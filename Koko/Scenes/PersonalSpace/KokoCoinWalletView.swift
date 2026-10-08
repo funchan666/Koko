@@ -27,7 +27,7 @@ struct KokoWalletView: View {
                             KokoCard(tint: 3) {
                                 VStack(alignment: .leading, spacing: 8) {
                                     Text("A little more for \(shortfall.purpose)").font(.custom("AvenirNext-Bold", size: 18))
-                                    Text("Cost: \(shortfall.requiredCoins) coins. You need \(max(0, shortfall.requiredCoins - community.coinBalance)) more.")
+                                    Text("Cost: \(shortfall.requiredCoins) coins. You need \(max(0, shortfall.requiredCoins - community.coinBalance) + community.coinAdjustmentDue) more.")
                                     Text("After adding coins, return to the item and confirm it again. Nothing is spent automatically.").font(.custom("AvenirNext-Regular", size: 12))
                                     Button("Dismiss") { community.coinShortfall = nil }.font(.custom("AvenirNext-DemiBold", size: 13)).buttonStyle(.plain).padding(.vertical, 8)
                                 }

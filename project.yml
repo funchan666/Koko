@@ -19,8 +19,15 @@ targets:
       SystemCapabilities:
         com.apple.InAppPurchase:
           enabled: 1
+        com.apple.SignInWithApple:
+          enabled: 1
     dependencies:
       - sdk: StoreKit.framework
+      - sdk: AuthenticationServices.framework
+      - sdk: WebKit.framework
+      - sdk: PhotosUI.framework
+      - sdk: AVFoundation.framework
+      - sdk: Security.framework
     sources:
       - path: Koko
         excludes:

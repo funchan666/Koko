@@ -1,7 +1,8 @@
 import SwiftUI
+import AuthenticationServices
 
 enum KokoDestination: Hashable {
-    case search, room(String), createRoom(Bool), moment(String), profile(String), conversation(String), call(String)
+    case search, room(String), createRoom(Bool), moment(String), profile(String), conversation(String), call(String, KokoConversationChannel), roomConnection(String, Int?)
     case wallet, shop, backpack, checkIn, level, settings, editProfile, album, friends(String), notices, ranking
     case feedback, blacklist, preferences(String), policy(String), savedMoments
 }
@@ -18,12 +19,20 @@ final class KokoSceneNavigation: ObservableObject {
 struct KokoApplicationRoot: View {
     @EnvironmentObject private var purchases: KokoAppleCoinPurchases
     @EnvironmentObject private var community: CommunityJournalStore
+    @StateObject private var accessJourney = KokoAccessJourney()
+    @AppStorage("koko.introduction.completed") private var introductionCompleted = false
+    @State private var openingApp = true
     var body: some View {
         ZStack {
-            if let journal = community.journal {
-                if journal.completedProfile { KokoMainShell().id(journal.member.id) }
+            if openingApp { KokoLaunchLoading() }
+            else if !introductionCompleted && community.journal == nil {
+                KokoFirstVisitGuide { introductionCompleted = true }
+            } else if let journal = community.journal {
+                if !community.hasCurrentPolicyConsent { KokoConsentRenewalGate() }
+                else if journal.completedProfile && !community.requiresAppleProfileReview { KokoMainShell().id(journal.member.id) }
                 else { KokoProfileEditor(isOnboarding: true) }
             } else { KokoAccountEntry() }
+            if accessJourney.transitioning { KokoAccountLoading().zIndex(90) }
             if let message = purchases.purchaseMessage {
                 KokoModal(title: "Your Apple purchase", dismiss: { purchases.purchaseMessage = nil }) {
                     Text(message)
@@ -36,7 +45,15 @@ struct KokoApplicationRoot: View {
                     KokoAction(title: "Got it") { community.notice = nil }
                 }.zIndex(100)
             }
-        }
+        }.environmentObject(accessJourney)
+            .task {
+                guard openingApp else { return }
+                if community.journal != nil { introductionCompleted = true }
+                community.refreshAppleCredentialState()
+                do { try await Task.sleep(nanoseconds: 1_600_000_000) } catch { return }
+                openingApp = false
+            }
+            .onReceive(NotificationCenter.default.publisher(for: ASAuthorizationAppleIDProvider.credentialRevokedNotification)) { _ in community.invalidateAppleSession() }
     }
 }
 
@@ -88,7 +105,8 @@ struct KokoMainShell: View {
         case .moment(let id): KokoMomentDetail(momentID: id)
         case .profile(let id): KokoMemberProfile(memberID: id)
         case .conversation(let id): KokoConversationDetail(memberID: id)
-        case .call(let id): KokoCallPreview(memberID: id)
+        case .call(let id, let channel): KokoPrivateCallView(memberID: id, channel: channel)
+        case .roomConnection(let id, let seat): KokoRoomConnectionView(roomID: id, preferredSeat: seat)
         case .wallet: KokoWalletView()
         case .shop: KokoKeepsakeCollection(backpack: false)
         case .backpack: KokoKeepsakeCollection(backpack: true)

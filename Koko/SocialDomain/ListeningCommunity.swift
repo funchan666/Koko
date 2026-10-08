@@ -10,6 +10,9 @@ struct CommunityMember: Identifiable, Codable, Hashable {
     var introductionLine: String
     var portraitTile: Int
     var interests: [String]
+    var homeCountryCode: String? = nil
+    var birthday: Date? = nil
+    var portraitFileName: String? = nil
 }
 
 struct ListeningRoom: Identifiable, Codable, Hashable {
@@ -89,6 +92,9 @@ struct SafetyRecord: Identifiable, Codable, Hashable {
 
 struct PersonalJournal: Codable {
     var member: CommunityMember
+    var accountCredentialKind: String? = nil
+    var appleSubjectIdentifier: String? = nil
+    var policyConsent: KokoPolicyConsent? = nil
     var followedMembers: Set<String> = []
     var sampleFollowers: Set<String> = []
     var blockedMembers: Set<String> = []

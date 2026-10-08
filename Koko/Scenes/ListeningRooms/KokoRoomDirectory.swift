@@ -54,7 +54,7 @@ struct KokoRoomComposer: View {
             KokoAction(title: "Open my room", icon: 1) {
                 let title = roomTitle.trimmingCharacters(in: .whitespacesAndNewlines)
                 guard !title.isEmpty, title.count <= 50, conversationPrompt.count <= 240, let audience = Int(targetAudience), (1...999).contains(audience) else { community.notice = "Add a room name up to 50 characters, a description up to 240 characters, and an audience goal from 1 to 999."; return }
-                let room = ListeningRoom(id: UUID().uuidString, roomTitle: title, conversationPrompt: conversationPrompt, hostMemberID: community.myID, conversationTopic: topic, seatLimit: Int(seats) ?? 6, isPublicRoom: publicRoom, isVideoStage: videoStage, artworkTile: cover, targetAudience: audience, seatAssignments: [0: community.myID])
+                let room = ListeningRoom(id: UUID().uuidString, roomTitle: title, conversationPrompt: conversationPrompt, hostMemberID: community.myID, conversationTopic: topic, seatLimit: Int(seats) ?? 6, isPublicRoom: publicRoom, isVideoStage: videoStage, artworkTile: cover, targetAudience: audience, seatAssignments: [0: community.myID], mutedSeatNumbers: [0])
                 if community.saveRoom(room, creating: true) { navigation.back(); navigation.open(.room(room.id)) }
             }
         }

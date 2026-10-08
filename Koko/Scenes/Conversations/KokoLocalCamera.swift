@@ -9,6 +9,7 @@ final class KokoCapturePipeline: @unchecked Sendable {
         captureQueue.async { [self] in
             captureSession.beginConfiguration()
             captureSession.sessionPreset = .medium
+            captureSession.automaticallyConfiguresApplicationAudioSession = false
             for input in captureSession.inputs { captureSession.removeInput(input) }
             let position: AVCaptureDevice.Position = front ? .front : .back
             guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: position),
@@ -32,6 +33,7 @@ final class KokoLocalCamera: ObservableObject {
     let pipeline = KokoCapturePipeline()
     @Published private(set) var active = false
     @Published private(set) var requesting = false
+    @Published private(set) var permissionDenied = false
     @Published private(set) var front = true
     @Published private(set) var explanation = "Camera is off. Preview stays on this device."
     private var requestRevision = UUID()
@@ -46,6 +48,7 @@ final class KokoLocalCamera: ObservableObject {
             default: granted = false
             }
             guard let self, self.requestRevision == revision else { return }
+            self.permissionDenied = !granted
             guard granted else { self.requesting = false; self.explanation = "Camera permission is off. You can enable it in iOS Settings."; return }
             self.pipeline.start(front: self.front) { [weak self] ready in
                 Task { @MainActor in

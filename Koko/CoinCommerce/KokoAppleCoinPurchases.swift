@@ -126,7 +126,8 @@ final class KokoAppleCoinPurchases: ObservableObject {
         }
         let transactionID = String(transaction.id)
         if let revoked = transaction.revocationDate {
-            let needsAdjustment = community.journal?.verifiedCoinCredits?[transactionID].map { $0.revokedAt == nil } ?? false
+            let previousCredit = community.journal?.verifiedCoinCredits?[transactionID]
+            let needsAdjustment = previousCredit != nil && previousCredit?.revokedAt == nil
             guard community.recordPurchaseRevocation(transactionID: transactionID, revokedAt: revoked, ownerToken: ownerToken) else { return }
             await transaction.finish()
             if needsAdjustment && community.purchaseAccountToken == ownerToken { purchaseMessage = "Apple refunded a coin purchase. Your balance and history have been updated." }

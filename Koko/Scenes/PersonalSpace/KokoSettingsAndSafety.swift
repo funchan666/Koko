@@ -16,7 +16,7 @@ struct KokoSettingsView: View {
                 KokoMenuRow(title: "Blocked people", icon: 3) { navigation.open(.blacklist) }
                 KokoMenuRow(title: "Community guidelines", icon: 2) { navigation.open(.policy("Community guidelines")) }
                 KokoMenuRow(title: "Privacy notice", icon: 11) { navigation.open(.policy("Privacy")) }
-                KokoMenuRow(title: "Preview terms", icon: 11) { navigation.open(.policy("Preview terms")) }
+                KokoMenuRow(title: "Terms of Service", icon: 11) { navigation.open(.policy("Terms of Service")) }
                 KokoMenuRow(title: "About Koko", detail: "Version 1.0 · Local preview", icon: 1) { navigation.open(.preferences("About Koko")) }
                 KokoAction(title: "Switch local account", emphasis: false) { confirmation = "Switch accounts?" }
                 KokoAction(title: "Sign out", emphasis: false) { confirmation = "Sign out?" }
@@ -25,7 +25,7 @@ struct KokoSettingsView: View {
             if let confirmation {
                 KokoModal(title: confirmation, dismiss: { self.confirmation = nil }) {
                     let deleting = confirmation == "Delete your local profile?"
-                    Text(deleting ? "This permanently removes this account's local profile, messages, album, rooms, remaining coins (including purchased coins), purchase records and keepsakes. Completed consumable purchases cannot restore this deleted balance. Other local accounts are kept." : "Your local data stays here. Use the same email to return to this profile.")
+                    Text(deleting ? "This permanently removes this account's local profile, messages, album, rooms, remaining coins (including purchased coins), purchase records and keepsakes. Completed consumable purchases cannot restore this deleted balance. Other local accounts are kept." : "Your local data stays here. Use your registered email and password, or the same Apple account, to return.")
                     KokoAction(title: deleting ? "Delete this local profile" : "Continue") {
                         if deleting { community.deleteLocalAccount() } else { community.signOut() }
                     }
@@ -72,9 +72,9 @@ struct KokoPreferencesView: View {
                     KokoAction(title: "Clear local conversations", emphasis: false) { clearingMessages = true }
                 } else if kind == "Account" {
                     Text(community.currentMember?.publicName ?? "Your profile").font(.custom("AvenirNext-Bold", size: 27))
-                    Text("Email entry opens a local profile using a valid email and any password of 8–128 characters. This build does not verify mailbox ownership, store passwords, or create a backend session.")
+                    Text("Email accounts use the password registered on this device. A salted password verifier is kept in the device Keychain. Mailbox verification and cross-device account access are not connected yet.")
                     Text("Apple sign-in, when configured, uses genuine Apple authorization. Koko interactions remain local in this build.")
-                    KokoAction(title: "Password help", emphasis: false) { community.notice = "No password is stored in this preview. Re-enter the same email and any 8–128 character password to reopen your local profile." }
+                    KokoAction(title: "Password help", emphasis: false) { community.notice = "Use the password registered on this device. Email password recovery is not connected yet. An older preview profile without a password can set its first one through Sign up with the same email." }
                 } else {
                     Artwork(sheet: .scenes, tile: 3).frame(height: 240)
                     Text("koko").font(.custom("AvenirNext-Bold", size: 40))
@@ -136,7 +136,7 @@ struct KokoBlacklistView: View {
             KokoPage(title: "Your boundaries matter", subtitle: "People hidden on this device", back: navigation.back) {
                 let blocked = KokoCommunity.members.filter { community.journal?.blockedMembers.contains($0.id) == true }
                 if blocked.isEmpty { KokoEmpty(title: "Nothing here, and that's okay", detail: "People you block will appear here. You can unblock them at any time.") }
-                ForEach(blocked) { member in KokoCard { HStack { Artwork(sheet: .collection, tile: member.portraitTile).frame(width: 60, height: 60); Text(member.publicName).font(.custom("AvenirNext-DemiBold", size: 16)); Spacer(); Button("Unblock") { selectedID = member.id }.buttonStyle(.plain).font(.custom("AvenirNext-Medium", size: 12)) } } }
+                ForEach(blocked) { member in KokoCard { HStack { KokoMemberPortrait(member: member).frame(width: 60, height: 60); Text(member.publicName).font(.custom("AvenirNext-DemiBold", size: 16)); Spacer(); Button("Unblock") { selectedID = member.id }.buttonStyle(.plain).font(.custom("AvenirNext-Medium", size: 12)) } } }
             }
             if let memberID = selectedID { KokoModal(title: "Unblock this person?", dismiss: { selectedID = nil }) { Text("Their content can appear again. Your previous follow relationship will not be restored automatically."); KokoAction(title: "Unblock") { community.update { $0.blockedMembers.remove(memberID); $0.hiddenContentKeys.remove(memberID) }; selectedID = nil } } }
         }

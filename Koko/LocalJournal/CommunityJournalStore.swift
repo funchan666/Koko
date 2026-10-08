@@ -1,6 +1,7 @@
 import Foundation
 import CryptoKit
 import Combine
+import AuthenticationServices
 
 @MainActor
 final class CommunityJournalStore: ObservableObject {
@@ -10,6 +11,7 @@ final class CommunityJournalStore: ObservableObject {
     @Published var coinSpendRequest: CoinSpendRequest?
     @Published var coinShortfall: CoinShortfall?
     @Published var purchaseInProgress = false
+    @Published private(set) var requiresAppleProfileReview = false
     private var activeIdentity: String?
     private let fileManager = FileManager.default
     private let sessionPreference = "koko.activeLocalIdentity"
@@ -65,41 +67,100 @@ final class CommunityJournalStore: ObservableObject {
         return KokoCommunity.members.first { $0.id == identifier }
     }
     func room(_ identifier: String) -> ListeningRoom? { rooms.first { $0.id == identifier } }
-    func signIn(email: String, password: String) -> Bool {
-        let normalized = email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        guard normalized.range(of: #"^[A-Z0-9._%+\-]+@[A-Z0-9.\-]+\.[A-Z]{2,}$"#, options: .caseInsensitive) != nil,
-              normalized.count <= 254, (8...128).contains(password.count) else {
-            notice = "Enter a valid email and a password between 8 and 128 characters. This is a local preview; no email is sent."
-            return false
-        }
-        return enterLocalIdentity("email:" + normalized)
-    }
-    func enterAppleIdentity(_ identifier: String, givenName: String?) -> Bool {
-        enterLocalIdentity("apple:" + identifier, displayName: givenName)
-    }
-    private func enterLocalIdentity(_ identity: String, displayName: String? = nil) -> Bool {
-        let key = SHA256.hash(data: Data(identity.utf8)).map { String(format: "%02x", $0) }.joined()
+    var hasCurrentPolicyConsent: Bool { journal?.policyConsent?.revision == KokoPolicyConsent.currentRevision }
+
+    func signIn(email: String, password: String, consent: Bool) async -> Bool {
+        guard consent else { notice = "Please agree to the Terms of Service and Privacy Policy before continuing."; return false }
+        if let issue = KokoAccountValidation.emailIssue(email) ?? KokoAccountValidation.passwordIssue(password) { notice = issue; return false }
+        let key = KokoLocalCredentials.identityKey("email:" + KokoAccountValidation.normalizedEmail(email))
         do {
-            let url = try journalURL(key)
-            var restored: PersonalJournal
-            if fileManager.fileExists(atPath: url.path) {
-                restored = try JSONDecoder().decode(PersonalJournal.self, from: Data(contentsOf: url))
-            } else {
-                restored = PersonalJournal(member: .init(id: key, publicName: displayName ?? "Your name", hometownLabel: "", spokenLanguage: "English", adultAge: 25, genderLabel: "Prefer not to say", introductionLine: "", portraitTile: 0, interests: []))
-                var newJournal = restored
-                newJournal.welcomeGiftEligible = !UserDefaults.standard.bool(forKey: "koko.firstVisitGift." + key)
-                try persist(newJournal, identity: key)
-                restored = newJournal
+            guard let verifier = try KokoLocalCredentials.verifier(for: key) else {
+                let existed = fileManager.fileExists(atPath: try journalURL(key).path)
+                notice = existed ? "This earlier preview profile has no password yet. Choose Sign up with this email to set one and keep your saved data." : "No account with this email is saved on this device. Choose Sign up to create one."
+                return false
             }
-            activeIdentity = key
-            journal = restored
-            storageUnavailable = false
-            UserDefaults.standard.set(key, forKey: sessionPreference)
+            let matches = try await Task.detached(priority: .userInitiated) { try KokoLocalCredentials.matches(password: password, verifier: verifier) }.value
+            guard matches else { notice = "The email and password do not match. Please try again."; return false }
+            var restored = try readSavedJournal(key) ?? newJournal(identity: key)
+            restored.accountCredentialKind = "email"
+            restored.policyConsent = KokoPolicyConsent()
+            try activate(restored, identity: key)
+            return true
+        } catch { notice = "Your account could not be opened. Your saved data has been kept. Please try again."; return false }
+    }
+
+    func register(email: String, password: String, consent: Bool) async -> Bool {
+        guard consent else { notice = "Please agree to both policies first."; return false }
+        if let issue = KokoAccountValidation.emailIssue(email) ?? KokoAccountValidation.passwordIssue(password) { notice = issue; return false }
+        let key = KokoLocalCredentials.identityKey("email:" + KokoAccountValidation.normalizedEmail(email))
+        var createdVerifier = false
+        do {
+            guard try KokoLocalCredentials.verifier(for: key) == nil else { notice = "This account already exists on this device. Choose Log in instead."; return false }
+            var draft = try readSavedJournal(key) ?? newJournal(identity: key)
+            guard draft.accountCredentialKind == nil else { notice = "This account already exists. Sign in to continue."; return false }
+            let verifier = try await Task.detached(priority: .userInitiated) { try KokoLocalCredentials.makeVerifier(password: password) }.value
+            try KokoLocalCredentials.save(verifier, identity: key); createdVerifier = true
+            draft.accountCredentialKind = "email"; draft.policyConsent = KokoPolicyConsent(); draft.completedProfile = false
+            try activate(draft, identity: key)
             return true
         } catch {
-            notice = "Your local profile couldn't be opened. Existing data has been kept."
-            return false
+            if createdVerifier { try? KokoLocalCredentials.remove(identity: key) }
+            notice = "Your account could not be saved securely. Please try again."; return false
         }
+    }
+
+    /// Called only after genuine ASAuthorizationAppleIDCredential authorization completes.
+    func enterAppleIdentity(_ identifier: String, fullName: String?, consent: Bool) -> Bool {
+        guard consent, !identifier.isEmpty else { notice = "Agree to both policies and finish Apple authorization first."; return false }
+        let key = KokoLocalCredentials.identityKey("apple:" + identifier)
+        do {
+            var restored = try readSavedJournal(key) ?? newJournal(identity: key)
+            if restored.member.publicName.isEmpty, let fullName, !fullName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                // Apple supplies names on first authorization. Save it immediately, even if profile editing is interrupted.
+                restored.member.publicName = String(fullName.prefix(40))
+            }
+            restored.accountCredentialKind = "apple"; restored.appleSubjectIdentifier = identifier
+            restored.policyConsent = KokoPolicyConsent()
+            requiresAppleProfileReview = true
+            try activate(restored, identity: key)
+            return true
+        } catch { requiresAppleProfileReview = false; notice = "Your Apple profile could not be saved on this device. Please try again."; return false }
+    }
+
+    func refreshAppleCredentialState() {
+        guard let subject = journal?.appleSubjectIdentifier else { return }
+        let owner = myID
+        ASAuthorizationAppleIDProvider().getCredentialState(forUserID: subject) { [weak self] state, error in
+            let mustSignIn = error == nil && (state == .revoked || state == .notFound || state == .transferred)
+            Task { @MainActor in
+                guard let self, self.myID == owner, mustSignIn else { return }
+                self.invalidateAppleSession()
+            }
+        }
+    }
+    func invalidateAppleSession() {
+        guard journal?.accountCredentialKind == "apple" else { return }
+        // Revocation is authoritative even when a purchase is pending; its account token still protects delivery.
+        journal = nil; activeIdentity = nil; requiresAppleProfileReview = false
+        coinSpendRequest = nil; coinShortfall = nil
+        UserDefaults.standard.removeObject(forKey: sessionPreference)
+        notice = "Apple authorization has changed. Please sign in with Apple again. Your saved profile remains on this device."
+    }
+    func acceptCurrentPolicies() { update { $0.policyConsent = KokoPolicyConsent() } }
+    private func readSavedJournal(_ identity: String) throws -> PersonalJournal? {
+        let url = try journalURL(identity)
+        guard fileManager.fileExists(atPath: url.path) else { return nil }
+        return try JSONDecoder().decode(PersonalJournal.self, from: Data(contentsOf: url))
+    }
+    private func newJournal(identity: String) -> PersonalJournal {
+        var value = PersonalJournal(member: .init(id: identity, publicName: "", hometownLabel: "", spokenLanguage: "English", adultAge: 0, genderLabel: "", introductionLine: "", portraitTile: 0, interests: []))
+        value.welcomeGiftEligible = !UserDefaults.standard.bool(forKey: "koko.firstVisitGift." + identity)
+        return value
+    }
+    private func activate(_ value: PersonalJournal, identity: String) throws {
+        try persist(value, identity: identity)
+        activeIdentity = identity; journal = value; storageUnavailable = false
+        UserDefaults.standard.set(identity, forKey: sessionPreference)
     }
     @discardableResult
     func update(_ change: (inout PersonalJournal) -> Void) -> Bool {
@@ -123,7 +184,7 @@ final class CommunityJournalStore: ObservableObject {
     }
     func signOut() {
         guard !purchaseInProgress else { notice = "Please finish or cancel the Apple purchase before switching accounts."; return }
-        coinSpendRequest = nil; coinShortfall = nil
+        coinSpendRequest = nil; coinShortfall = nil; requiresAppleProfileReview = false
         KokoLocalReminders.disable()
         journal = nil
         activeIdentity = nil
@@ -132,14 +193,38 @@ final class CommunityJournalStore: ObservableObject {
     func deleteLocalAccount() {
         guard !purchaseInProgress else { notice = "Please finish or cancel the Apple purchase first."; return }
         guard let identity = activeIdentity else { return }
-        do { try fileManager.removeItem(at: journalURL(identity)); signOut() }
+        if journal?.welcomeGiftGrantedAt != nil { UserDefaults.standard.set(true, forKey: "koko.firstVisitGift." + myID) }
+        do {
+            let verifier = try KokoLocalCredentials.verifier(for: identity)
+            let portrait = journal?.member.portraitFileName
+            try KokoLocalCredentials.remove(identity: identity)
+            do { try fileManager.removeItem(at: journalURL(identity)) }
+            catch {
+                if let verifier { try? KokoLocalCredentials.save(verifier, identity: identity) }
+                throw error
+            }
+            if let portrait { KokoPortraitFiles.remove(portrait) }
+            if let subject = journal?.appleSubjectIdentifier { UserDefaults.standard.removeObject(forKey: "koko.appleName." + KokoLocalCredentials.identityKey(subject)) }
+            signOut()
+        }
         catch { notice = "Your profile could not be removed. Please try again." }
     }
-    func saveProfile(_ member: CommunityMember) -> Bool {
-        guard (18...99).contains(member.adultAge), !member.publicName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            notice = "Add a display name and an adult age from 18 to 99."; return false
-        }
-        return update { $0.member = member; $0.completedProfile = true }
+    func saveProfile(_ member: CommunityMember, portraitJPEG: Data? = nil) -> Bool {
+        guard hasCurrentPolicyConsent else { notice = "Agree to the current Terms of Service and Privacy Policy first."; return false }
+        if let issue = KokoAccountValidation.profileIssue(member) { notice = issue; return false }
+        var revised = member
+        var newPortrait: String?
+        let oldPortrait = currentMember?.portraitFileName
+        do {
+            if let portraitJPEG { newPortrait = try KokoPortraitFiles.save(portraitJPEG); revised.portraitFileName = newPortrait }
+            if update({ $0.member = revised; $0.completedProfile = true }) {
+                requiresAppleProfileReview = false
+                if let oldPortrait, oldPortrait != revised.portraitFileName { KokoPortraitFiles.remove(oldPortrait) }
+                return true
+            }
+        } catch { notice = "Your photo could not be saved. Please try again." }
+        if let newPortrait { KokoPortraitFiles.remove(newPortrait) }
+        return false
     }
     func toggleFollow(_ memberID: String) {
         guard memberID != myID, !(journal?.blockedMembers.contains(memberID) ?? false) else { return }
@@ -188,7 +273,9 @@ final class CommunityJournalStore: ObservableObject {
     func leaveSeat(in roomID: String) {
         guard var room = room(roomID) else { return }
         guard room.hostMemberID != myID else { return }
+        let departingSeats = room.seatAssignments.filter { $0.value == myID }.map(\.key)
         room.seatAssignments = room.seatAssignments.filter { $0.value != myID }
+        room.mutedSeatNumbers.subtract(departingSeats)
         saveRoom(room)
     }
     func block(_ memberID: String) {

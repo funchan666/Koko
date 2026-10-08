@@ -9,9 +9,9 @@ enum KokoInk {
 }
 
 enum ArtworkSheet: String {
-    case navigation = "KokoNavigation", surfaces = "KokoSurfaces", scenes = "KokoScenes", collection = "KokoCollection"
-    var columns: Int { self == .surfaces || self == .scenes ? 2 : 4 }
-    var rows: Int { self == .surfaces ? 3 : (self == .scenes ? 2 : 4) }
+    case navigation = "KokoNavigation", surfaces = "KokoSurfaces", scenes = "KokoScenes", collection = "KokoCollection", arrival = "KokoArrival"
+    var columns: Int { self == .surfaces || self == .scenes || self == .arrival ? 2 : 4 }
+    var rows: Int { self == .surfaces ? 3 : (self == .scenes || self == .arrival ? 2 : 4) }
 }
 
 @MainActor
@@ -37,7 +37,7 @@ struct Artwork: View {
     let tile: Int
     var body: some View {
         Image(uiImage: OriginalArtwork.image(sheet, tile)).resizable().scaledToFit()
-            .blendMode(sheet == .navigation || sheet == .collection ? .multiply : .normal)
+            .blendMode(sheet == .navigation || sheet == .collection || sheet == .arrival ? .multiply : .normal)
             .accessibilityHidden(true)
     }
 }

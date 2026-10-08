@@ -58,7 +58,11 @@ struct KokoConversationDetail: View {
         ZStack {
             KokoPage(title: community.member(memberID)?.publicName ?? "Conversation", subtitle: "LOCAL CONVERSATION · NO REMOTE DELIVERY", back: navigation.back) {
                 HStack {
-                    KokoAction(title: "Video preview", icon: 0) { navigation.open(.call(memberID)) }
+                    KokoAction(title: "Voice call", icon: 13) { navigation.open(.call(memberID, .voice)) }
+                    KokoAction(title: "Video call", icon: 0) { navigation.open(.call(memberID, .video)) }
+                }
+                HStack {
+                    Spacer()
                     KokoIconAction(icon: 11, label: "Report or block") { showSafety = true }
                     KokoIconAction(icon: 6, label: "Clear this chat") { showClear = true }
                 }
@@ -117,38 +121,6 @@ struct KokoConversationDetail: View {
             }
         }.onAppear { draft = community.conversation(for: memberID)?.compositionDraft ?? "" }
             .onDisappear { if !draft.isEmpty { community.saveDraft(draft, memberID: memberID) } }
-    }
-}
-
-struct KokoCallPreview: View {
-    @EnvironmentObject private var community: CommunityJournalStore
-    @EnvironmentObject private var navigation: KokoSceneNavigation
-    @Environment(\.scenePhase) private var scenePhase
-    @StateObject private var camera = KokoLocalCamera()
-    let memberID: String
-    @State private var micEnabled = true
-    @State private var phase = "Ready"
-    var body: some View {
-        KokoPage(title: "A face-to-face hello", back: navigation.back) {
-            if camera.active { KokoCameraSurface(session: camera.pipeline.captureSession).frame(height: 290).clipped() }
-            else { Artwork(sheet: .scenes, tile: 1).frame(height: 245) }
-            if let member = community.member(memberID) {
-                HStack { Artwork(sheet: .collection, tile: member.portraitTile).frame(width: 90, height: 90); VStack(alignment: .leading, spacing: 6) { Text(member.publicName).font(.custom("AvenirNext-Bold", size: 24)); Text(phase).foregroundStyle(KokoInk.secondary) } }
-            }
-            LocalPreviewNote(text: "LOCAL CAMERA PREVIEW · NO CALL OR REMOTE TRANSMISSION")
-            Text(camera.explanation).font(.custom("AvenirNext-Regular", size: 13))
-            KokoToggleRow(title: "Microphone preview", enabled: $micEnabled)
-            KokoAction(title: camera.active ? "Turn camera off" : (camera.requesting ? "Opening camera…" : "Preview my camera"), icon: 0) { if camera.active { camera.stop() } else { camera.start() } }
-            KokoAction(title: camera.front ? "Camera: front · switch" : "Camera: back · switch", icon: 0, emphasis: false) { camera.flip() }
-            KokoAction(title: "Preview connection request", icon: 12) {
-                guard community.friends.contains(memberID) else { community.notice = "Enable a sample mutual connection from this profile first."; return }
-                phase = "Waiting preview · no recipient contacted"
-            }
-            KokoAction(title: "End preview", emphasis: false) { navigation.back() }
-        }.onDisappear { camera.stop() }
-            .onChange(of: scenePhase) { phase in
-                if phase == .background || (phase == .inactive && !camera.requesting) { camera.stop() }
-            }
     }
 }
 

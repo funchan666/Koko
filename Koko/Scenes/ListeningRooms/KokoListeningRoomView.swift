@@ -27,7 +27,7 @@ struct KokoListeningRoomView: View {
                     }
                     HStack(spacing: 10) {
                         if let host = community.member(room.hostMemberID) {
-                            Button { navigation.open(.profile(host.id)) } label: { HStack { Artwork(sheet: .collection, tile: host.portraitTile).frame(width: 44, height: 44); VStack(alignment: .leading) { Text(host.publicName).font(.custom("AvenirNext-Bold", size: 16)); Text("Your host").font(.custom("AvenirNext-Regular", size: 11)) } } }.buttonStyle(.plain)
+                            Button { navigation.open(.profile(host.id)) } label: { HStack { KokoMemberPortrait(member: host).frame(width: 44, height: 44); VStack(alignment: .leading) { Text(host.publicName).font(.custom("AvenirNext-Bold", size: 16)); Text("Your host").font(.custom("AvenirNext-Regular", size: 11)) } } }.buttonStyle(.plain)
                         }
                         Spacer()
                         if !isHost { KokoAction(title: community.following.contains(room.hostMemberID) ? "Following" : "Follow", emphasis: false) { community.toggleFollow(room.hostMemberID) }.frame(width: 110) }
@@ -76,7 +76,7 @@ struct KokoListeningRoomView: View {
         } label: {
             VStack(spacing: 6) {
                 if let memberID = room.seatAssignments[position], let member = community.member(memberID) {
-                    Artwork(sheet: .collection, tile: member.portraitTile).frame(height: 58)
+                    KokoMemberPortrait(member: member).frame(height: 58)
                     Text(member.publicName).lineLimit(1)
                     Text(room.mutedSeatNumbers.contains(position) ? "Muted" : (position == 0 ? "Host" : "On the mic")).font(.custom("AvenirNext-Regular", size: 9))
                 } else { Artwork(sheet: .navigation, tile: 13).frame(height: 48).opacity(0.4); Text("Seat \(position + 1)"); Text("Join locally").font(.custom("AvenirNext-Regular", size: 9)) }
@@ -120,19 +120,19 @@ struct KokoListeningRoomView: View {
                 }
                 if candidates.isEmpty { Text("Every available sample guest already has a seat.") }
             case "Take this seat?":
-                Text("Try being a speaker in this local room. Your microphone is not recorded or transmitted.")
-                KokoAction(title: "Take seat \((selectedSeat ?? 0) + 1)", icon: 13) {
-                    guard let seat = selectedSeat, room.seatAssignments[seat] == nil else { return }
-                    var updated = room
-                    updated.seatAssignments = updated.seatAssignments.filter { $0.value != community.myID }
-                    updated.seatAssignments[seat] = community.myID
-                    community.saveRoom(updated); panel = nil
+                Text("Check your microphone permission and prepare a local seat request. Nothing is sent to the host.")
+                KokoAction(title: "Prepare seat \((selectedSeat ?? 0) + 1)", icon: 13) {
+                    let seat = selectedSeat; panel = nil; music.stop()
+                    navigation.open(.roomConnection(roomID, seat))
                 }
             case "At this seat":
                 if let seat = selectedSeat, let memberID = room.seatAssignments[seat] {
                     if let member = community.member(memberID) { KokoMemberRow(member: member) }
                     if memberID == community.myID || isHost || room.moderatorMemberIDs.contains(community.myID) {
-                        KokoAction(title: room.mutedSeatNumbers.contains(seat) ? "Unmute seat locally" : "Mute seat locally", icon: 13) {
+                        KokoAction(title: memberID == community.myID ? "Manage my microphone" : (room.mutedSeatNumbers.contains(seat) ? "Unmute seat locally" : "Mute seat locally"), icon: 13) {
+                            if memberID == community.myID {
+                                panel = nil; music.stop(); navigation.open(.roomConnection(roomID, seat)); return
+                            }
                             var updated = room
                             if updated.mutedSeatNumbers.contains(seat) { updated.mutedSeatNumbers.remove(seat) } else { updated.mutedSeatNumbers.insert(seat) }
                             community.saveRoom(updated); panel = nil
@@ -153,9 +153,9 @@ struct KokoListeningRoomView: View {
                 ForEach(Array(Set(room.seatAssignments.values)).sorted(), id: \.self) { memberID in if let member = community.member(memberID) { KokoMemberRow(member: member) } }
                 LocalPreviewNote(text: "SAMPLE OCCUPANTS · NO REAL-TIME AUDIENCE CONNECTED")
             case "Voice connection":
-                Artwork(sheet: .navigation, tile: 13).frame(height: 90)
-                Text("Join a seat to try microphone states. A real-time audio service will be connected later.")
-                KokoAction(title: isHost ? "Invite a sample guest" : "Choose an open seat") { selectedSeat = (0..<room.seatLimit).first(where: { room.seatAssignments[$0] == nil }); panel = selectedSeat == nil ? nil : (isHost ? "Invite a sample guest" : "Take this seat?"); if selectedSeat == nil { community.notice = "All seats are occupied." } }
+                Artwork(sheet: .arrival, tile: 1).frame(height: 140)
+                Text("Request a seat, check your microphone, and try the local stage controls. Voice and video are always free.")
+                KokoAction(title: "Open connection panel", icon: 13) { panel = nil; music.stop(); navigation.open(.roomConnection(roomID, nil)) }
                 if room.seatAssignments.values.contains(community.myID), !isHost { KokoAction(title: "Leave my seat", emphasis: false) { community.leaveSeat(in: roomID); panel = nil } }
             case "Room music":
                 Text("Music plays on this device only. Audio files can be added later.").font(.custom("AvenirNext-Regular", size: 13))

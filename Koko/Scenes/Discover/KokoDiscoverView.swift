@@ -37,7 +37,7 @@ struct KokoDiscoverView: View {
                     ForEach(community.members) { member in
                         Button { navigation.open(.profile(member.id)) } label: {
                             VStack(alignment: .leading, spacing: 7) {
-                                Artwork(sheet: .collection, tile: member.portraitTile).frame(width: 82, height: 82)
+                                KokoMemberPortrait(member: member).frame(width: 82, height: 82)
                                 Text(member.publicName.components(separatedBy: " ").first ?? member.publicName).font(.custom("AvenirNext-DemiBold", size: 13))
                                 Text(member.interests.first ?? "Conversation").font(.custom("AvenirNext-Regular", size: 10)).foregroundStyle(KokoInk.secondary)
                             }
@@ -166,7 +166,7 @@ struct KokoMemberRow: View {
     var body: some View {
         Button { navigation.open(.profile(member.id)) } label: {
             HStack(spacing: 14) {
-                Artwork(sheet: .collection, tile: member.portraitTile).frame(width: 58, height: 64)
+                KokoMemberPortrait(member: member).frame(width: 58, height: 64)
                 VStack(alignment: .leading, spacing: 5) { Text(member.publicName).font(.custom("AvenirNext-DemiBold", size: 17)); Text("\(member.hometownLabel) · \(member.spokenLanguage)").font(.custom("AvenirNext-Regular", size: 12)).foregroundStyle(KokoInk.secondary) }
                 Spacer()
             }.padding(14).background(ArtworkSurface())

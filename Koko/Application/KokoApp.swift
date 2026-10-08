@@ -16,7 +16,10 @@ struct KokoApp: App {
                 }
                 .onChange(of: community.myID) { _ in coinPurchases.recoverUnfinishedPurchases() }
                 .onChange(of: scenePhase) { phase in
-                    if phase == .active { coinPurchases.recoverUnfinishedPurchases() }
+                    if phase == .active {
+                        coinPurchases.recoverUnfinishedPurchases()
+                        community.refreshAppleCredentialState()
+                    }
                 }
                 .font(.custom("AvenirNext-Regular", size: 16, relativeTo: .body))
                 .foregroundStyle(KokoInk.primary)

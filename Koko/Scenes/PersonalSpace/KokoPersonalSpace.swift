@@ -9,7 +9,7 @@ struct KokoPersonalSpace: View {
             KokoPage(title: "Make yourself at home", subtitle: "YOUR LITTLE CORNER OF KOKO") {
                 if let member = community.currentMember {
                     HStack(alignment: .top, spacing: 18) {
-                        Artwork(sheet: .collection, tile: member.portraitTile).frame(width: 112, height: 125)
+                        KokoMemberPortrait(member: member).frame(width: 112, height: 125)
                         VStack(alignment: .leading, spacing: 8) {
                             Text(member.publicName).font(.custom("AvenirNext-Bold", size: 27))
                             Text(member.hometownLabel.isEmpty ? "Somewhere good" : member.hometownLabel).font(.custom("AvenirNext-Regular", size: 13)).foregroundStyle(KokoInk.secondary)
@@ -72,7 +72,7 @@ struct KokoMemberProfile: View {
         ZStack {
             KokoPage(title: "Meet someone", back: navigation.back) {
                 if let member = community.member(memberID) {
-                    Artwork(sheet: .collection, tile: member.portraitTile).frame(height: 235)
+                    KokoMemberPortrait(member: member).frame(height: 235)
                     Text(member.publicName).font(.custom("AvenirNext-Bold", size: 34))
                     Text("\(member.adultAge) · \(member.hometownLabel) · \(member.spokenLanguage)").foregroundStyle(KokoInk.secondary)
                     Text(member.introductionLine).font(.custom("AvenirNext-Medium", size: 19))
@@ -82,7 +82,11 @@ struct KokoMemberProfile: View {
                             KokoAction(title: community.following.contains(memberID) ? "Following" : "Follow", icon: 7) { community.toggleFollow(memberID) }
                             KokoIconAction(icon: 11, label: "Report or block") { safety = true }
                         }
-                        HStack { KokoAction(title: "Message", icon: 2, emphasis: false) { navigation.open(.conversation(memberID)) }; KokoAction(title: "Video", icon: 0, emphasis: false) { navigation.open(.call(memberID)) } }
+                        KokoAction(title: "Message", icon: 2, emphasis: false) { navigation.open(.conversation(memberID)) }
+                        HStack {
+                            KokoAction(title: "Voice call", icon: 13, emphasis: false) { navigation.open(.call(memberID, .voice)) }
+                            KokoAction(title: "Video call", icon: 0, emphasis: false) { navigation.open(.call(memberID, .video)) }
+                        }
                         KokoCard {
                             VStack(alignment: .leading, spacing: 10) {
                                 LocalPreviewNote(text: "SAMPLE PROFILE")
@@ -114,7 +118,17 @@ struct KokoConnectionsView: View {
     var body: some View {
         KokoPage(title: kind, back: navigation.back) {
             KokoField(label: "Search people", value: $query)
-            ForEach(members) { KokoMemberRow(member: $0) }
+            ForEach(members) { member in
+                VStack(spacing: 8) {
+                    KokoMemberRow(member: member)
+                    if kind == "Friends" {
+                        HStack {
+                            KokoAction(title: "Voice call", icon: 13, emphasis: false) { navigation.open(.call(member.id, .voice)) }
+                            KokoAction(title: "Video call", icon: 0, emphasis: false) { navigation.open(.call(member.id, .video)) }
+                        }
+                    }
+                }
+            }
             if members.isEmpty { KokoEmpty(title: "Good company takes a first hello", detail: "Find a creator in Discover. Sample mutual connections can be enabled from their profile."); KokoAction(title: "Explore people", icon: 4) { navigation.open(.search) } }
             LocalPreviewNote()
         }

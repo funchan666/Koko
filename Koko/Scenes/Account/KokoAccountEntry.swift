@@ -1,153 +1,138 @@
 import SwiftUI
 import AuthenticationServices
+import CryptoKit
 import UIKit
 
 struct KokoAccountEntry: View {
     @EnvironmentObject private var community: CommunityJournalStore
+    @EnvironmentObject private var journey: KokoAccessJourney
     @StateObject private var appleEntry = KokoAppleEntry()
+    @State private var destination = "Welcome"
     @State private var emailAddress = ""
     @State private var passwordDraft = ""
-    @State private var formVisible = false
-    @State private var creatingProfile = false
-    @State private var hasReadPreviewNotice = false
-    @State private var policy: String?
+    @State private var repeatedPassword = ""
+    @State private var agreed = false
+    @State private var showConsentPrompt = false
+    @State private var document: KokoLegalDocument?
+    private var welcome: Bool { destination == "Welcome" }
+    private var registration: Bool { destination == "Sign up" }
     var body: some View {
         ZStack {
-            KokoPage(title: "koko", subtitle: "GOOD COMPANY, AT YOUR PACE") {
-                Artwork(sheet: .scenes, tile: 3).frame(maxHeight: formVisible ? 175 : 310)
-                Text(formVisible ? (creatingProfile ? "Make room\nfor yourself." : "Good to have\nyou here.") : "A little closer.\nA little more you.")
-                    .font(.custom("AvenirNext-Bold", size: 35, relativeTo: .largeTitle)).lineSpacing(-2)
-                Text("Drop into a conversation. Share what moves you. Find your kind of company.")
-                    .foregroundStyle(KokoInk.secondary)
-                if formVisible {
+            KokoPage(title: "koko", subtitle: "GOOD COMPANY, AT YOUR PACE", back: welcome ? nil : { passwordDraft = ""; repeatedPassword = ""; destination = "Welcome" }) {
+                Artwork(sheet: .arrival, tile: welcome ? 2 : 3).frame(height: welcome ? 235 : 145)
+                Text(welcome ? "A little closer.\nA little more you." : (registration ? "Make room\nfor yourself." : "Good to have\nyou here."))
+                    .font(.custom("AvenirNext-Bold", size: 35)).lineSpacing(-2)
+                if welcome {
+                    Text("Find a conversation, share a moment, make yourself at home.").foregroundStyle(KokoInk.secondary)
+                    KokoAction(title: "Log in", icon: 12) { guard requireConsent() else { return }; destination = "Log in" }
+                    KokoAction(title: appleEntry.authorizing ? "Waiting for Apple…" : "Continue with Apple", emphasis: false) {
+                        guard requireConsent() else { return }
+                        appleEntry.start { identity, name in
+                            journey.enter(caption: "Your space is taking shape.") {
+                                _ = community.enterAppleIdentity(identity, fullName: name, consent: agreed)
+                            }
+                        } failure: { community.notice = $0 }
+                    }.disabled(appleEntry.authorizing)
+                    Button("New here? Sign up") { guard requireConsent() else { return }; destination = "Sign up" }
+                        .font(.custom("AvenirNext-DemiBold", size: 14)).buttonStyle(.plain).frame(maxWidth: .infinity, minHeight: 44)
+                } else {
                     KokoField(label: "Email address", value: $emailAddress, keyboard: .emailAddress)
                     KokoField(label: "Password · 8–128 characters", value: $passwordDraft, secure: true)
-                    KokoToggleRow(title: "I understand this is a local preview", enabled: $hasReadPreviewNotice)
-                    LocalPreviewNote(text: "ANY VALID EMAIL WORKS HERE. PASSWORDS ARE NOT STORED OR SENT.")
-                    KokoAction(title: creatingProfile ? "Create my local profile" : "Enter Koko", icon: 12) {
-                        guard hasReadPreviewNotice else { community.notice = "Please acknowledge the local preview notice first."; return }
-                        if community.signIn(email: emailAddress, password: passwordDraft) { passwordDraft = "" }
+                    if registration { KokoField(label: "Confirm password", value: $repeatedPassword, secure: true) }
+                    KokoAction(title: registration ? "Sign up" : "Start", icon: 12, action: submit)
+                    KokoAction(title: registration ? "Already have an account? Log in" : "No account yet? Sign up", emphasis: false) {
+                        destination = registration ? "Log in" : "Sign up"; passwordDraft = ""; repeatedPassword = ""
                     }
-                    KokoAction(title: creatingProfile ? "Already have a local profile? Sign in" : "New here? Create a profile", emphasis: false) { creatingProfile.toggle() }
-                    KokoAction(title: "Forgot password?", emphasis: false) { community.notice = "This preview checks password length only. Enter any 8–128 character password with the same email to reopen your local profile." }
-                } else {
-                    KokoAction(title: "Come on in", icon: 12) { formVisible = true }
+                    if !registration {
+                        Button("Password help") { community.notice = "Use the password you registered on this device. Koko does not email password resets yet. Earlier preview profiles can set their first password through Sign up using the same email." }
+                            .font(.custom("AvenirNext-Medium", size: 12)).buttonStyle(.plain).frame(minHeight: 44)
+                    }
+                    Text("Your account stays signed in on this device until you choose to sign out.")
+                        .font(.custom("AvenirNext-Regular", size: 12)).foregroundStyle(KokoInk.secondary)
                 }
-                KokoAction(title: "Continue with Apple", emphasis: false) {
-                    appleEntry.start { identity, name in _ = community.enterAppleIdentity(identity, givenName: name) } failure: { community.notice = $0 }
-                }
-                HStack {
-                    Button("Preview terms") { policy = "Preview terms" }
-                    Spacer()
-                    Button("Privacy") { policy = "Privacy" }
-                }.font(.custom("AvenirNext-Medium", size: 12)).buttonStyle(.plain).padding(.vertical, 6)
-                LocalPreviewNote()
-            }
-            if let policy { KokoPolicyView(kind: policy, onBack: { self.policy = nil }) }
+                KokoConsentFooter(agreed: $agreed) { document = $0 }
+            }.disabled(appleEntry.authorizing || journey.transitioning)
+            if showConsentPrompt { KokoConsentRequiredPanel(dismiss: { showConsentPrompt = false }) { document = $0 } }
+            if let document { KokoLegalWebPage(document: document) { self.document = nil }.id(document) }
+        }
+    }
+    private func requireConsent() -> Bool {
+        guard agreed else { showConsentPrompt = true; return false }
+        return true
+    }
+    private func submit() {
+        guard requireConsent() else { return }
+        if let issue = KokoAccountValidation.emailIssue(emailAddress) ?? KokoAccountValidation.passwordIssue(passwordDraft) { community.notice = issue; return }
+        if registration && repeatedPassword != passwordDraft { community.notice = "Enter the same password in both fields."; return }
+        let isRegistration = registration
+        let email = emailAddress; let password = passwordDraft
+        journey.enter(caption: isRegistration ? "Making room for you." : "Your company is waiting.") {
+            let success: Bool
+            if isRegistration { success = await community.register(email: email, password: password, consent: agreed) }
+            else { success = await community.signIn(email: email, password: password, consent: agreed) }
+            if success { passwordDraft = ""; repeatedPassword = "" }
         }
     }
 }
 
 @MainActor
 final class KokoAppleEntry: NSObject, ObservableObject, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
+    @Published private(set) var authorizing = false
     private var success: ((String, String?) -> Void)?
     private var failure: ((String) -> Void)?
     private var authorization: ASAuthorizationController?
+    private var requestState: String?
     func start(success: @escaping (String, String?) -> Void, failure: @escaping (String) -> Void) {
         guard authorization == nil else { return }
         self.success = success; self.failure = failure
         let request = ASAuthorizationAppleIDProvider().createRequest()
         request.requestedScopes = [.fullName, .email]
+        let state = UUID().uuidString; requestState = state; request.state = state
+        request.nonce = SHA256.hash(data: Data(UUID().uuidString.utf8)).map { String(format: "%02x", $0) }.joined()
         let controller = ASAuthorizationController(authorizationRequests: [request])
         controller.delegate = self; controller.presentationContextProvider = self
-        authorization = controller
+        authorization = controller; authorizing = true
         controller.performRequests()
     }
     func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
         UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.flatMap(\.windows).first(where: \.isKeyWindow) ?? ASPresentationAnchor()
     }
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization result: ASAuthorization) {
-        defer { authorization = nil; success = nil; failure = nil }
-        guard let credential = result.credential as? ASAuthorizationAppleIDCredential else { failure?("Apple couldn't complete authorization."); return }
-        success?(credential.user, credential.fullName?.givenName)
+        defer { clearRequest() }
+        guard let credential = result.credential as? ASAuthorizationAppleIDCredential,
+              credential.state == requestState, !credential.user.isEmpty,
+              let token = credential.identityToken, !token.isEmpty,
+              let code = credential.authorizationCode, !code.isEmpty else {
+            failure?("Apple authorization did not return a complete credential. Please try again."); return
+        }
+        let cacheKey = "koko.appleName." + KokoLocalCredentials.identityKey(credential.user)
+        var fullName: String?
+        if let components = credential.fullName {
+            let name = PersonNameComponentsFormatter().string(from: components).trimmingCharacters(in: .whitespacesAndNewlines)
+            if !name.isEmpty { fullName = name; UserDefaults.standard.set(name, forKey: cacheKey) }
+        }
+        success?(credential.user, fullName ?? UserDefaults.standard.string(forKey: cacheKey))
     }
     func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
-        defer { authorization = nil; success = nil; failure = nil }
+        defer { clearRequest() }
         if (error as? ASAuthorizationError)?.code != .canceled {
-            failure?("Apple sign-in isn't available for this installation. It needs your developer team's configured App ID. Email local preview remains available.")
+            failure?("Apple sign-in could not complete. This installation needs a matching App ID, developer team and Sign in with Apple capability. Please try again when configured.")
         }
     }
-}
-
-struct KokoProfileEditor: View {
-    @EnvironmentObject private var community: CommunityJournalStore
-    let isOnboarding: Bool
-    var onFinish: (() -> Void)? = nil
-    @State private var displayName = ""
-    @State private var hometown = ""
-    @State private var introduction = ""
-    @State private var age = "25"
-    @State private var language = "English"
-    @State private var gender = "Prefer not to say"
-    @State private var portrait = 0
-    @State private var interests: Set<String> = []
-    var body: some View {
-        KokoPage(title: isOnboarding ? "Your kind of space" : "Edit your profile", subtitle: "A few things that make you, you.", back: isOnboarding ? nil : onFinish) {
-            HStack {
-                Artwork(sheet: .collection, tile: portrait).frame(width: 110, height: 110)
-                VStack(alignment: .leading, spacing: 8) { Text("Pick a starting portrait").font(.custom("AvenirNext-DemiBold", size: 16)); Text("Original placeholders. You can replace them later.").font(.custom("AvenirNext-Regular", size: 12)).foregroundStyle(KokoInk.secondary) }
-            }
-            HStack {
-                ForEach(0..<4) { tile in
-                    Button { portrait = tile } label: { Artwork(sheet: .collection, tile: tile).frame(height: 64).padding(6).background(ArtworkSurface(tile: portrait == tile ? 3 : 2)) }.buttonStyle(.plain).accessibilityLabel("Portrait \(tile + 1)")
-                }
-            }
-            KokoField(label: "Display name", value: $displayName)
-            KokoField(label: "City or region", value: $hometown)
-            KokoField(label: "Age · 18 or older", value: $age, keyboard: .numberPad)
-            KokoField(label: "A little about you", value: $introduction, multiline: true)
-            Text("You describe yourself as").font(.custom("AvenirNext-DemiBold", size: 13))
-            KokoChoiceRail(choices: ["Woman", "Man", "Non-binary", "Prefer not to say"], selection: $gender)
-            Text("Conversation language").font(.custom("AvenirNext-DemiBold", size: 13))
-            KokoChoiceRail(choices: ["English", "Portuguese", "French", "Spanish", "Mandarin"], selection: $language)
-            Text("What brings you here?").font(.custom("AvenirNext-DemiBold", size: 18))
-            ForEach(Array(KokoCommunity.topics.dropFirst()), id: \.self) { topic in
-                KokoToggleRow(title: topic, enabled: Binding(get: { interests.contains(topic) }, set: { enabled in if enabled { interests.insert(topic) } else { interests.remove(topic) } }))
-            }
-            KokoAction(title: isOnboarding ? "Find my company" : "Save profile", icon: 12) {
-                guard var member = community.currentMember else { return }
-                member.publicName = String(displayName.trimmingCharacters(in: .whitespacesAndNewlines).prefix(40))
-                member.hometownLabel = String(hometown.prefix(60)); member.introductionLine = String(introduction.prefix(240))
-                member.adultAge = Int(age) ?? 0; member.genderLabel = gender; member.spokenLanguage = language
-                member.portraitTile = portrait; member.interests = interests.sorted()
-                if community.saveProfile(member) { onFinish?() }
-            }
-            if isOnboarding { KokoAction(title: "Back to sign in", emphasis: false) { community.signOut() } }
-        }.onAppear {
-            guard let member = community.currentMember else { return }
-            displayName = member.publicName == "Your name" ? "" : member.publicName; hometown = member.hometownLabel
-            introduction = member.introductionLine; age = String(member.adultAge); gender = member.genderLabel
-            language = member.spokenLanguage; portrait = member.portraitTile; interests = Set(member.interests)
-        }
-    }
+    private func clearRequest() { authorization = nil; success = nil; failure = nil; requestState = nil; authorizing = false }
 }
 
 struct KokoPolicyView: View {
     let kind: String
     var onBack: () -> Void
     var body: some View {
-        KokoPage(title: kind, back: onBack) {
-            Artwork(sheet: .scenes, tile: 3).frame(height: 160)
-            Text("A considered place to connect.").font(.custom("AvenirNext-Bold", size: 24))
-            if kind == "Privacy" {
-                Text("This build stores your profile, interactions, photos selected from the sample collection, and coin purchases and spending history on this device. Email is transformed into a local account key. Passwords are not saved or sent.")
-                Text("Apple authorization uses Apple's genuine system flow if configured. Coin purchases use Apple In-App Purchase. Koko sends an account association token to Apple and saves verified transaction IDs locally; Apple handles payment details. There is no Koko server authentication, analytics or remote messaging in this version.")
-                Text("Remove your local profile from Settings to delete its saved journal, including any remaining purchased coins. This device-local balance is not restored from completed consumable purchases. A local anonymous gift-eligibility flag prevents a second welcome gift after profile deletion. This preview notice will be replaced with the operator's published privacy policy before release.")
-            } else {
-                Text("Koko is currently a local product preview for adults. Sample people and rooms are illustrative. Messages and reports stay on your device. Optional coin packs are real Apple In-App Purchases. Coins are for in-app gifts and decorations, do not expire, and cannot be exchanged for cash. Conversations are free.")
-                Text("Respect other people. Do not share harassment, hate, sexual exploitation, threats, scams or private information. Reporting and blocking are available throughout the experience.")
-                Text("Production service terms, support contact and moderation procedures will be supplied before the service goes live. This page is a preview notice, not a published service agreement.")
+        if kind == "Community guidelines" {
+            KokoPage(title: kind, back: onBack) {
+                Artwork(sheet: .arrival, tile: 1).frame(height: 210)
+                Text("Make room for one another.").font(.custom("AvenirNext-Bold", size: 26))
+                Text("Respect people's boundaries. Do not share harassment, hate, exploitation, threats, scams or private information. Report or block content that makes you uncomfortable.")
+                Text("Koko is for adults. Local reports remain on this device until a moderation service is connected.").foregroundStyle(KokoInk.secondary)
             }
-        }
+        } else { KokoLegalWebPage(document: kind == "Privacy" ? .privacy : .terms, close: onBack) }
     }
 }
