@@ -1,0 +1,57 @@
+name: Koko
+options:
+  minimumXcodeGenVersion: 2.38.0
+  deploymentTarget:
+    iOS: "16.0"
+  developmentLanguage: en
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+    CODE_SIGN_STYLE: Automatic
+targets:
+  Koko:
+    type: application
+    platform: iOS
+    attributes:
+      SystemCapabilities:
+        com.apple.InAppPurchase:
+          enabled: 1
+    dependencies:
+      - sdk: StoreKit.framework
+    sources:
+      - path: Koko
+        excludes:
+          - Resources
+          - Configuration
+      - path: Koko/Resources
+        excludes:
+          - CommunityMedia
+        buildPhase: resources
+      - path: Koko/Resources/CommunityMedia
+        type: folder
+        buildPhase: resources
+      - path: photos
+        type: folder
+        buildPhase: resources
+      - path: videos
+        type: folder
+        buildPhase: resources
+      - path: Koko/Configuration
+        buildPhase: none
+    settings:
+      base:
+        PRODUCT_NAME: Koko
+        PRODUCT_BUNDLE_IDENTIFIER: com.koko.app
+        INFOPLIST_FILE: Koko/Configuration/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        CODE_SIGN_ENTITLEMENTS: Koko/Configuration/Koko.entitlements
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SUPPORTS_MACCATALYST: NO
+        SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
+        SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD: NO
+    scheme:
+      gatherCoverageData: false
