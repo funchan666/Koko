@@ -31,19 +31,15 @@ struct KokoDiscoverView: View {
                 KokoLiveDirectoryHero(roomCount: visibleRooms.count) {
                     navigation.open(.createRoom(true))
                 }
-                HStack(spacing: 10) {
-                    KokoSearchField(prompt: "Search the live floor", query: $roomSearch)
-                        .frame(minWidth: 0, maxWidth: .infinity)
-                    KokoIconAction(icon: 11, label: "Room topic: " + roomTopic)
-                        { choosingTopic = true }
-                        .frame(width: 52)
-                }
-                .frame(minWidth: 0, maxWidth: .infinity)
+                KokoSearchField(prompt: "Search the live floor", query: $roomSearch)
+                    .frame(minWidth: 0, maxWidth: .infinity)
                 HStack(spacing: 10) {
                     KokoChoiceRail(choices: ["Live rooms", "Following"], selection: $roomAudience)
                     Spacer(minLength: 0)
-                    Text("Swipe into a room").font(.custom("AvenirNext-Medium", size: 10)).foregroundStyle(KokoInk.secondary)
+                    KokoIconAction(icon: 11, label: "Room topic: " + roomTopic) { choosingTopic = true }
+                        .frame(width: 52)
                 }
+                .frame(minWidth: 0, maxWidth: .infinity)
                 if roomTopic != "All" {
                     HStack {
                         Text(roomTopic).font(.custom("AvenirNext-DemiBold", size: 12)).foregroundStyle(KokoInk.accent)
@@ -55,6 +51,7 @@ struct KokoDiscoverView: View {
                 LazyVGrid(columns: roomColumns, spacing: 14) {
                     ForEach(visibleRooms) { room in KokoLiveRoomCard(room: room) }
                 }
+                .frame(minWidth: 0, maxWidth: .infinity)
                 if visibleRooms.isEmpty {
                     KokoEmpty(title: "No rooms here yet", detail: "Try another topic or create your own live room.", art: 1)
                     KokoAction(title: "Create a live room", icon: 0) { navigation.open(.createRoom(true)) }
@@ -183,7 +180,8 @@ struct KokoLiveRoomCard: View {
         Button { navigation.open(.room(room.id)) } label: {
             VStack(alignment: .leading, spacing: 0) {
                 ZStack(alignment: .topLeading) {
-                    Image(artName).resizable().scaledToFill().frame(height: 152).clipped()
+                    Image(artName).resizable().scaledToFill()
+                        .frame(maxWidth: .infinity).frame(height: 152).clipped()
                     LinearGradient(colors: [.clear, Color.black.opacity(0.72)], startPoint: .center, endPoint: .bottom)
                     HStack(spacing: 6) {
                         Circle().fill(KokoInk.coral).frame(width: 6, height: 6)
@@ -220,7 +218,8 @@ struct KokoLiveRoomCard: View {
                 .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
                 .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous).stroke(KokoInk.accent.opacity(0.35), lineWidth: 1))
                 .shadow(color: .black.opacity(0.18), radius: 14, y: 8)
-        }.buttonStyle(KokoPressStyle()).accessibilityLabel("Enter live room: " + room.roomTitle)
+        }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+        .buttonStyle(KokoPressStyle()).accessibilityLabel("Enter live room: " + room.roomTitle)
     }
 }
 
