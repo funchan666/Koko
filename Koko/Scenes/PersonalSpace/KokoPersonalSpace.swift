@@ -6,48 +6,50 @@ struct KokoPersonalSpace: View {
     @State private var confirmLogout = false
     var body: some View {
         ZStack {
-            KokoPage(title: "Make yourself at home", subtitle: "YOUR LITTLE CORNER OF KOKO") {
+            KokoPage(title: "My space", subtitle: "A little more you.") {
                 if let member = community.currentMember {
-                    HStack(alignment: .top, spacing: 18) {
-                        KokoMemberPortrait(member: member).frame(width: 112, height: 125)
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(member.publicName).font(.custom("AvenirNext-Bold", size: 27))
-                            Text(member.hometownLabel.isEmpty ? "Somewhere good" : member.hometownLabel).font(.custom("AvenirNext-Regular", size: 13)).foregroundStyle(KokoInk.secondary)
-                            Text(member.introductionLine.isEmpty ? "Make a little space for the things you love." : member.introductionLine).font(.custom("AvenirNext-Regular", size: 13))
-                            Button("Edit your story") { navigation.open(.editProfile) }.font(.custom("AvenirNext-DemiBold", size: 12)).buttonStyle(.plain)
+                    KokoCard {
+                        HStack(alignment: .top, spacing: 16) {
+                            KokoMemberPortrait(member: member).frame(width: 76, height: 86)
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(member.publicName).font(.custom("AvenirNext-Bold", size: 22, relativeTo: .title2)).fixedSize(horizontal: false, vertical: true)
+                                if !member.hometownLabel.isEmpty { Text(member.hometownLabel).font(.custom("AvenirNext-Regular", size: 12)).foregroundStyle(KokoInk.secondary) }
+                                Text(member.introductionLine.isEmpty ? "Add a little about yourself." : member.introductionLine).font(.custom("AvenirNext-Regular", size: 13)).foregroundStyle(KokoInk.secondary).lineLimit(3)
+                                KokoAction(title: "Edit profile", emphasis: false) { navigation.open(.editProfile) }.frame(maxWidth: 150)
+                            }.frame(maxWidth: .infinity, alignment: .leading)
                         }
-                        Spacer(minLength: 0)
-                    }
-                    if let worn = KokoCommunity.keepsakes.first(where: { $0.id == community.journal?.wornKeepsakeID }) {
-                        HStack { Artwork(sheet: .collection, tile: worn.artworkTile).frame(width: 35, height: 35); Text(worn.keepsakeName).font(.custom("AvenirNext-DemiBold", size: 13)) }
+                        if let worn = KokoCommunity.keepsakes.first(where: { $0.id == community.journal?.wornKeepsakeID }) {
+                            HStack { Artwork(sheet: .collection, tile: worn.artworkTile).frame(width: 30, height: 30); Text(worn.keepsakeName).font(.custom("AvenirNext-DemiBold", size: 12)) }
+                        }
                     }
                 }
                 HStack(spacing: 8) {
                     relationship("Followers", community.followers.count)
                     relationship("Following", community.following.count)
                     relationship("Friends", community.friends.count)
-                }
+                }.padding(.vertical, 14).background(ArtworkSurface())
                 KokoCard(tint: 3) {
-                    HStack {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("A small daily ritual.").font(.custom("AvenirNext-Bold", size: 22))
-                            Text("Level \(community.activityLevel) · \(community.activityPoints % 200)/200 points").font(.custom("AvenirNext-Medium", size: 12))
-                            Button(community.checkedInToday ? "Today's visit is saved" : "Check in for today") { navigation.open(.checkIn) }.font(.custom("AvenirNext-Bold", size: 13)).buttonStyle(.plain).padding(.vertical, 8)
-                        }
-                        Spacer()
-                        Artwork(sheet: .collection, tile: 13).frame(width: 80, height: 90)
+                    HStack(spacing: 14) {
+                        VStack(alignment: .leading, spacing: 5) {
+                            HStack(spacing: 6) { Artwork(sheet: .navigation, tile: 9).frame(width: 20, height: 20); Text("Your balance").font(.custom("AvenirNext-Medium", size: 12)) }.foregroundStyle(KokoInk.accent)
+                            Text("\(community.coinBalance)").font(.custom("AvenirNext-Bold", size: 32, relativeTo: .largeTitle))
+                            Text("coins").font(.custom("AvenirNext-Regular", size: 12)).foregroundStyle(KokoInk.secondary)
+                        }.frame(maxWidth: .infinity, alignment: .leading)
+                        KokoAction(title: "Top up", icon: 7) { navigation.open(.wallet) }.frame(width: 124)
                     }
                 }
-                KokoMenuRow(title: "Your wallet", detail: "\(community.coinBalance) coins", icon: 9) { navigation.open(.wallet) }
+                KokoMenuRow(title: community.checkedInToday ? "Checked in today" : "Your daily check-in", detail: "Level \(community.activityLevel) · \(community.activityPoints % 200)/200 points", icon: 15) { navigation.open(.checkIn) }
                 HStack(spacing: 10) {
                     KokoAction(title: "Album", icon: 3, emphasis: false) { navigation.open(.album) }
                     KokoAction(title: "Saved", icon: 8, emphasis: false) { navigation.open(.savedMoments) }
                 }
-                KokoMenuRow(title: "The little shop", detail: "Find something that feels like you", icon: 8) { navigation.open(.shop) }
-                KokoMenuRow(title: "Your backpack", detail: "Small keepsakes, good memories", icon: 9) { navigation.open(.backpack) }
+                KokoSectionTitle(title: "Collected by you")
+                KokoMenuRow(title: "Keepsake shop", detail: "Gifts & little extras", icon: 8) { navigation.open(.shop) }
+                KokoMenuRow(title: "Backpack", detail: "Your keepsakes", icon: 9) { navigation.open(.backpack) }
                 KokoMenuRow(title: "Your level", icon: 15) { navigation.open(.level) }
-                KokoMenuRow(title: "Leave us a note", icon: 2) { navigation.open(.feedback) }
-                KokoMenuRow(title: "Blocked people", icon: 3) { navigation.open(.blacklist) }
+                KokoSectionTitle(title: "Make it yours")
+                KokoMenuRow(title: "Feedback", icon: 2) { navigation.open(.feedback) }
+                KokoMenuRow(title: "Blocked people", icon: 14) { navigation.open(.blacklist) }
                 KokoMenuRow(title: "Settings", icon: 11) { navigation.open(.settings) }
                 KokoAction(title: "Sign out", emphasis: false) { confirmLogout = true }
                 LocalPreviewNote()
@@ -57,7 +59,7 @@ struct KokoPersonalSpace: View {
     }
     private func relationship(_ title: String, _ count: Int) -> some View {
         Button { navigation.open(.friends(title)) } label: {
-            VStack(spacing: 5) { Text("\(count)").font(.custom("AvenirNext-Bold", size: 27)); Text(title).font(.custom("AvenirNext-Medium", size: 11)) }.frame(maxWidth: .infinity).padding(.vertical, 15).background(ArtworkSurface())
+            VStack(spacing: 5) { Text("\(count)").font(.custom("AvenirNext-Bold", size: 24)); Text(title).font(.custom("AvenirNext-Medium", size: 11)).foregroundStyle(KokoInk.secondary) }.frame(maxWidth: .infinity, minHeight: 50).contentShape(Rectangle())
         }.buttonStyle(KokoPressStyle())
     }
 }

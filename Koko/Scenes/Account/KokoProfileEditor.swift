@@ -6,6 +6,9 @@ struct KokoProfileEditor: View {
     @EnvironmentObject private var journey: KokoAccessJourney
     let isOnboarding: Bool
     var onFinish: (() -> Void)? = nil
+    @Environment(\.kokoScreenInsets) private var screenInsets
+    @FocusState private var editing: KokoProfileField?
+    @State private var page: KokoProfilePage = .basics
     @State private var draft: CommunityMember?
     @State private var displayName = ""
     @State private var gender = ""
@@ -33,80 +36,245 @@ struct KokoProfileEditor: View {
     }
     var body: some View {
         ZStack {
-            KokoPage(title: isOnboarding ? "Make it yours" : "Your little details", subtitle: isOnboarding ? "YOUR NAME. YOUR COMPANY. YOUR RHYTHM." : "A space that feels like you", back: isOnboarding ? nil : onFinish) {
-                HStack(spacing: 20) {
-                    portrait.frame(width: 105, height: 126).clipped()
-                    VStack(alignment: .leading, spacing: 7) {
-                        Text("A face to\nthe hello.").font(.custom("AvenirNext-Bold", size: 25))
-                        Text("Choose a photo, or keep an original Koko portrait.").font(.custom("AvenirNext-Regular", size: 12)).foregroundStyle(KokoInk.secondary)
+            KokoWelcomePalette.backdrop
+            ScrollViewReader { scroll in
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 24) {
+                        HStack {
+                            backButton(action: goBack)
+                            Spacer()
+                            Text(page == .basics ? "01 / 02" : "02 / 02")
+                                .font(.custom("AvenirNext-DemiBold", size: 12, relativeTo: .caption))
+                                .tracking(2).foregroundStyle(KokoWelcomePalette.mint)
+                                .accessibilityLabel(page == .basics ? "Step 1 of 2" : "Step 2 of 2")
+                        }.id("profile-top")
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(page == .basics ? "Make it yours." : "A little about you.")
+                                .font(.custom("AvenirNext-Bold", size: 32, relativeTo: .largeTitle))
+                                .tracking(-1).accessibilityAddTraits(.isHeader)
+                            Text(page == .basics ? "A face. A name. Your kind of company." : "A few details to start with.")
+                                .font(.custom("AvenirNext-Regular", size: 13, relativeTo: .subheadline))
+                                .foregroundStyle(KokoWelcomePalette.quiet)
+                        }.id("profile-heading")
+                        if page == .basics { basicsFields } else { preferenceFields }
+                        KokoWelcomeAction(title: importingPhoto ? "Preparing photo…" : (page == .basics ? "Continue" : (isOnboarding ? "Enter Koko" : "Save profile")),
+                                          primary: true, action: advance)
+                            .disabled(importingPhoto || journey.transitioning)
                     }
+                    .padding(.horizontal, 26).padding(.top, screenInsets.top + 8)
+                    .padding(.bottom, editing == nil ? screenInsets.bottom + 24 : 24)
+                    .frame(maxWidth: 500).frame(maxWidth: .infinity)
                 }
-                HStack(spacing: 8) {
-                    PhotosPicker(selection: $selectedPhoto, matching: .images, photoLibrary: .shared()) {
-                        Text(importingPhoto ? "Opening photo…" : "Choose photo").font(.custom("AvenirNext-DemiBold", size: 14)).foregroundStyle(KokoInk.primary)
-                            .frame(maxWidth: .infinity, minHeight: 50).background(ArtworkSurface(tile: 3))
-                    }.buttonStyle(KokoPressStyle()).disabled(importingPhoto)
-                    KokoAction(title: "Take photo", emphasis: false) { showingCamera = true }.disabled(importingPhoto)
-                }
-                HStack(spacing: 8) {
-                    ForEach(0..<4) { tile in
-                        Button {
-                            portraitRevision = UUID(); selectedPhoto = nil; importingPhoto = false
-                            portraitTile = tile; usingArtwork = true; portraitJPEG = nil
-                        } label: {
-                            Artwork(sheet: .collection, tile: tile).frame(width: 48, height: 52).padding(5)
-                                .background(ArtworkSurface(tile: usingArtwork && portraitTile == tile ? 3 : 2))
-                        }.buttonStyle(KokoPressStyle()).accessibilityLabel("Koko portrait \(tile + 1)")
-                    }
-                }
-                KokoField(label: "Display name · required", value: $displayName)
-                Text("How do you describe yourself? · required").font(.custom("AvenirNext-DemiBold", size: 12)).foregroundStyle(KokoInk.secondary)
-                KokoChoiceRail(choices: ["Woman", "Man", "Non-binary", "Prefer not to say"], selection: $gender)
-                KokoMenuRow(title: countryCode.isEmpty ? "Choose country or region" : countryName, detail: "Country or region · required", icon: 3) { countryQuery = ""; choosingCountry = true }
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Date of birth · required").font(.custom("AvenirNext-DemiBold", size: 12)).foregroundStyle(KokoInk.secondary)
-                    HStack(spacing: 8) {
-                        KokoField(label: "Year · YYYY", value: $birthYear, keyboard: .numberPad)
-                        KokoField(label: "Month · MM", value: $birthMonth, keyboard: .numberPad)
-                        KokoField(label: "Day · DD", value: $birthDay, keyboard: .numberPad)
-                    }
-                    Text("For ages 18 and over. Your full birthday is kept private.").font(.custom("AvenirNext-Regular", size: 11)).foregroundStyle(KokoInk.secondary)
-                }
-                Text("Your conversation starters · choose at least one").font(.custom("AvenirNext-DemiBold", size: 12)).foregroundStyle(KokoInk.secondary)
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
-                    ForEach(interestOptions, id: \.self) { interest in
-                        Button { if chosenInterests.contains(interest) { chosenInterests.remove(interest) } else { chosenInterests.insert(interest) } } label: {
-                            Text(interest).font(.custom("AvenirNext-DemiBold", size: 13)).frame(maxWidth: .infinity, minHeight: 46)
-                                .background(ArtworkSurface(tile: chosenInterests.contains(interest) ? 3 : 2))
-                        }.buttonStyle(KokoPressStyle()).accessibilityAddTraits(chosenInterests.contains(interest) ? .isSelected : [])
-                    }
-                }
-                KokoField(label: "A little about you · optional, up to 180 characters", value: $introduction, multiline: true)
-                KokoAction(title: importingPhoto ? "Preparing your photo…" : (isOnboarding ? (community.journal?.accountCredentialKind == "apple" ? "Enter Koko" : "Next") : "Save profile"), icon: 12, action: save)
-                    .disabled(importingPhoto || journey.transitioning)
-                if isOnboarding { KokoAction(title: "Use another account", emphasis: false) { community.signOut() } }
-            }.disabled(showingCamera || choosingCountry || journey.transitioning)
-            if choosingCountry {
-                KokoModal(title: "Where feels like home?", dismiss: { choosingCountry = false }) {
-                    KokoField(label: "Search country or region", value: $countryQuery)
-                    if countryChoices.isEmpty { Text("No matching places. Try another name.").foregroundStyle(KokoInk.secondary) }
-                    ForEach(countryChoices, id: \.self) { code in
-                        Button { countryCode = code; choosingCountry = false } label: {
-                            Text(Locale(identifier: "en").localizedString(forRegionCode: code) ?? code)
-                                .font(.custom("AvenirNext-Medium", size: 15)).frame(maxWidth: .infinity, minHeight: 46, alignment: .leading)
-                                .padding(.horizontal, 12).background(ArtworkSurface(tile: code == countryCode ? 3 : 5))
-                        }.buttonStyle(KokoPressStyle())
-                    }
+                .scrollDismissesKeyboard(.interactively)
+                .onChange(of: page) { _ in scroll.scrollTo("profile-top", anchor: .top) }
+                .onChange(of: editing) { field in
+                    if let field { scroll.scrollTo(field, anchor: .center) }
                 }
             }
+            .disabled(showingCamera || choosingCountry || journey.transitioning)
+            .accessibilityHidden(showingCamera || choosingCountry)
+            if choosingCountry { countryPicker }
             if showingCamera {
                 KokoPortraitCameraPage(close: { showingCamera = false }) { jpeg in
                     portraitRevision = UUID(); selectedPhoto = nil; portraitJPEG = jpeg; usingArtwork = false; showingCamera = false
                 }
             }
-        }.onAppear(perform: loadDraft)
-            .onChange(of: selectedPhoto) { selection in importPhoto(selection) }
-            .onDisappear { portraitRevision = UUID() }
+        }
+        .foregroundStyle(KokoWelcomePalette.paper)
+        .tint(KokoWelcomePalette.mint)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            if editing != nil && !showingCamera {
+                HStack {
+                    Spacer()
+                    Button { editing = nil } label: {
+                        controlLabel("Done", selected: true).frame(width: 88)
+                    }.buttonStyle(KokoPressStyle())
+                }.padding(.horizontal, 24).padding(.vertical, 6).background(KokoWelcomePalette.backdrop)
+            }
+        }
+        .onAppear { journey.usesDarkProfileAppearance = true; loadDraft() }
+        .onChange(of: selectedPhoto) { selection in importPhoto(selection) }
+        .onDisappear { portraitRevision = UUID(); journey.usesDarkProfileAppearance = false }
+    }
+
+    private var basicsFields: some View {
+        VStack(alignment: .leading, spacing: 22) {
+            VStack(spacing: 14) {
+                HStack(spacing: 22) {
+                    portrait.frame(width: 100, height: 108).clipped()
+                        .accessibilityLabel("Your profile photo")
+                    VStack(spacing: 8) {
+                        PhotosPicker(selection: $selectedPhoto, matching: .images, photoLibrary: .shared()) {
+                            controlLabel(importingPhoto ? "Opening photo…" : "Choose photo", selected: true)
+                        }.buttonStyle(KokoPressStyle()).disabled(importingPhoto)
+                        Button { editing = nil; showingCamera = true } label: { controlLabel("Take photo") }
+                            .buttonStyle(KokoPressStyle()).disabled(importingPhoto)
+                    }
+                }
+                HStack(spacing: 12) {
+                    ForEach(0..<4) { tile in
+                        Button {
+                            portraitRevision = UUID(); selectedPhoto = nil; importingPhoto = false
+                            portraitTile = tile; usingArtwork = true; portraitJPEG = nil
+                        } label: {
+                            Artwork(sheet: .collection, tile: tile).frame(width: 44, height: 46)
+                                .padding(5)
+                                .background(KokoProfileChoiceSurface(selected: usingArtwork && portraitTile == tile))
+                        }.buttonStyle(KokoPressStyle())
+                            .accessibilityLabel("Portrait option \(tile + 1)")
+                            .accessibilityAddTraits(usingArtwork && portraitTile == tile ? .isSelected : [])
+                    }
+                }.frame(maxWidth: .infinity)
+            }
+            profileField(.name, title: "Display name", placeholder: "What should we call you?", value: $displayName)
+            VStack(alignment: .leading, spacing: 10) {
+                fieldHeading("Gender")
+                LazyVGrid(columns: choiceColumns, spacing: 10) {
+                    ForEach(["Woman", "Man", "Non-binary", "Prefer not to say"], id: \.self) { option in
+                        Button { gender = option; editing = nil } label: {
+                            controlLabel(option, selected: gender == option)
+                        }.buttonStyle(KokoPressStyle()).accessibilityAddTraits(gender == option ? .isSelected : [])
+                    }
+                }
+            }
+        }
+    }
+
+    private var preferenceFields: some View {
+        VStack(alignment: .leading, spacing: 22) {
+            VStack(alignment: .leading, spacing: 8) {
+                fieldHeading("Country or region")
+                Button { editing = nil; countryQuery = ""; choosingCountry = true } label: {
+                    HStack(spacing: 12) {
+                        Text(countryCode.isEmpty ? "Choose your country" : countryName)
+                            .multilineTextAlignment(.leading)
+                        Spacer(minLength: 0)
+                        Text("Change").font(.custom("AvenirNext-DemiBold", size: 12, relativeTo: .caption))
+                            .foregroundStyle(KokoWelcomePalette.mint)
+                    }
+                    .font(.custom("AvenirNext-Medium", size: 14, relativeTo: .body))
+                    .padding(.horizontal, 16).padding(.vertical, 14).frame(minHeight: 54)
+                    .background(KokoProfileChoiceSurface(selected: false))
+                }.buttonStyle(KokoPressStyle())
+            }
+            VStack(alignment: .leading, spacing: 8) {
+                fieldHeading("Birthday")
+                HStack(alignment: .top, spacing: 10) {
+                    profileField(.year, title: "Year", placeholder: "YYYY", value: $birthYear, numeric: true)
+                    profileField(.month, title: "Month", placeholder: "MM", value: $birthMonth, numeric: true)
+                    profileField(.day, title: "Day", placeholder: "DD", value: $birthDay, numeric: true)
+                }
+                Text("18+ only. Your full birthday stays private.")
+                    .font(.custom("AvenirNext-Regular", size: 11, relativeTo: .caption))
+                    .foregroundStyle(KokoWelcomePalette.quiet)
+            }
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    fieldHeading("Into anything good?")
+                    Spacer()
+                    Text("Pick at least one").font(.custom("AvenirNext-Regular", size: 11, relativeTo: .caption))
+                        .foregroundStyle(KokoWelcomePalette.quiet)
+                }
+                LazyVGrid(columns: choiceColumns, spacing: 10) {
+                    ForEach(interestOptions, id: \.self) { interest in
+                        Button {
+                            editing = nil
+                            if chosenInterests.contains(interest) { chosenInterests.remove(interest) } else { chosenInterests.insert(interest) }
+                        } label: { controlLabel(interest, selected: chosenInterests.contains(interest)) }
+                            .buttonStyle(KokoPressStyle())
+                            .accessibilityAddTraits(chosenInterests.contains(interest) ? .isSelected : [])
+                    }
+                }
+            }
+            profileField(.introduction, title: "About you · optional", placeholder: "A little something to say hello…", value: $introduction, multiline: true)
+            Text("\(introduction.count) / 180")
+                .font(.custom("AvenirNext-Regular", size: 11, relativeTo: .caption))
+                .foregroundStyle(KokoWelcomePalette.quiet).frame(maxWidth: .infinity, alignment: .trailing)
+                .padding(.top, -16)
+        }
+    }
+
+    private var countryPicker: some View {
+        VStack(spacing: 16) {
+            HStack(spacing: 14) {
+                backButton { editing = nil; choosingCountry = false }
+                Text("Country or region").font(.custom("AvenirNext-Bold", size: 22, relativeTo: .title2))
+                Spacer(minLength: 0)
+            }
+            profileField(.countrySearch, title: "Search", placeholder: "Find your country", value: $countryQuery)
+            ScrollView {
+                LazyVStack(spacing: 8) {
+                    if countryChoices.isEmpty {
+                        Text("No matches. Try another name.")
+                            .foregroundStyle(KokoWelcomePalette.quiet).padding(.vertical, 24)
+                    }
+                    ForEach(countryChoices, id: \.self) { code in
+                        Button { countryCode = code; editing = nil; choosingCountry = false } label: {
+                            controlLabel(Locale(identifier: "en").localizedString(forRegionCode: code) ?? code,
+                                         selected: code == countryCode)
+                        }.buttonStyle(KokoPressStyle()).accessibilityAddTraits(code == countryCode ? .isSelected : [])
+                    }
+                }.padding(.bottom, screenInsets.bottom + 16)
+            }.scrollDismissesKeyboard(.interactively)
+        }
+        .padding(.horizontal, 26).padding(.top, screenInsets.top + 8)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(KokoWelcomePalette.backdrop)
+        .accessibilityAddTraits(.isModal)
+        .accessibilityAction(.escape) { editing = nil; choosingCountry = false }
+    }
+
+    private var choiceColumns: [GridItem] { [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)] }
+    private func fieldHeading(_ title: String) -> some View {
+        Text(title).font(.custom("AvenirNext-DemiBold", size: 12, relativeTo: .subheadline))
+            .foregroundStyle(KokoWelcomePalette.quiet)
+    }
+    private func controlLabel(_ title: String, selected: Bool = false) -> some View {
+        Text(title).font(.custom("AvenirNext-DemiBold", size: 13, relativeTo: .body))
+            .foregroundStyle(selected ? KokoWelcomePalette.backdrop : KokoWelcomePalette.paper)
+            .multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
+            .padding(.horizontal, 12).padding(.vertical, 12).frame(maxWidth: .infinity, minHeight: 48)
+            .background(KokoProfileChoiceSurface(selected: selected))
+    }
+    private func backButton(action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image("KokoAccountBack").resizable().scaledToFit().frame(width: 44, height: 44).accessibilityHidden(true)
+        }.buttonStyle(KokoPressStyle()).accessibilityLabel("Back")
+    }
+    private func profileField(_ field: KokoProfileField, title: String, placeholder: String,
+                              value: Binding<String>, numeric: Bool = false, multiline: Bool = false) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            fieldHeading(title)
+            TextField(title, text: value, prompt: Text(placeholder).foregroundColor(KokoWelcomePalette.quiet), axis: multiline ? .vertical : .horizontal)
+                .textFieldStyle(.plain)
+                .font(.custom("AvenirNext-Medium", size: 15, relativeTo: .body))
+                .foregroundStyle(KokoWelcomePalette.paper).tint(KokoWelcomePalette.mint)
+                .keyboardType(numeric ? .numberPad : .default)
+                .textInputAutocapitalization(field == .name ? .words : .sentences)
+                .autocorrectionDisabled(numeric)
+                .focused($editing, equals: field)
+                .submitLabel(.done).onSubmit { editing = nil }
+                .padding(.horizontal, 14).padding(.vertical, 16).frame(minHeight: 54)
+                .background(KokoProfileChoiceSurface(selected: false))
+                .accessibilityLabel(title)
+        }.id(field)
+    }
+    private func goBack() {
+        editing = nil
+        if page == .preferences { page = .basics }
+        else if isOnboarding { community.signOut() }
+        else { onFinish?() }
+    }
+    private func advance() {
+        editing = nil
+        let name = displayName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard (2...40).contains(name.count) else {
+            page = .basics; community.notice = "Choose a name between 2 and 40 characters."; return
+        }
+        guard !gender.isEmpty else {
+            page = .basics; community.notice = "Choose a gender option, or select Prefer not to say."; return
+        }
+        if page == .basics { page = .preferences } else { save() }
     }
     @ViewBuilder private var portrait: some View {
         if let jpeg = portraitJPEG, let image = UIImage(data: jpeg) { Image(uiImage: image).resizable().scaledToFit() }
@@ -160,7 +328,35 @@ struct KokoProfileEditor: View {
         guard member.introductionLine.count <= 180 else { community.notice = "Keep your introduction within 180 characters."; return }
         let completedMember = member; let photo = portraitJPEG
         if isOnboarding {
-            journey.enter(caption: "Your first hello is waiting.") { _ = community.saveProfile(completedMember, portraitJPEG: photo) }
+            journey.enter(caption: "Saving your profile…") { _ = community.saveProfile(completedMember, portraitJPEG: photo) }
         } else if community.saveProfile(member, portraitJPEG: photo) { onFinish?() }
+    }
+}
+
+
+private enum KokoProfilePage: Equatable { case basics, preferences }
+private enum KokoProfileField: Hashable { case name, year, month, day, introduction, countrySearch }
+
+@MainActor
+private enum KokoProfileSelectionArtwork {
+    private static var prepared: [Bool: UIImage] = [:]
+    static func skin(selected: Bool) -> UIImage {
+        if let cached = prepared[selected] { return cached }
+        guard let source = UIImage(named: "KokoProfileSelection")?.cgImage else { return UIImage() }
+        let scale = CGFloat(source.width) / 1254
+        let bounds = CGRect(x: 62 * scale, y: (selected ? 668 : 272) * scale, width: 1130 * scale, height: 338 * scale)
+        guard let crop = source.cropping(to: bounds) else { return UIImage() }
+        let image = UIImage(cgImage: crop, scale: 6 * scale, orientation: .up)
+        prepared[selected] = image
+        return image
+    }
+}
+
+private struct KokoProfileChoiceSurface: View {
+    var selected: Bool
+    var body: some View {
+        Image(uiImage: KokoProfileSelectionArtwork.skin(selected: selected))
+            .resizable(capInsets: EdgeInsets(top: 18, leading: 18, bottom: 18, trailing: 18), resizingMode: .stretch)
+            .accessibilityHidden(true)
     }
 }

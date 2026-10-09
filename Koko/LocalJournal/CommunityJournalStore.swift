@@ -68,6 +68,10 @@ final class CommunityJournalStore: ObservableObject {
     }
     func room(_ identifier: String) -> ListeningRoom? { rooms.first { $0.id == identifier } }
     var hasCurrentPolicyConsent: Bool { journal?.policyConsent?.revision == KokoPolicyConsent.currentRevision }
+    var hasCompletedAccountEntry: Bool {
+        guard let journal, !requiresAppleProfileReview else { return false }
+        return journal.completedProfile || (journal.accountCredentialKind == "email" && journal.enteredHomeViaEmail == true)
+    }
 
     func signIn(email: String, password: String, consent: Bool) async -> Bool {
         guard consent else { notice = "Please agree to the Terms of Service and Privacy Policy before continuing."; return false }
@@ -78,7 +82,13 @@ final class CommunityJournalStore: ObservableObject {
             var restored = try readSavedJournal(key) ?? newJournal(identity: key)
             restored.accountCredentialKind = "email"
             restored.policyConsent = KokoPolicyConsent()
+            restored.enteredHomeViaEmail = true
+            if restored.member.publicName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                // Use the supplied email handle; do not invent age, country, or interests.
+                restored.member.publicName = String(KokoAccountValidation.normalizedEmail(email).split(separator: "@")[0].prefix(40))
+            }
             try activate(restored, identity: key)
+            requiresAppleProfileReview = false
             return true
         } catch { notice = "Your account could not be opened. Your saved data has been kept. Please try again."; return false }
     }

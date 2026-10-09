@@ -29,7 +29,7 @@ final class KokoAppleCoinPurchases: ObservableObject {
     func purchase(_ pack: KokoCoinPack) async {
         guard purchasingProductID == nil, !recoveringOrders,
               let community, let ownerToken = community.purchaseAccountToken,
-              community.journal?.completedProfile == true, community.prepareCoinWallet() else { return }
+              community.hasCompletedAccountEntry, community.prepareCoinWallet() else { return }
         guard AppStore.canMakePayments else {
             purchaseMessage = "Apple purchases are not allowed on this device. Check your Screen Time purchase restrictions."; return
         }

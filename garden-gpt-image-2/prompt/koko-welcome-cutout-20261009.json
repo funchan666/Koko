@@ -1,0 +1,5 @@
+{
+  "use_case": "background-extraction",
+  "asset_type": "Koko welcome collage transparent PNG",
+  "request": "Edit the supplied image ONLY by extracting the three portrait frames, the fine mint looping line and small yellow sparkle onto a genuinely transparent background. Remove ALL dark green outside the portrait frames, including the empty lower fifth, corners, and gaps. Preserve the exact canvas dimensions and positions, portraits, interior photographic backgrounds, cream oval border, all details and sizes. Do not remove dark hair, headphones, or any pixels INSIDE the portrait frames. Do not zoom, recrop or move anything. No text. No opaque background, no colored haze, no checkerboard baked in. The entire bottom 20 percent remains transparent negative space."
+}

@@ -38,10 +38,10 @@ Koko 使用薄荷、深墨绿与柔白的独立视觉方向，采用 Avenir Next
 ## 数据与演示边界
 
 - `CommunityMember`、`ListeningRoom`、`SharedMoment`、`RoomKeepsake`、`PersonalJournal` 等按业务职责独立建模。
-- 邮箱登录按用户最新要求仅校验有效邮箱格式和 8–128 字符非空白密码，不需要提前注册或匹配历史密码。新邮箱自动创建本地资料，已有邮箱恢复原有数据，未完成资料继续填写。注册入口保留重复密码确认；新登录/注册不存储密码或校验值。旧 Keychain 数据不再用于登录，删除对应本地账号时仍清理旧记录。当前没有邮箱验证、邮件找回或跨设备账号服务。
+- 邮箱登录按用户最新要求仅校验有效邮箱格式和 8–128 字符非空白密码，不需要提前注册或匹配历史密码。新邮箱自动创建本地资料，已有邮箱恢复原有数据；邮箱直接登录成功后进入首页，不强制补资料。注册入口保留重复密码确认；新登录/注册不存储密码或校验值。旧 Keychain 数据不再用于登录，删除对应本地账号时仍清理旧记录。当前没有邮箱验证、邮件找回或跨设备账号服务。
 - 每个账号的资料、关系、房间、评论、会话、物品、金币钱包和已验证交易独立存放于 Application Support/KokoCommunity 的 JSON 文件；采用原子写入和文件保护。保存失败保留原状态并展示可读提示。
 - 金币充值通过真实 StoreKit 2；只有点某档 Buy 才请求该商品。验证 Apple 交易、匹配 appAccountToken，余额和交易去重记录原子落盘后才 finish。支持取消、pending、未到账重试和收到的退款调整；没有模拟成功分支。
-- 新建本地账号首次完成资料进入首页赠送 600 金币并展示原创唱片欢迎动效。正常重登不重复赠送，同一安装内删除后重建同一身份也不重复赠送。聊天始终免费；可选礼物及装饰的消费需要明确确认，不足自动进入充值页。
+- 新建本地账号首次进入首页赠送 600 金币并展示原创赠币欢迎卡。正常重登不重复赠送，同一安装内删除后重建同一身份也不重复赠送。聊天始终免费；可选礼物及装饰的消费需要明确确认，不足自动进入充值页。
 - 旧的演示金币余额与流水归档保留，不转换成可消费金币。新字段均为可选值，兼容旧账号 JSON。
 - 当前账户体系与钱包仍按此前范围保存在本机，没有生产认证、服务端余额、防篡改账本或跨设备同步。不可宣称已具备服务端支付闭环；上线前需接入正式账号和服务端交易/余额对账。删除本地资料会删除剩余金币与已完成订单记录，页面明确说明这一影响。
 - 举报和反馈保存在本地；界面明确说明未提交给审核/客服服务。
@@ -74,10 +74,10 @@ Bundle ID 暂为 `com.koko.app`，签名团队尚未指定。正式签名和服�
 
 ## 登录与入场流程（2026-10-08）
 
-- 启动显示约 1.6 秒原创唱片动效；未登录时直接进入单页欢迎入口，可选择邮箱登录、注册或 Apple 登录，不再展示多页引导。已有会话直接恢复，资料未完成则继续填写。
+- 启动显示约 1.6 秒原创唱片动效；未登录时直接进入单页欢迎入口，可选择邮箱登录、注册或 Apple 登录，不再展示多页引导。已有会话直接恢复；邮箱直接登录会话回到首页，注册或 Apple 流程未完成时继续填写资料。
 - 欢迎入口、邮箱登录和注册底部均有未预选的双协议同意项。未同意点击下一步会显示深绿薄荷色的简短协议提醒；本地记录同意版本及时间。旧会话缺少当前同意记录时补充勾选。
 - [用户协议](https://sites.google.com/view/koko-terms-of-service/about)与[隐私协议](https://sites.google.com/view/koko-privacypolicy/about)在 WKWebView 中打开，保留返回、重试和加载失败提示。
-- 有效表单提交后显示独立的入场卡片展开动效，固定约 3.6 秒，再执行本地格式校验与资料保存；不会用假进度声称已联网认证。启用“减少动态效果”时降低动画。
+- 有效表单提交后显示深绿全屏对话插画过渡，固定约 3.6 秒，再执行本地格式校验与资料保存；不会用假进度声称已联网认证。启用“减少动态效果”时使用静态插画。
 - Apple 按钮调用 AuthenticationServices 真实授权；取消不进入下一步，成功后进入资料页。首次 Apple 返回姓名时保存并自动填入，已编辑的名字不会被后续授权覆盖。启动及回到前台检查 Apple 授权状态，已撤销或失效时返回登录。
 - 资料必填显示名、性别（可选不透露）、国家/地区、有效生日（18 岁以上）和至少一个兴趣；简介可选。头像支持系统 PhotosPicker 或实际拍照，并保留四个原创插画选项。照片压缩为最长边 900px 的 JPEG，不复制原始照片元数据。
 - 本地资料、登录状态和头像持久保存；照片在 Application Support/KokoPortraits。替换头像和删除账号会清理旧照片。没有开启完整相册扫描、照片自动上传或自动拍照。
@@ -99,13 +99,14 @@ Bundle ID 暂为 `com.koko.app`，签名团队尚未指定。正式签名和服�
 
 ## 欢迎页视觉更新
 
-欢迎页采用深墨绿与薄荷色的原创人物主视觉，不显示应用名。2026-10-09 更新为错落的圆弧人像、细线连接与小幅暖黄色点缀，替换原来的矩形拼图。短标题“Good company. / Starts here.”在图片预留的下沿区域以原生文字排版，按钮紧接标题，不再用可无限拉伸的中间留白。只突出薄荷色邮箱登录按钮，Apple 登录采用轻量文字入口。登录、注册和协议勾选继续复用原有校验与跳转，底部保留“I agree to Terms & Privacy”一组勾选和独立链接。图片依据可用高度缩放；页内空间不足时可滚动，大字号协议链接可换行，标题不烘焙进图片。欢迎页与账号表单保持深色；协议页使用深色导航栏、浅色网页正文和匹配的状态栏外观。
+欢迎页采用深墨绿与薄荷色的原创人物主视觉，不显示应用名。2026-10-09 更新为错落的圆弧人像、细线连接与小幅暖黄色点缀，替换原来的矩形拼图。短标题“Good company. / Starts here.”在图片预留的下沿区域以原生文字排版，按钮紧接标题，不再用可无限拉伸的中间留白。三个入口使用一组原创按钮皮肤：薄荷绿登录按钮带箭头、奶油白 Apple 按钮，以及深绿描边带星形点缀的注册按钮；标签保留原生文字。登录、注册和协议勾选继续复用原有校验与跳转，底部保留“I agree to Terms & Privacy”一组勾选和独立链接。图片依据可用高度缩放；页内空间不足时可滚动，大字号协议链接可换行，标题不烘焙进图片。欢迎页与账号表单保持深色；协议页使用深色导航栏、浅色网页正文和匹配的状态栏外观。
 
 - 界面：`Koko/Scenes/Account/KokoSocialWelcome.swift`。
 - 旧版主视觉存档：`Koko/Resources/KokoArtwork.xcassets/KokoSocialWelcome.imageset/KokoSocialWelcome.png`。
 - 控件图集：`Koko/Resources/KokoArtwork.xcassets/KokoWelcomeControls.imageset/KokoWelcomeControls.png`。
 - 原始提示词：`garden-gpt-image-2/prompt/koko-social-welcome-hero.json`、`garden-gpt-image-2/prompt/koko-social-welcome-controls.json`。
-- 当前主视觉：`Koko/Resources/KokoArtwork.xcassets/KokoWelcomeCompany.imageset/KokoWelcomeCompany.png`；对应提示词：`garden-gpt-image-2/prompt/koko-welcome-company-20261009.json`。此前主视觉保留为设计历史，当前欢迎页不再引用。
+- 当前主视觉：`Koko/Resources/KokoArtwork.xcassets/KokoWelcomeCompanyCutout.imageset/KokoWelcomeCompanyCutout.png`；对应提示词：`garden-gpt-image-2/prompt/koko-welcome-cutout-20261009.json`。三个人像、连接线与点缀保留，外部绿色背景改为真实透明，欢迎页和表单小图共用这一素材，避免与页面底色产生方形接缝。旧主视觉保留为设计历史。
+- 欢迎入口按钮图集：`Koko/Resources/KokoArtwork.xcassets/KokoWelcomeEntryButtons.imageset/KokoWelcomeEntryButtons.png`；提示词：`garden-gpt-image-2/prompt/koko-welcome-entry-buttons-20261009.json`。使用 Garden Host-Native 内置图像工具生成，原生 UIImage 仅裁取图集区域并拉伸空白中段，不通过代码绘制装饰。按钮为欢迎页专用，不改变其他页面的通用操作外观。
 - 使用内置图像生成工具（Garden Host-Native）制作，人物为原创虚构成年角色，只作欢迎页视觉，不假装在线用户或新增用户资料。Taste 的网页实现流程不用于此原生界面；沿用 Design 的层级、排版和内容约束。
 - 本轮未编译、测试或运行模拟器。仅检查生成素材、原生布局源码、资源清单和授权/协议入口引用。
 
@@ -120,7 +121,7 @@ Bundle ID 暂为 `com.koko.app`，签名团队尚未指定。正式签名和服�
 - 原生文本输入保留邮箱键盘、密码自动填充、显示/隐藏、下一项、收起键盘和滚动。大字号下隐藏装饰性小图，为文字保留空间。
 - 提交时在对应字段下展示格式或确认密码错误，聚焦首个无效字段；未同意仍显示协议提醒，不自动勾选。
 - 切换登录/注册清除密码和错误展示，保留邮箱；实际邮箱规则、账号激活、3.6 秒过渡和本地持久化仍由原来的入口与 store 执行。
-- 本地登录说明折叠到“How sign-in works”，可随时展开，不把格式校验描述为服务器认证。
+- 按用户要求移除表单底部的登录说明入口及展开文案；邮箱登录仍为本地格式校验，不是服务器认证。
 - 仅生成 Xcode 工程并静态核对源码、资源与工程引用；未编译、测试或运行应用。
 
 
@@ -135,3 +136,51 @@ Bundle ID 暂为 `com.koko.app`，签名团队尚未指定。正式签名和服�
 ## 通用提示弹窗
 
 2026-10-09：全局提示使用 `KokoNoticePanel`，复用原创 `KokoConsentSurface` 卡面与薄荷按钮。移除旧白色立体卡面、关闭图标和纹理遮罩，改为居中短卡片、完整提示文案与一个“Got it”操作；长内容和大字号可滚动。提示出现时，底层页面不接收点击或 VoiceOver 焦点，关闭后恢复；原有错误消息和业务校验不变。应用内购买结果说明共用此提示，真实 Apple 支付面板不变。本轮仅静态检查并生成工程引用，未编译、测试或运行应用。
+
+
+2026-10-09：登录与注册表单的文字 Back 改为原创薄荷色圆角箭头图片按钮，48pt 点击区域，保留返回前收起键盘和 VoiceOver 返回描述。素材：`Koko/Resources/KokoArtwork.xcassets/KokoAccountBack.imageset/KokoAccountBack.png`；提示词：`garden-gpt-image-2/prompt/koko-account-back-button-20261009.json`。使用 Garden / Image 2 Host-Native 内置生成，仅做源码及资源检查，未编译、测试或运行。
+
+
+## 登录等待界面更新（2026-10-09）
+
+移除旧白色卡框、纹理遮罩、卡片插画和三个步骤标签。登录、注册与资料保存共用深绿全屏、薄荷与奶油白双对话插画，仅展示一句对应状态文案。插画轻微浮动与呼吸缩放，减少动态效果时静止；原有 3.6 秒等待和保存流程不变，未引入网络进度百分比或成功暗示。等待期间底层页面不接收触摸与 VoiceOver 焦点，状态栏保持深色页外观。启动 loading 保持独立。
+
+- 原创素材（Garden / Image 2 Host-Native 内置生成）：`Koko/Resources/KokoArtwork.xcassets/KokoConversationArrival.imageset/KokoConversationArrival.png`。
+- 提示词：`garden-gpt-image-2/prompt/koko-conversation-arrival-20261009.json`。
+- 原生实现：`Koko/AccountAccess/KokoAccessJourney.swift`；使用现有 Design 层级原则，不引入网页实现或代码绘图。
+- 仅检查源码、资源清单和 Git 差异；未编译、测试或运行应用。
+
+
+## 资料页与邮箱直达首页（2026-10-09）
+
+资料页改为两步深绿原生表单：第一步为头像、称呼、性别，第二步为国家/地区、生日、兴趣及可选简介。保留 Apple 名称预填、系统相册选图、真实拍照和四个原创头像；选择项使用双列排版和薄荷选中状态，去掉原有白底皮肤、横向截断的性别选项及冗长文案。国家搜索改为同色系全屏页；返回箭头、键盘收起、字段校验和照片导入保护保留。
+
+邮箱登录成功时原子保存 `enteredHomeViaEmail`，主入口及钱包使用统一的 `hasCompletedAccountEntry` 判定，重启可恢复首页。新邮箱缺少称呼时使用邮箱本地部分，不编造生日、国家、性别或兴趣，不把 `completedProfile` 标为真。注册与 Apple 路径继续填写资料；既有资料、余额和一次性欢迎礼记录保持原有存储规则。
+
+- 原创选项图集：`Koko/Resources/KokoArtwork.xcassets/KokoProfileSelection.imageset/KokoProfileSelection.png`。
+- 提示词：`garden-gpt-image-2/prompt/koko-profile-selection-20261009.json`，Garden / Image 2 Host-Native 内置生成。
+- 保持 SwiftUI，应用 Design 的层级和间距原则；不引入网页 UI、系统图标或代码绘制装饰。
+- 本轮只做源码、配置、素材透明度及 Git 差异检查，未编译、测试或运行。
+
+
+## 首次赠币欢迎卡（2026-10-09）
+
+欢迎弹窗改为居中的紧凑深绿卡片，移除白色厚框、旧唱片插画、大段说明及立体关闭按钮。原创薄荷信封与暖金对话金币插画轻柔入场，金额使用实际 `firstVisitGift` 配置，余额直接读取本地钱包；“Already in your wallet”只出现在既有赠币已记录的展示条件下。单个“Let’s explore”按钮确认欢迎礼，VoiceOver 退出同样确认；不会再次调用加币逻辑。背景使用半透明黑色遮罩，弹窗出现时主页不可点击或被 VoiceOver 访问；大字号与小屏幕可滚动，减少动态效果时直接显示插画。
+
+- 原创插画：`Koko/Resources/KokoArtwork.xcassets/KokoFirstHelloGift.imageset/KokoFirstHelloGift.png`。
+- 提示词：`garden-gpt-image-2/prompt/koko-first-hello-gift-20261009.json`，Garden / Image 2 Host-Native 内置生成。
+- 使用现有原创深绿卡面与薄荷按钮，保持 SwiftUI 原生布局；未改充值或赠币记账规则。
+- 仅检查源码、资源透明度与 Git 差异，未编译、测试或运行。
+
+
+## 四个主页面与共用皮肤修复（2026-10-09）
+
+本轮按用户四张截图重排 Discover、Rooms、Messages、My space。保持原生 SwiftUI，以 Design 的信息层级与 Garden / Image 2 Host-Native 原创位图流程实现；Taste 与网页实现技能已评估，本次不创建网页替代原生界面。
+
+- 统一深森林绿底色、薄荷操作与奶油白文字；移除旧立体白底贴图和 multiply 隐藏白底的方式。输入标签与字段分离，卡片文字按内容扩展，按钮至少 46–50pt 可点击。底部导航改为紧凑图标和标签，仅当前项使用薄荷卡面。
+- Discover 压缩宣传区与人物头像，保留搜索、排行榜、视频房创建、语音房入口、关注/主题/媒体筛选、全部内容卡片。Rooms 先显示搜索、创建与筛选，直接进入列表。Messages 将会话提前，保留通知、朋友、排行榜、相册、清空及朋友房间。My space 分组资料、关系、实时余额、签到、收藏及设置，不再使用虚构地点占位。
+- `KokoCommunitySurfaces` 提供两种原创九宫格拉伸卡面；按钮复用 `KokoProfileSelection`。`KokoCommunityNavigation` 是原创单色位图，显示时用原生亮度蒙版移除黑底并着色，未用路径或形状合成图标。`KokoCommunityScenes` 和 `KokoCommunityCollection` 采用清理边缘后的深绿底稿、原生裁切显示，避免生成透明图中残留白点。旧资源保留，当前共用组件引用新资源。
+- 共用更改同时覆盖详情、房间、商店和菜单等使用这些组件的页面。`KokoScreenCanvas` 继续全窗口铺底，标题避让顶部物理遮挡，滚动与导航分开占位，保留键盘避让。原生系统权限、购买、Apple 授权及相册流程保持系统界面。
+- 账号、赠币、充值、消息与通话逻辑没有在本轮更改。44 张照片与 10 段视频的内容目录及资源保留。启动插画改为轻微明暗变化，避免新卡面旋转；登录等待仍使用独立插画和动画。
+
+原创素材在 `Koko/Resources/KokoArtwork.xcassets/KokoCommunity{Navigation,Surfaces,Scenes,Collection}.imageset`；提示词与修订记录在 `garden-gpt-image-2/prompt/koko-community-*-20261009.json`。使用内置图像工具生成和清理，未使用脚本绘画。只做源码、资源清单、图片像素与 Git 差异检查，未编译、测试、运行应用或模拟器，因此尚无运行态截图验收。

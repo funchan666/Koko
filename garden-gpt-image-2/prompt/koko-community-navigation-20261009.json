@@ -1,0 +1,44 @@
+{
+  "type": "Original 16-icon UI atlas",
+  "theme": "Koko forest-and-mint social app",
+  "style": {
+    "rendering": "Flat custom monoline pictograms, confident softly rounded strokes with little asymmetrical character, sparse details, all same stroke weight. Original illustration, not SF Symbols or a stock library.",
+    "palette": "Single pale mint #B9EDCE",
+    "shape_base": "None. Each icon floats alone on transparent alpha, no disks, tiles, shadows or colored panels."
+  },
+  "layout": {
+    "grid": "EXACT 4 columns by 4 rows, equal square cells, one icon centered in each. Each symbol occupies 70 percent of cell width/height. Clear equal margins. Square overall image.",
+    "label_below": false
+  },
+  "icons": [
+    "row1col1: video camera with small play cutout",
+    "row1col2: over-ear headphones",
+    "row1col3: two overlapping speech bubbles",
+    "row1col4: person bust within an open arch",
+    "row2col1: search magnifying glass",
+    "row2col2: left pointing arrow",
+    "row2col3: close X",
+    "row2col4: plus sign",
+    "row3col1: wrapped gift box",
+    "row3col2: wallet with small clasp",
+    "row3col3: notification bell",
+    "row3col4: three horizontal adjustment sliders",
+    "row4col1: send paper plane",
+    "row4col2: microphone on stand",
+    "row4col3: padlock",
+    "row4col4: trophy cup"
+  ],
+  "constraints": "Transparent background, no text or labels or grid lines, no embossing, no colored surfaces. Exactly 16 distinct complete icons, correct order. Solid opaque strokes, empty areas transparent.",
+  "refinement": {
+    "tool": "image_gen.imagegen",
+    "mode": "Host-Native background-extraction",
+    "request": "Keep all sixteen icons and their 4x4 positions; remove white speckles, colored flecks and halos from all negative space; retain only smooth mint glyphs on transparent alpha.",
+    "output": "exec-66429874-4867-4f1e-b023-7a30187e90b5.png"
+  },
+  "final_refinement": {
+    "tool": "image_gen.imagegen",
+    "workflow": "Garden Host-Native",
+    "output": "exec-ea4b4b02-fdfa-4e1f-b0a2-6b05e5b6f7b5.png",
+    "prompt": "Preserve all original symbols, identities, colors and equal grid positions. Remove contaminated alpha fringes and speckles. Navigation: redraw as pure white strokes on pure black, for native luminance-mask display. Illustrations and collection: opaque uniform #132A26 matte, no background texture or shadows, clean subject edges."
+  }
+}

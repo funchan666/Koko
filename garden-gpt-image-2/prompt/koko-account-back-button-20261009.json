@@ -1,0 +1,8 @@
+{
+  "use_case": "ui-mockup",
+  "asset_type": "One original raster back navigation button for Koko iOS social app",
+  "design": "A single refined softly squared button with generous rounded corners, straight-on orthographic view. Pale sage mint #B9EDCE filled face, hairline warm ivory rim, very subtle matte paper grain. Center a custom thick deep forest green #132A26 LEFT-pointing arrow with a short horizontal shaft and elegantly rounded ends. Crisp, confident and immediately readable at 44pt. Flat contemporary editorial social style, aligned with a forest-green and mint welcome page. Not glossy, not 3D, not neumorphic. No bevel, no floating shadow.",
+  "composition": "Square canvas. Button centered and filling 92 percent of width and height with a narrow TRANSPARENT margin. Whole button including corners visible. Opaque mint inside, genuine alpha transparency only outside. Arrow fits center 42 percent of face.",
+  "text": "No text, letters, logos or additional symbols. Only the left arrow within the mint button.",
+  "constraints": "Original artwork. Do not use an SF Symbol or stock icon. No background square, checkerboard or surrounding scene."
+}

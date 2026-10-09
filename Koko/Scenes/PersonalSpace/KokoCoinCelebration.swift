@@ -5,36 +5,97 @@ struct KokoFirstRecordWelcome: View {
     @EnvironmentObject private var community: CommunityJournalStore
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var arrived = false
+    @AccessibilityFocusState private var giftFocused: Bool
+
     var body: some View {
-        ZStack {
-            ArtworkBackdrop(dark: true)
-            ScrollView {
-                VStack(alignment: .leading, spacing: 18) {
-                    HStack {
-                        Text("KOKO · YOUR FIRST RECORD").font(.custom("AvenirNext-DemiBold", size: 11)).tracking(1.3)
-                        Spacer()
-                        KokoIconAction(icon: 6, label: "Close welcome") { community.acknowledgeWelcomeGift() }
+        GeometryReader { viewport in
+            ZStack {
+                Color.black.opacity(0.66).accessibilityHidden(true)
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 0) {
+                        Text("A little welcome.")
+                            .font(.custom("AvenirNext-Bold", size: 25, relativeTo: .title2))
+                            .tracking(-0.6)
+                            .foregroundStyle(KokoWelcomePalette.paper)
+                            .accessibilityAddTraits(.isHeader)
+                            .accessibilityFocused($giftFocused)
+                        Image("KokoFirstHelloGift")
+                            .resizable().scaledToFit().frame(width: 142, height: 142)
+                            .scaleEffect(reduceMotion || arrived ? 1 : 0.9)
+                            .offset(y: reduceMotion || arrived ? 0 : 10)
+                            .opacity(reduceMotion || arrived ? 1 : 0)
+                            .accessibilityHidden(true)
+                            .padding(.top, 12)
+                        Text("+\(KokoCoinCatalog.firstVisitGift)")
+                            .font(.custom("AvenirNext-Bold", size: 54, relativeTo: .largeTitle))
+                            .tracking(-2).monospacedDigit()
+                            .foregroundStyle(KokoWelcomePalette.mint)
+                            .accessibilityLabel("\(KokoCoinCatalog.firstVisitGift) welcome coins")
+                        Text("welcome coins")
+                            .font(.custom("AvenirNext-DemiBold", size: 14, relativeTo: .subheadline))
+                            .foregroundStyle(KokoWelcomePalette.paper)
+                            .accessibilityHidden(true)
+                        Text("Already in your wallet.")
+                            .font(.custom("AvenirNext-Regular", size: 13, relativeTo: .body))
+                            .foregroundStyle(KokoWelcomePalette.quiet)
+                            .padding(.top, 6)
+                        ViewThatFits(in: .horizontal) {
+                            HStack(spacing: 12) {
+                                balanceLabel
+                                Spacer(minLength: 8)
+                                balanceAmount
+                            }
+                            VStack(spacing: 6) { balanceLabel; balanceAmount }
+                        }
+                        .padding(.horizontal, 16).padding(.vertical, 12)
+                        .background {
+                            Image("KokoAccountField").resizable().accessibilityHidden(true)
+                        }
+                        .padding(.top, 20)
+                        KokoWelcomeAction(title: "Let’s explore", primary: true) {
+                            community.acknowledgeWelcomeGift()
+                        }.padding(.top, 16)
+                        Text("Chats and calls are always free.")
+                            .font(.custom("AvenirNext-Regular", size: 11, relativeTo: .caption))
+                            .foregroundStyle(KokoWelcomePalette.quiet)
+                            .padding(.top, 12)
                     }
-                    Image("KokoFirstRecord").resizable().scaledToFit().frame(maxWidth: .infinity).frame(height: 265)
-                        .scaleEffect(arrived ? 1 : 0.86).rotationEffect(.degrees(arrived ? 0 : -9))
-                        .offset(y: arrived ? 0 : 22).opacity(arrived ? 1 : 0)
-                        .accessibilityHidden(true)
-                    Text("You're part\nof the rhythm.").font(.custom("AvenirNext-Bold", size: 35)).lineSpacing(-3)
-                    HStack(alignment: .firstTextBaseline, spacing: 10) {
-                        Text("+\(KokoCoinCatalog.firstVisitGift)").font(.custom("AvenirNext-Bold", size: 54)).monospacedDigit()
-                        Text("WELCOME COINS").font(.custom("AvenirNext-DemiBold", size: 10)).tracking(1)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(24)
+                    .background {
+                        Image("KokoConsentSurface")
+                            .resizable(capInsets: EdgeInsets(top: 28, leading: 28, bottom: 28, trailing: 28))
+                            .accessibilityHidden(true)
                     }
-                    Text("A first little gift from Koko. Your coins are already in your wallet, ready for a keepsake or a kind gesture.").font(.custom("AvenirNext-Regular", size: 15))
-                    Text("Current balance · \(community.coinBalance) coins").font(.custom("AvenirNext-DemiBold", size: 13))
-                    KokoAction(title: "Find my people", icon: 1) { community.acknowledgeWelcomeGift() }
-                    Text("Your conversations are always free.").font(.custom("AvenirNext-Medium", size: 12)).foregroundStyle(KokoInk.secondary)
-                }.padding(26).background(ArtworkSurface()).frame(maxWidth: 480).padding(22).frame(maxWidth: .infinity)
+                    .frame(maxWidth: 350)
+                    .padding(.horizontal, 24).padding(.vertical, 20)
                     .padding(.top, screenInsets.top).padding(.bottom, screenInsets.bottom)
+                    .frame(maxWidth: .infinity, minHeight: viewport.size.height)
+                }
             }
-        }.onAppear {
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityAddTraits(.isModal)
+        .accessibilityAction(.escape) { community.acknowledgeWelcomeGift() }
+        .onAppear {
+            giftFocused = true
             if reduceMotion { arrived = true }
-            else { withAnimation(.spring(response: 0.85, dampingFraction: 0.78)) { arrived = true } }
-        }.accessibilityAddTraits(.isModal)
+            else { withAnimation(.easeOut(duration: 0.5)) { arrived = true } }
+        }
+    }
+
+    private var balanceLabel: some View {
+        Text("Your balance")
+            .font(.custom("AvenirNext-Medium", size: 12, relativeTo: .subheadline))
+            .foregroundStyle(KokoWelcomePalette.quiet)
+            .fixedSize(horizontal: true, vertical: false)
+    }
+    private var balanceAmount: some View {
+        Text("\(community.coinBalance.formatted()) coins")
+            .font(.custom("AvenirNext-DemiBold", size: 14, relativeTo: .body))
+            .foregroundStyle(KokoWelcomePalette.paper).monospacedDigit()
+            .fixedSize(horizontal: true, vertical: false)
     }
 }
 

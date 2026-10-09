@@ -1,0 +1,8 @@
+{
+  "use_case": "ui-mockup",
+  "asset_type": "Original Koko mobile welcome button skin atlas, three horizontal rows",
+  "composition": "Square transparent canvas, exactly THREE separate wide button skins stacked vertically. Each identical width 88% canvas and height 15% canvas, centered horizontally, centered at y=23%,50%,77%. Large transparent gaps. Orthographic flat front view, clean alpha edges. No mockup phone.",
+  "design": "Contemporary social editorial style: softly squared 22px corners at 360pt display width, refined tactile printed-card surfaces. Top: solid luminous pale mint #B9EDCE, fine cream top edge, at far right a small forest-green circular inset with a cream hand-designed rightward arrow. Middle: opaque warm ivory #F2F1E6 with fine sage border, entirely clean blank surface for the native Apple sign-in label. Bottom: opaque subdued forest green #203D35 fill, clearly visible fine mint outline and a tiny hand-drawn mint four-point star at far right. Flat and graphic, subtle material depth only, no glossy 3D, no huge shadows, no neomorphism. All three surfaces have clear continuous silhouettes, edge detail. The central 70% and left of every button must remain entirely empty for native text.",
+  "text": "ABSOLUTELY NO TEXT, letters, numbers, logos or Apple symbols anywhere.",
+  "constraints": "Outside the buttons is transparent alpha. Inside ALL three buttons is fully opaque, including dark green third button. Do not cut out button centers. Do not add background card or labels. Fresh original art for Koko forest-and-mint social app."
+}

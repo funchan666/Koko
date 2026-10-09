@@ -12,6 +12,25 @@ enum KokoWelcomePalette {
 @MainActor
 private enum KokoWelcomeArtwork {
     private static var prepared: [Int: UIImage] = [:]
+    private static var entrySkins: [KokoWelcomeEntryStyle: UIImage] = [:]
+
+    static func entrySkin(_ style: KokoWelcomeEntryStyle) -> UIImage {
+        if let image = entrySkins[style] { return image }
+        guard let source = UIImage(named: "KokoWelcomeEntryButtons")?.cgImage else { return UIImage() }
+        let region: CGRect
+        switch style {
+        case .email: region = CGRect(x: 58, y: 218, width: 1140, height: 240)
+        case .apple: region = CGRect(x: 58, y: 528, width: 1140, height: 232)
+        case .registration: region = CGRect(x: 58, y: 832, width: 1140, height: 232)
+        }
+        let scale = CGFloat(source.width) / 1254
+        guard let cropped = source.cropping(to: CGRect(x: region.minX * scale, y: region.minY * scale,
+                                                      width: region.width * scale, height: region.height * scale)) else { return UIImage() }
+        // Keep the illustrated end caps at their intended size while the quiet center stretches.
+        let image = UIImage(cgImage: cropped, scale: 4 * scale, orientation: .up)
+        entrySkins[style] = image
+        return image
+    }
     static func control(_ index: Int) -> UIImage {
         if let image = prepared[index] { return image }
         guard let source = UIImage(named: "KokoWelcomeControls")?.cgImage else { return UIImage() }
@@ -43,10 +62,10 @@ struct KokoSocialWelcome: View {
     var body: some View {
         GeometryReader { geometry in
             // Reserve room for native text and actions instead of stretching a spacer between them.
-            let portraitExtent = min(geometry.size.width, 440, max(270, geometry.size.height - 340))
+            let portraitExtent = min(geometry.size.width, 440, max(250, geometry.size.height - 445))
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
-                    Image("KokoWelcomeCompany")
+                    Image("KokoWelcomeCompanyCutout")
                         .resizable().scaledToFit()
                         .frame(width: portraitExtent, height: portraitExtent)
                         .accessibilityHidden(true)
@@ -62,26 +81,51 @@ struct KokoSocialWelcome: View {
                         .padding(.horizontal, 30)
                         // The artwork deliberately reserves its bottom fifth for this headline.
                         .padding(.top, -portraitExtent * 0.16)
-                    VStack(spacing: 6) {
-                        KokoWelcomeAction(title: "Log in", primary: true, action: logIn)
-                        KokoWelcomeAction(title: authorizing ? "Waiting for Apple…" : "Continue with Apple", primary: false, action: appleSignIn)
-                    }.padding(.horizontal, 28).padding(.top, 24)
-                    Button(action: signUp) {
-                        Text("Create account")
-                            .font(.custom("AvenirNext-DemiBold", size: 13, relativeTo: .subheadline))
-                            .foregroundStyle(KokoWelcomePalette.mint)
-                            .frame(maxWidth: .infinity, minHeight: 44)
-                    }.buttonStyle(KokoPressStyle())
+                    VStack(spacing: 10) {
+                        KokoWelcomeEntryButton(title: "Log in", style: .email, action: logIn)
+                        KokoWelcomeEntryButton(title: authorizing ? "Waiting for Apple…" : "Continue with Apple",
+                                               style: .apple, action: appleSignIn)
+                        KokoWelcomeEntryButton(title: "Create account", style: .registration, action: signUp)
+                    }.padding(.horizontal, 28).padding(.top, 22)
                     KokoEntryAgreement(agreed: $agreed, openPolicy: openPolicy)
-                        .padding(.horizontal, 22).padding(.top, 12).padding(.bottom, 16)
+                        .padding(.horizontal, 22).padding(.top, 16).padding(.bottom, 12)
                 }.padding(.top, screenInsets.top + 8).padding(.bottom, screenInsets.bottom)
                     .frame(maxWidth: 500)
                     .frame(minHeight: geometry.size.height, alignment: .center)
                     .frame(maxWidth: .infinity)
-            }.background(KokoWelcomePalette.backdrop.ignoresSafeArea())
+            }.background(KokoWelcomePalette.backdrop)
         }.foregroundStyle(KokoWelcomePalette.paper)
     }
 
+}
+
+private enum KokoWelcomeEntryStyle: Hashable {
+    case email, apple, registration
+}
+
+private struct KokoWelcomeEntryButton: View {
+    let title: String
+    let style: KokoWelcomeEntryStyle
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(.custom("AvenirNext-DemiBold", size: 16, relativeTo: .body))
+                .foregroundStyle(style == .registration ? KokoWelcomePalette.mint : KokoWelcomePalette.backdrop)
+                .fixedSize(horizontal: false, vertical: true)
+                .multilineTextAlignment(style == .apple ? .center : .leading)
+                .padding(.leading, 24)
+                .padding(.trailing, style == .apple ? 24 : 68)
+                .padding(.vertical, 16)
+                .frame(maxWidth: .infinity, minHeight: 58, alignment: style == .apple ? .center : .leading)
+                .background {
+                    Image(uiImage: KokoWelcomeArtwork.entrySkin(style))
+                        .resizable(capInsets: EdgeInsets(top: 22, leading: 24, bottom: 22, trailing: 56), resizingMode: .stretch)
+                        .accessibilityHidden(true)
+                }
+        }.buttonStyle(KokoPressStyle())
+    }
 }
 
 struct KokoEntryAgreement: View {

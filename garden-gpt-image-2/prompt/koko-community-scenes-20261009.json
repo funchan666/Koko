@@ -1,0 +1,18 @@
+{
+  "type": "Four original compact illustrations for Koko social app",
+  "layout": "Precise 2x2 grid, four equal square cells. Center each complete subject within 74 percent of its cell, wide transparent gaps. Square overall atlas. No background tiles or dividers.",
+  "panels": [
+    "TOP LEFT: mint and warm ivory over-ear headphones, small looping sage ribbon, one pale yellow star, no pedestal.",
+    "TOP RIGHT: a deep sage crescent moon embracing a small ivory vintage radio with mint accents, one small star, a quiet night conversation.",
+    "BOTTOM LEFT: two friendly interlocking mint and ivory speech bubbles, one small gold glint.",
+    "BOTTOM RIGHT: two overlapping small ivory photographic keepsake frames with simple mint landscape illustrations inside, sage ribbon corner, no writing."
+  ],
+  "style": "Contemporary matte cut-paper illustration with restrained layered depth, clean bold silhouettes, subtle paper grain. Adult social editorial style. Mint #B9EDCE, forest #132A26, warm ivory, tiny muted gold accents. Consistent hand-crafted illustration, no glass or glossy plastic, no heavy shadows.",
+  "constraints": "Genuine transparent alpha surrounding all four illustrations, interiors opaque. No rooms or photographic backgrounds, no furniture or architectural arch, no letters/logos/text. Do not crop subjects. All four distinct artworks must have clean separation and matching scale.",
+  "final_refinement": {
+    "tool": "image_gen.imagegen",
+    "workflow": "Garden Host-Native",
+    "output": "exec-f5e767ae-e27e-41bf-bcd1-39724eba8af0.png",
+    "prompt": "Preserve all original symbols, identities, colors and equal grid positions. Remove contaminated alpha fringes and speckles. Navigation: redraw as pure white strokes on pure black, for native luminance-mask display. Illustrations and collection: opaque uniform #132A26 matte, no background texture or shadows, clean subject edges."
+  }
+}

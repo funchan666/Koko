@@ -1,0 +1,10 @@
+{
+  "use_case": "background-extraction",
+  "request": "Edit this existing 4x4 Koko asset atlas: remove ONLY all white background between and around the sixteen subjects, making it genuinely transparent alpha. Preserve all 16 subjects, exact 4x4 order, positions, relative sizes, identities, canvas dimensions, original colors and materials. Preserve opaque ivory clothing, ivory headphones, ivory radio and bag, skin tones and specular highlights WITHIN subjects. Do not darken or tint the art. No new icons, cropping, labels or reordering. Every tile's background must be transparent including gaps inside the leaf/headphones/crown and handles, no white matte fringe.",
+  "final_refinement": {
+    "tool": "image_gen.imagegen",
+    "workflow": "Garden Host-Native",
+    "output": "exec-0a377f59-f984-47ca-b670-1489ec388851.png",
+    "prompt": "Preserve all original symbols, identities, colors and equal grid positions. Remove contaminated alpha fringes and speckles. Navigation: redraw as pure white strokes on pure black, for native luminance-mask display. Illustrations and collection: opaque uniform #132A26 matte, no background texture or shadows, clean subject edges."
+  }
+}

@@ -126,6 +126,8 @@ struct PersonalJournal: Codable {
     var feedbackNotes: [String] = []
     var preferences: [String: Bool] = ["Show my activity": true, "Allow room invitations": true, "Message reminders": true, "Check-in reminders": false, "Room updates": true]
     var completedProfile = false
+    // Email sign-in may enter home without claiming that personal details were supplied.
+    var enteredHomeViaEmail: Bool? = nil
 }
 
 enum KokoCommunity {

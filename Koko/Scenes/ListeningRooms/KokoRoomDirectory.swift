@@ -9,21 +9,17 @@ struct KokoRoomDirectory: View {
         community.rooms.filter { (topic == "All" || (topic == "Following" ? community.following.contains($0.hostMemberID) : $0.conversationTopic == topic)) && (search.isEmpty || $0.roomTitle.localizedCaseInsensitiveContains(search)) }
     }
     var body: some View {
-        KokoPage(title: "Pull up a chair", subtitle: "GOOD CONVERSATIONS HAVE ROOM FOR YOU") {
-            HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("A room for\nevery mood.").font(.custom("AvenirNext-Bold", size: 30))
-                    Text("Listen first. Speak when you're ready.").font(.custom("AvenirNext-Regular", size: 13)).foregroundStyle(KokoInk.secondary)
-                }
-                Artwork(sheet: .scenes, tile: 0).frame(width: 128, height: 138)
+        KokoPage(title: "Rooms", subtitle: "Listen in. Find a conversation.") {
+            KokoSearchField(prompt: "Search rooms", query: $search)
+            HStack(spacing: 10) {
+                KokoAction(title: "Create a voice room", icon: 7) { navigation.open(.createRoom(false)) }
+                KokoIconAction(icon: 15, label: "Room ranking") { navigation.open(.ranking) }
             }
-            HStack { KokoAction(title: "Make a room", icon: 7) { navigation.open(.createRoom(false)) }; KokoIconAction(icon: 15, label: "Room ranking") { navigation.open(.ranking) } }
-            KokoField(label: "Find a conversation", value: $search)
             KokoChoiceRail(choices: ["All", "Following"] + Array(KokoCommunity.topics.dropFirst()), selection: $topic)
-            HStack { Text("The doors are open").font(.custom("AvenirNext-Bold", size: 21)); Spacer(); Text("\(filtered.count) rooms").font(.custom("AvenirNext-Medium", size: 12)) }
+            KokoSectionTitle(title: "Find your room", detail: "\(filtered.count) rooms")
             ForEach(filtered) { room in KokoRoomCard(room: room) }
-            if filtered.isEmpty { KokoEmpty(title: "A quiet corner", detail: "Try a different category, or start a room of your own.") }
-            LocalPreviewNote()
+            if filtered.isEmpty { KokoEmpty(title: "A quiet corner", detail: "Choose another category, or start a room of your own.", art: 1) }
+            LocalPreviewNote(text: "LOCAL ROOM PREVIEWS · NO AUDIO IS BROADCAST")
         }
     }
 }

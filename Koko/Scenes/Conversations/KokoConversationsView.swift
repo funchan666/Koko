@@ -8,23 +8,23 @@ struct KokoConversationsView: View {
     var filtered: [PrivateConversation] { community.conversations.filter { search.isEmpty || (community.member($0.correspondentID)?.publicName.localizedCaseInsensitiveContains(search) ?? false) || ($0.entries.last?.messageText.localizedCaseInsensitiveContains(search) ?? false) } }
     var body: some View {
         ZStack {
-            KokoPage(title: "A little hello", subtitle: "THE CONVERSATIONS YOU COME BACK TO") {
-                HStack {
-                    KokoMenuRow(title: "Notices", detail: "\(community.journal?.notices.filter { !$0.hasBeenRead }.count ?? 0) unread", icon: 10) { navigation.open(.notices) }
-                    KokoIconAction(icon: 15, label: "Ranking") { navigation.open(.ranking) }
+            KokoPage(title: "Messages", subtitle: "Keep a good conversation going.") {
+                HStack(spacing: 10) {
+                    shortcut("Notices", detail: "\(community.journal?.notices.filter { !$0.hasBeenRead }.count ?? 0) unread", icon: 10, destination: .notices)
+                    shortcut("People", detail: "\(community.friends.count) friends", icon: 3, destination: .friends("Friends"))
+                    shortcut("Ranking", detail: "Community", icon: 15, destination: .ranking)
+                }
+                HStack(spacing: 10) {
+                    KokoSearchField(prompt: "Search conversations", query: $search)
                     KokoIconAction(icon: 3, label: "My album") { navigation.open(.album) }
                 }
-                KokoAction(title: "Your people · \(community.friends.count) mutual", icon: 3, emphasis: false) { navigation.open(.friends("Friends")) }
-                KokoField(label: "Find a conversation", value: $search)
-                Text("Friends at the table").font(.custom("AvenirNext-Bold", size: 22))
-                let friendsRooms = community.rooms.filter { community.friends.contains($0.hostMemberID) }
-                if friendsRooms.isEmpty {
-                    KokoEmpty(title: "There's a seat for someone", detail: "Rooms from your sample mutual connections appear here.", art: 0)
-                } else { ForEach(friendsRooms) { KokoRoomCard(room: $0) } }
-                HStack { Text("Your conversations").font(.custom("AvenirNext-Bold", size: 22)); Spacer(); if !community.conversations.isEmpty { KokoIconAction(icon: 6, label: "Clear conversations") { confirmClear = true } } }
+                HStack {
+                    KokoSectionTitle(title: "Conversations")
+                    if !community.conversations.isEmpty { KokoIconAction(icon: 6, label: "Clear conversations") { confirmClear = true } }
+                }
                 if filtered.isEmpty {
-                    KokoEmpty(title: search.isEmpty ? "Every friendship starts somewhere" : "No matching conversations", detail: search.isEmpty ? "Visit a profile to try a sample mutual connection. Nothing is sent to another person." : "Try another name or phrase.")
-                    KokoAction(title: "Find your people", icon: 4) { navigation.open(.search) }
+                    KokoEmpty(title: search.isEmpty ? "A hello starts here" : "No conversations found", detail: search.isEmpty ? "Explore a profile to try a local conversation. Messages stay on this device." : "Try another name or phrase.", art: 2)
+                    KokoAction(title: "Discover people", icon: 4) { navigation.open(.search) }
                 }
                 ForEach(filtered) { conversation in
                     KokoMenuRow(title: community.member(conversation.correspondentID)?.publicName ?? "Conversation", detail: conversation.entries.last.map { $0.messageText.isEmpty && $0.attachmentPhotoKey != nil ? "Photo from the collection" : $0.messageText } ?? (conversation.compositionDraft.isEmpty ? "A new local conversation" : "Draft: " + conversation.compositionDraft), icon: 2) {
@@ -32,6 +32,11 @@ struct KokoConversationsView: View {
                         navigation.open(.conversation(conversation.correspondentID))
                     }
                 }
+                KokoSectionTitle(title: "Friends’ rooms")
+                let friendsRooms = community.rooms.filter { community.friends.contains($0.hostMemberID) }
+                if friendsRooms.isEmpty {
+                    KokoMenuRow(title: "Bring your people together", detail: "Rooms from local mutual connections appear here.", icon: 1) { navigation.open(.friends("Friends")) }
+                } else { ForEach(friendsRooms) { KokoRoomCard(room: $0) } }
             }
             if confirmClear {
                 KokoModal(title: "Clear your local conversations?", dismiss: { confirmClear = false }) {
@@ -42,6 +47,16 @@ struct KokoConversationsView: View {
             }
         }
     }
+    private func shortcut(_ title: String, detail: String, icon: Int, destination: KokoDestination) -> some View {
+        Button { navigation.open(destination) } label: {
+            VStack(spacing: 8) {
+                Artwork(sheet: .navigation, tile: icon).frame(width: 28, height: 28).foregroundStyle(KokoInk.accent)
+                Text(title).font(.custom("AvenirNext-DemiBold", size: 13, relativeTo: .subheadline))
+                Text(detail).font(.custom("AvenirNext-Regular", size: 10, relativeTo: .caption2)).foregroundStyle(KokoInk.secondary)
+            }.multilineTextAlignment(.center).frame(maxWidth: .infinity).padding(.horizontal, 5).padding(.vertical, 16).background(ArtworkSurface())
+        }.buttonStyle(KokoPressStyle())
+    }
+
 }
 
 struct KokoConversationDetail: View {

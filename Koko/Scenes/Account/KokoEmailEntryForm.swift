@@ -19,7 +19,6 @@ struct KokoEmailEntryForm: View {
 
     @FocusState private var editing: KokoEmailEntryField?
     @State private var attemptedContinue = false
-    @State private var explainsLocalEntry = false
     @ScaledMetric(relativeTo: .largeTitle) private var headlineSize: CGFloat = 36
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.dynamicTypeSize) private var textSize
@@ -32,10 +31,10 @@ struct KokoEmailEntryForm: View {
                         editing = nil
                         back()
                     } label: {
-                        Text("Back")
-                            .font(.custom("AvenirNext-DemiBold", size: 14, relativeTo: .body))
-                            .foregroundStyle(KokoWelcomePalette.mint)
-                            .frame(minWidth: 44, minHeight: 44, alignment: .leading)
+                        Image("KokoAccountBack")
+                            .resizable().scaledToFit()
+                            .frame(width: 48, height: 48)
+                            .accessibilityHidden(true)
                     }.buttonStyle(KokoPressStyle()).accessibilityLabel("Back to welcome")
 
                     HStack(alignment: .center, spacing: 12) {
@@ -47,19 +46,19 @@ struct KokoEmailEntryForm: View {
                             .layoutPriority(1)
                             .accessibilityAddTraits(.isHeader)
                         if !textSize.isAccessibilitySize {
-                            Image("KokoWelcomeCompany").resizable().scaledToFit()
+                            Image("KokoWelcomeCompanyCutout").resizable().scaledToFit()
                                 .frame(width: 104, height: 104).accessibilityHidden(true)
                         }
                     }.padding(.top, 12).padding(.bottom, 26)
 
                     VStack(spacing: 18) {
-                        entryField(.email, title: "Email", placeholder: "you@example.com",
+                        entryField(.email, title: "Email", placeholder: "Enter your email",
                                    value: $emailAddress, secure: false, contentType: .emailAddress)
-                        entryField(.password, title: "Password", placeholder: "8–128 characters",
+                        entryField(.password, title: "Password", placeholder: registration ? "Create a password" : "Enter your password",
                                    value: $passwordDraft, secure: true,
                                    contentType: registration ? .newPassword : .password)
                         if registration {
-                            entryField(.confirmation, title: "Confirm password", placeholder: "Enter it again",
+                            entryField(.confirmation, title: "Confirm password", placeholder: "Re-enter your password",
                                        value: $repeatedPassword, secure: true, contentType: .newPassword)
                         }
                     }
@@ -81,23 +80,6 @@ struct KokoEmailEntryForm: View {
                             .multilineTextAlignment(.center)
                             .frame(maxWidth: .infinity, minHeight: 48)
                     }.buttonStyle(KokoPressStyle()).padding(.top, 8)
-                    Button {
-                        editing = nil
-                        explainsLocalEntry.toggle()
-                    } label: {
-                        Text(explainsLocalEntry ? "Hide sign-in details" : "How sign-in works")
-                            .font(.custom("AvenirNext-Regular", size: 12, relativeTo: .caption))
-                            .foregroundStyle(KokoWelcomePalette.quiet)
-                            .frame(maxWidth: .infinity, minHeight: 44)
-                    }.buttonStyle(KokoPressStyle())
-                        .accessibilityValue(explainsLocalEntry ? "Expanded" : "Collapsed")
-                    if explainsLocalEntry {
-                        Text("This local preview checks email format and an 8–128 character password. No previous registration or matching password is needed to log in. The same email restores your saved profile on this device.")
-                            .font(.custom("AvenirNext-Regular", size: 12, relativeTo: .caption))
-                            .foregroundStyle(KokoWelcomePalette.quiet)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .padding(.top, 4)
-                    }
                 }
                 .padding(.horizontal, 28).padding(.top, screenInsets.top + 8)
                 .padding(.bottom, editing == nil ? screenInsets.bottom + 24 : 24)

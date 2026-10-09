@@ -28,12 +28,12 @@ struct KokoApplicationRoot: View {
                 if openingApp { KokoLaunchLoading() }
                 else if let journal = community.journal {
                     if !community.hasCurrentPolicyConsent { KokoConsentRenewalGate() }
-                    else if journal.completedProfile && !community.requiresAppleProfileReview { KokoMainShell().id(journal.member.id) }
+                    else if community.hasCompletedAccountEntry { KokoMainShell().id(journal.member.id) }
                     else { KokoProfileEditor(isOnboarding: true) }
                 } else { KokoAccountEntry() }
             }
-            .allowsHitTesting(!showsFeedback)
-            .accessibilityHidden(showsFeedback)
+            .allowsHitTesting(!showsFeedback && !accessJourney.transitioning)
+            .accessibilityHidden(showsFeedback || accessJourney.transitioning)
             if accessJourney.transitioning {
                 KokoAccountLoading().accessibilityHidden(showsFeedback).zIndex(90)
             }
@@ -51,7 +51,7 @@ struct KokoApplicationRoot: View {
                     .id(notice).zIndex(100)
             }
         }.environmentObject(accessJourney)
-            .preferredColorScheme(showsFeedback || accessJourney.showsPolicyReader || (accessJourney.usesDarkWelcomeAppearance && community.journal == nil) ? .dark : .light)
+            .preferredColorScheme(.dark)
             .task {
                 guard openingApp else { return }
                 community.refreshAppleCredentialState()
@@ -80,21 +80,28 @@ struct KokoMainShell: View {
                     }
                 }.environment(\.kokoScreenInsets, EdgeInsets(top: screenInsets.top, leading: screenInsets.leading,
                                                             bottom: 0, trailing: screenInsets.trailing))
-                HStack(spacing: 2) {
+                HStack(spacing: 6) {
                     ForEach(0..<4) { index in
                         Button { navigation.selectedTab = index } label: {
-                            VStack(spacing: 2) {
-                                Artwork(sheet: .navigation, tile: index).frame(width: 27, height: 27)
+                            VStack(spacing: 5) {
+                                Artwork(sheet: .navigation, tile: index, ink: navigation.selectedTab == index ? KokoInk.onMint : KokoInk.secondary).frame(width: 26, height: 26)
                                 Text(["Discover", "Rooms", "Messages", "My space"][index]).font(.custom(navigation.selectedTab == index ? "AvenirNext-Bold" : "AvenirNext-Medium", size: 11))
-                            }.foregroundStyle(KokoInk.primary).frame(maxWidth: .infinity).padding(.vertical, 10)
-                                .background(ArtworkSurface(tile: navigation.selectedTab == index ? 3 : 2))
+                            }.foregroundStyle(navigation.selectedTab == index ? KokoInk.onMint : KokoInk.secondary)
+                                .frame(maxWidth: .infinity, minHeight: 60).contentShape(Rectangle())
+                                .background { if navigation.selectedTab == index { KokoControlSurface(highlighted: true) } }
                         }.buttonStyle(KokoPressStyle()).accessibilityAddTraits(navigation.selectedTab == index ? .isSelected : [])
                     }
-                }.padding(.horizontal, 12).padding(.bottom, screenInsets.bottom + 4).background(ArtworkBackdrop())
+                }.padding(.horizontal, 16).padding(.top, 10).padding(.bottom, screenInsets.bottom + 6).background(ArtworkBackdrop())
             }
         }.background(ArtworkBackdrop())
+            .allowsHitTesting(!community.welcomeGiftNeedsPresentation)
+            .accessibilityHidden(community.welcomeGiftNeedsPresentation)
             .overlay {
-                if let request = community.coinSpendRequest { KokoCoinSpendConfirmation(request: request) }
+                if let request = community.coinSpendRequest {
+                    KokoCoinSpendConfirmation(request: request)
+                        .allowsHitTesting(!community.welcomeGiftNeedsPresentation)
+                        .accessibilityHidden(community.welcomeGiftNeedsPresentation)
+                }
                 if community.welcomeGiftNeedsPresentation { KokoFirstRecordWelcome() }
             }
             .environmentObject(navigation)

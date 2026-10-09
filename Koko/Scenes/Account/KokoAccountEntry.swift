@@ -54,7 +54,7 @@ struct KokoAccountEntry: View {
     private func beginAppleSignIn() {
         guard requireConsent() else { return }
         appleEntry.start { identity, name in
-            journey.enter(caption: "Your space is taking shape.") {
+            journey.enter(caption: "Getting ready…") {
                 _ = community.enterAppleIdentity(identity, fullName: name, consent: agreed)
             }
         } failure: { community.notice = $0 }
@@ -69,7 +69,7 @@ struct KokoAccountEntry: View {
         if registration && repeatedPassword != passwordDraft { community.notice = "Enter the same password in both fields."; return }
         let isRegistration = registration
         let email = emailAddress; let password = passwordDraft
-        journey.enter(caption: isRegistration ? "Making room for you." : "Your company is waiting.") {
+        journey.enter(caption: isRegistration ? "Creating your account…" : "Getting ready…") {
             let success: Bool
             if isRegistration { success = await community.register(email: email, password: password, consent: agreed) }
             else { success = await community.signIn(email: email, password: password, consent: agreed) }

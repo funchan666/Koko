@@ -1,0 +1,7 @@
+{
+  "use_case": "ui-mockup",
+  "asset_type": "Two original selection button skins for Koko profile setup",
+  "composition": "Square transparent atlas. Exactly two horizontal rounded rectangles, same width 84 percent of canvas and height 24 percent. Top centered at 30 percent height, bottom at 70 percent. Broad transparent margins and separation. Straight-on flat view.",
+  "design": "Top skin is an opaque dark forest #203D35 face with one fine sage #709D89 outline. Bottom skin is an opaque pale mint #B9EDCE face with one fine warm ivory edge. Rounded corners equivalent to 16pt in a 160 by 48pt button. Contemporary clean editorial UI, faint matte paper texture only, gentle detail, NO glossy plastic, beveled shapes, shadows or neon. Both center areas fully empty for native label text. Exact same silhouettes for selected and unselected state.",
+  "constraints": "No words, no letters, no symbols, no pictures, no additional shapes. Fill INSIDE both skins completely opaque, even the dark one. Genuine transparent alpha ONLY outside the two buttons. No background panel. Original matching art for dark-green social onboarding."
+}

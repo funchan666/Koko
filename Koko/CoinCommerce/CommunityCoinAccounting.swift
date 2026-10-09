@@ -6,7 +6,7 @@ extension CommunityJournalStore {
     var coinBalance: Int { max(0, journal?.coinBalance ?? 0) }
     var coinAdjustmentDue: Int { max(0, -(journal?.coinBalance ?? 0)) }
     var welcomeGiftNeedsPresentation: Bool {
-        journal?.completedProfile == true && journal?.welcomeGiftGrantedAt != nil && journal?.welcomeGiftAcknowledged != true
+        hasCompletedAccountEntry && journal?.welcomeGiftGrantedAt != nil && journal?.welcomeGiftAcknowledged != true
     }
     var purchaseAccountToken: UUID? {
         guard journal != nil else { return nil }
@@ -34,7 +34,7 @@ extension CommunityJournalStore {
     }
 
     func welcomeOnFirstHomeVisit() {
-        guard journal?.completedProfile == true, prepareCoinWallet(),
+        guard hasCompletedAccountEntry, prepareCoinWallet(),
               journal?.welcomeGiftEligible == true, journal?.welcomeGiftGrantedAt == nil else { return }
         if update({
             $0.coinBalance = ($0.coinBalance ?? 0) + KokoCoinCatalog.firstVisitGift

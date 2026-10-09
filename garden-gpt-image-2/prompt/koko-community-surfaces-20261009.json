@@ -1,0 +1,7 @@
+{
+  "use_case": "ui-mockup",
+  "asset_type": "Two original blank square resizable card skins for Koko UI",
+  "composition": "Square transparent canvas, 2 columns by 1 row. Two identical size softly rounded SQUARE panels centered in left and right half, each occupying 42 percent total canvas width, fully separated. Opaque inside, transparent ONLY outside. No text or icons.",
+  "style": "Refined flat social editorial UI. Left panel opaque forest #1D3831, thin subdued sage #537466 rim. Right panel opaque richer forest #285042, thin mint #85B99D rim. Rounded corners 28px per 400px card. Entire center quiet solid color, very subtle paper finish. No gradients, highlights, shadows, bevel, inset edges or shiny glass. Clear silhouette, no surrounding canvas. Dark centers must stay FULLY OPAQUE, never cut them out.",
+  "constraints": "Two square card skins, no button ellipses, no extra panels or labels. Transparent alpha outside only, no baked background."
+}
