@@ -32,7 +32,15 @@ final class KokoPortraitCapture: NSObject, AVCapturePhotoCaptureDelegate, @unche
         queue.async { [self] in
             guard session.isRunning, delivery == nil else { deliver(nil); return }
             delivery = deliver
-            if let connection = output.connection(with: .video), connection.isVideoOrientationSupported { connection.videoOrientation = .portrait }
+            if let connection = output.connection(with: .video) {
+                if #available(iOS 17.0, *) {
+                    if connection.isVideoRotationAngleSupported(90) {
+                        connection.videoRotationAngle = 90
+                    }
+                } else if connection.isVideoOrientationSupported {
+                    connection.videoOrientation = .portrait
+                }
+            }
             output.capturePhoto(with: AVCapturePhotoSettings(), delegate: self)
         }
     }

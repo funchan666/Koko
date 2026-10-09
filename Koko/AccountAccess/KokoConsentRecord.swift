@@ -50,7 +50,10 @@ enum KokoAccountValidation {
         let name = member.publicName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard (2...40).contains(name.count) else { return "Choose a display name between 2 and 40 characters." }
         guard ["Woman", "Man", "Non-binary", "Prefer not to say"].contains(member.genderLabel) else { return "Choose how you describe yourself, or select Prefer not to say." }
-        guard let country = member.homeCountryCode, Locale.isoRegionCodes.contains(country) else { return "Choose your country or region." }
+        guard let country = member.homeCountryCode,
+              Locale.Region.isoRegions.contains(where: { $0.identifier == country }) else {
+            return "Choose your country or region."
+        }
         guard let birthday = member.birthday else { return "Enter your date of birth." }
         guard (18...99).contains(age(for: birthday)) else { return "Koko is for adults aged 18 and over. Check your date of birth." }
         guard !member.interests.isEmpty else { return "Choose at least one interest so your space feels like you." }

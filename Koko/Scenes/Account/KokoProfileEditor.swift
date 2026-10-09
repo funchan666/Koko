@@ -28,7 +28,7 @@ struct KokoProfileEditor: View {
     private let interestOptions = ["Music", "Conversation", "Creative", "After hours", "Travel", "Films", "Food", "Books"]
     private var countryName: String { Locale(identifier: "en").localizedString(forRegionCode: countryCode) ?? "Choose country or region" }
     private var countryChoices: [String] {
-        Locale.isoRegionCodes.filter { code in
+        Locale.Region.isoRegions.map(\.identifier).filter { code in
             countryQuery.isEmpty || code.localizedCaseInsensitiveContains(countryQuery) || (Locale(identifier: "en").localizedString(forRegionCode: code) ?? code).localizedCaseInsensitiveContains(countryQuery)
         }.sorted { (Locale(identifier: "en").localizedString(forRegionCode: $0) ?? $0) < (Locale(identifier: "en").localizedString(forRegionCode: $1) ?? $1) }
     }
