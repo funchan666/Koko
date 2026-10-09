@@ -5,15 +5,20 @@ enum KokoInk {
     static let primary = KokoWelcomePalette.paper
     static let secondary = KokoWelcomePalette.quiet
     static let accent = KokoWelcomePalette.mint
+    static let coral = Color(red: 0.98, green: 0.48, blue: 0.39)
+    static let peach = Color(red: 1.0, green: 0.76, blue: 0.62)
     static let warning = Color(red: 0.96, green: 0.70, blue: 0.59)
     static let canvas = KokoWelcomePalette.backdrop
+    static let panel = Color(red: 26 / 255, green: 58 / 255, blue: 52 / 255)
+    static let panelRaised = Color(red: 37 / 255, green: 76 / 255, blue: 67 / 255)
+    static let line = Color.white.opacity(0.17)
     static let onMint = KokoWelcomePalette.backdrop
 }
 
 enum ArtworkSheet: String {
-    case navigation = "KokoCommunityNavigation", surfaces = "KokoSurfaces", scenes = "KokoCommunityScenes", collection = "KokoCommunityCollection", arrival = "KokoArrival"
-    var columns: Int { self == .surfaces || self == .scenes || self == .arrival ? 2 : 4 }
-    var rows: Int { self == .surfaces ? 3 : (self == .scenes || self == .arrival ? 2 : 4) }
+    case navigation = "KokoCommunityNavigation", surfaces = "KokoSurfaces", scenes = "KokoCommunityScenes", collection = "KokoCommunityCollection", arrival = "KokoArrival", social = "KokoSocialAtlas", tabs = "KokoTabIcons"
+    var columns: Int { self == .surfaces || self == .scenes || self == .arrival || self == .social || self == .tabs ? 2 : 4 }
+    var rows: Int { self == .surfaces ? 3 : (self == .scenes || self == .arrival || self == .social || self == .tabs ? 2 : 4) }
 }
 
 @MainActor
@@ -82,7 +87,20 @@ struct ArtworkSurface: View {
     var tile = 2
     var body: some View {
         Image(uiImage: OriginalArtwork.panel(highlighted: tile == 3))
-            .resizable(capInsets: EdgeInsets(top: 12, leading: 12, bottom: 12, trailing: 12))
+            .resizable(capInsets: EdgeInsets(top: 18, leading: 18, bottom: 18, trailing: 18))
+            .overlay {
+                LinearGradient(
+                    colors: [KokoInk.accent.opacity(tile == 3 ? 0.12 : 0.035), Color.clear, KokoInk.coral.opacity(tile == 3 ? 0.04 : 0.02)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                    .stroke(tile == 3 ? KokoInk.accent.opacity(0.66) : KokoInk.line, lineWidth: 1)
+            }
+            .shadow(color: Color.black.opacity(0.16), radius: 14, y: 8)
             .accessibilityHidden(true)
     }
 }
@@ -92,13 +110,111 @@ struct KokoControlSurface: View {
     var body: some View {
         Image(uiImage: OriginalArtwork.control(highlighted: highlighted))
             .resizable(capInsets: EdgeInsets(top: 18, leading: 18, bottom: 18, trailing: 18))
+            .overlay {
+                LinearGradient(
+                    colors: highlighted ? [KokoInk.paper.opacity(0.28), KokoInk.accent.opacity(0.72)] : [KokoInk.accent.opacity(0.08), Color.clear, KokoInk.coral.opacity(0.06)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .stroke(highlighted ? KokoInk.paper.opacity(0.82) : KokoInk.line, lineWidth: 1)
+            }
+            .shadow(color: Color.black.opacity(highlighted ? 0.08 : 0.18), radius: 10, y: 5)
             .accessibilityHidden(true)
+    }
+}
+
+struct KokoGradientBackdrop: View {
+    var body: some View {
+        ZStack {
+            LinearGradient(
+                colors: [KokoInk.canvas, Color(red: 11 / 255, green: 32 / 255, blue: 34 / 255), KokoInk.canvas],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            RadialGradient(
+                colors: [KokoInk.coral.opacity(0.12), Color.clear],
+                center: .topTrailing,
+                startRadius: 8,
+                endRadius: 300
+            )
+        }
+        .accessibilityHidden(true)
     }
 }
 
 struct ArtworkBackdrop: View {
     var dark = false
-    var body: some View { KokoInk.canvas.accessibilityHidden(true) }
+    var body: some View {
+        ZStack(alignment: .topTrailing) {
+            KokoGradientBackdrop()
+            Artwork(sheet: .social, tile: dark ? 1 : 3)
+                .frame(width: 220, height: 165)
+                .opacity(dark ? 0.045 : 0.075)
+                .blur(radius: 0.15)
+                .offset(x: 34, y: -18)
+                .accessibilityHidden(true)
+        }.accessibilityHidden(true)
+    }
+}
+
+struct KokoTabIcon: View {
+    let index: Int
+    let selected: Bool
+    var body: some View {
+        Artwork(sheet: .tabs, tile: index)
+            .frame(width: selected ? 34 : 30, height: selected ? 34 : 30)
+            .shadow(color: selected ? KokoInk.coral.opacity(0.22) : Color.clear, radius: 7, y: 3)
+            .accessibilityHidden(true)
+    }
+}
+
+struct KokoTabSelectionSurface: View {
+    var body: some View {
+        RoundedRectangle(cornerRadius: 22, style: .continuous)
+            .fill(
+                LinearGradient(
+                    colors: [KokoInk.accent, KokoInk.peach.opacity(0.92)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+            .overlay {
+                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                    .stroke(KokoInk.paper.opacity(0.88), lineWidth: 1)
+            }
+            .shadow(color: KokoInk.coral.opacity(0.22), radius: 10, y: 5)
+            .accessibilityHidden(true)
+    }
+}
+
+struct KokoSocialTag: View {
+    let title: String
+    var highlighted = false
+    var body: some View {
+        Text(title)
+            .font(.custom("AvenirNext-DemiBold", size: 12, relativeTo: .caption))
+            .foregroundStyle(highlighted ? KokoInk.onMint : KokoInk.primary)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 9)
+            .background {
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: highlighted ? [KokoInk.accent, KokoInk.peach.opacity(0.92)] : [KokoInk.panelRaised, KokoInk.panel],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .stroke(highlighted ? KokoInk.paper.opacity(0.72) : KokoInk.line, lineWidth: 1)
+                    }
+            }
+    }
 }
 
 struct KokoAction: View {
@@ -114,8 +230,8 @@ struct KokoAction: View {
                     .multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
             }
             .foregroundStyle(emphasis ? KokoInk.onMint : KokoInk.primary)
-            .padding(.horizontal, 16).padding(.vertical, 14)
-            .frame(maxWidth: .infinity, minHeight: 50)
+            .padding(.horizontal, 18).padding(.vertical, 14)
+            .frame(maxWidth: .infinity, minHeight: 54)
             .background(KokoControlSurface(highlighted: emphasis))
         }.buttonStyle(KokoPressStyle())
     }
@@ -135,8 +251,8 @@ struct KokoIconAction: View {
     var action: () -> Void
     var body: some View {
         Button(action: action) {
-            Artwork(sheet: .navigation, tile: icon).frame(width: 28, height: 28)
-                .foregroundStyle(KokoInk.accent).frame(width: 46, height: 46)
+            Artwork(sheet: .navigation, tile: icon).frame(width: 27, height: 27)
+                .foregroundStyle(KokoInk.accent).frame(width: 52, height: 52)
                 .background(ArtworkSurface())
         }.buttonStyle(KokoPressStyle()).accessibilityLabel(label)
     }
@@ -146,8 +262,16 @@ struct KokoCard<Content: View>: View {
     var tint = 2
     @ViewBuilder var content: Content
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) { content }.padding(18).frame(maxWidth: .infinity, alignment: .leading)
-            .background(ArtworkSurface(tile: tint))
+        ZStack(alignment: .topTrailing) {
+            VStack(alignment: .leading, spacing: 14) { content }
+                .padding(20)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            Artwork(sheet: .social, tile: tint == 3 ? 1 : (tint == 5 ? 2 : 0))
+                .frame(width: 74, height: 55)
+                .opacity(0.12)
+                .offset(x: -8, y: 8)
+        }
+        .background(ArtworkSurface(tile: tint))
     }
 }
 
@@ -241,6 +365,36 @@ struct KokoPage<Content: View>: View {
     }
 }
 
+struct KokoSocialHero: View {
+    let eyebrow: String
+    let title: String
+    let detail: String
+    var artwork = 0
+    var body: some View {
+        HStack(spacing: 14) {
+            VStack(alignment: .leading, spacing: 7) {
+                Text(eyebrow.uppercased())
+                    .font(.custom("AvenirNext-Bold", size: 10, relativeTo: .caption2))
+                    .tracking(1.5)
+                    .foregroundStyle(KokoInk.coral)
+                Text(title)
+                    .font(.custom("AvenirNext-Bold", size: 23, relativeTo: .title2))
+                    .fixedSize(horizontal: false, vertical: true)
+                Text(detail)
+                    .font(.custom("AvenirNext-Regular", size: 12, relativeTo: .body))
+                    .foregroundStyle(KokoInk.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer(minLength: 0)
+            Artwork(sheet: .social, tile: artwork)
+                .frame(width: 126, height: 92)
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        }
+        .padding(18)
+        .background(ArtworkSurface(tile: 3))
+    }
+}
+
 struct KokoEmpty: View {
     let title: String
     let detail: String
@@ -260,7 +414,12 @@ struct KokoSectionTitle: View {
     var detail: String? = nil
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 12) {
-            Text(title).font(.custom("AvenirNext-Bold", size: 20, relativeTo: .title3))
+            HStack(spacing: 8) {
+                Artwork(sheet: .social, tile: 1)
+                    .frame(width: 21, height: 16)
+                    .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
+                Text(title).font(.custom("AvenirNext-Bold", size: 20, relativeTo: .title3))
+            }
             Spacer(minLength: 0)
             if let detail { Text(detail).font(.custom("AvenirNext-Medium", size: 11, relativeTo: .caption)).foregroundStyle(KokoInk.secondary) }
         }.fixedSize(horizontal: false, vertical: true)
@@ -276,13 +435,17 @@ struct KokoMenuRow: View {
         Button(action: action) {
             HStack(spacing: 12) {
                 Artwork(sheet: .navigation, tile: icon).frame(width: 27, height: 27).foregroundStyle(KokoInk.accent)
+                    .frame(width: 44, height: 44)
+                    .background(KokoInk.panelRaised.opacity(0.72))
+                    .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
+                    .overlay { RoundedRectangle(cornerRadius: 15, style: .continuous).stroke(KokoInk.line, lineWidth: 1) }
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title).font(.custom("AvenirNext-DemiBold", size: 15, relativeTo: .body))
                     if !detail.isEmpty { Text(detail).font(.custom("AvenirNext-Regular", size: 12, relativeTo: .caption)).foregroundStyle(KokoInk.secondary).lineLimit(2) }
                 }.fixedSize(horizontal: false, vertical: true)
                 Spacer(minLength: 4)
-                Artwork(sheet: .navigation, tile: 5).rotationEffect(.degrees(180)).frame(width: 17, height: 17).foregroundStyle(KokoInk.accent)
-            }.foregroundStyle(KokoInk.primary).padding(16).frame(maxWidth: .infinity, minHeight: 64, alignment: .leading).background(ArtworkSurface())
+                Artwork(sheet: .navigation, tile: 5).rotationEffect(.degrees(180)).frame(width: 17, height: 17).foregroundStyle(KokoInk.coral)
+            }.foregroundStyle(KokoInk.primary).padding(14).frame(maxWidth: .infinity, minHeight: 72, alignment: .leading).background(ArtworkSurface())
         }.buttonStyle(KokoPressStyle())
     }
 }

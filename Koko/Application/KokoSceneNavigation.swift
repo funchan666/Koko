@@ -83,15 +83,29 @@ struct KokoMainShell: View {
                 HStack(spacing: 6) {
                     ForEach(0..<4) { index in
                         Button { navigation.selectedTab = index } label: {
-                            VStack(spacing: 5) {
-                                Artwork(sheet: .navigation, tile: index, ink: navigation.selectedTab == index ? KokoInk.onMint : KokoInk.secondary).frame(width: 26, height: 26)
-                                Text(["Live", "Rooms", "Messages", "My space"][index]).font(.custom(navigation.selectedTab == index ? "AvenirNext-Bold" : "AvenirNext-Medium", size: 11))
-                            }.foregroundStyle(navigation.selectedTab == index ? KokoInk.onMint : KokoInk.secondary)
-                                .frame(maxWidth: .infinity, minHeight: 60).contentShape(Rectangle())
-                                .background { if navigation.selectedTab == index { KokoControlSurface(highlighted: true) } }
-                        }.buttonStyle(KokoPressStyle()).accessibilityAddTraits(navigation.selectedTab == index ? .isSelected : [])
+                            KokoTabIcon(index: index, selected: navigation.selectedTab == index)
+                                .frame(maxWidth: .infinity, minHeight: 58)
+                                .contentShape(Rectangle())
+                                .background { if navigation.selectedTab == index { KokoTabSelectionSurface() } }
+                        }
+                        .buttonStyle(KokoPressStyle())
+                        .accessibilityLabel(["Discover live rooms", "Browse voice rooms", "Open messages", "Open my space"][index])
+                        .accessibilityAddTraits(navigation.selectedTab == index ? .isSelected : [])
                     }
-                }.padding(.horizontal, 16).padding(.top, 10).padding(.bottom, screenInsets.bottom + 6).background(ArtworkBackdrop())
+                }
+                .padding(.horizontal, 16).padding(.top, 10).padding(.bottom, screenInsets.bottom + 6)
+                .background {
+                    LinearGradient(
+                        colors: [Color(red: 11 / 255, green: 34 / 255, blue: 35 / 255), KokoInk.canvas, Color(red: 20 / 255, green: 52 / 255, blue: 47 / 255)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                    Artwork(sheet: .social, tile: 0)
+                        .frame(width: 120, height: 84)
+                        .opacity(0.06)
+                        .offset(x: -8, y: 12)
+                        .accessibilityHidden(true)
+                }
             }
         }.background(ArtworkBackdrop())
             .overlay {

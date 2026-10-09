@@ -23,6 +23,12 @@ struct KokoDiscoverView: View {
     var body: some View {
         ZStack {
             KokoPage {
+                KokoSocialHero(
+                    eyebrow: "Live together",
+                    title: "Find your kind of room",
+                    detail: "Join a live conversation, meet the host, and make a little space for yourself.",
+                    artwork: 2
+                )
                 HStack(spacing: 10) {
                     KokoSearchField(prompt: "Search live rooms", query: $roomSearch)
                     KokoIconAction(icon: 0, label: "Create a live room") { navigation.open(.createRoom(true)) }

@@ -20,6 +20,12 @@ struct KokoRoomDirectory: View {
     var body: some View {
         ZStack {
             KokoPage {
+                KokoSocialHero(
+                    eyebrow: "Room for a hello",
+                    title: "Pull up a chair",
+                    detail: "Small voice rooms for real conversations and easy first hellos.",
+                    artwork: 0
+                )
                 HStack(spacing: 10) {
                     KokoSearchField(prompt: "Search voice rooms", query: $search)
                     KokoIconAction(icon: 7, label: "Create a voice room") { navigation.open(.createRoom(false)) }

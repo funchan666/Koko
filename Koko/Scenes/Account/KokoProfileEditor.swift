@@ -34,7 +34,15 @@ struct KokoProfileEditor: View {
     }
     var body: some View {
         ZStack {
-            KokoWelcomePalette.backdrop
+            ZStack(alignment: .topTrailing) {
+                KokoGradientBackdrop()
+                Image("KokoSocialAtlas")
+                    .resizable().scaledToFit()
+                    .frame(width: 250, height: 188)
+                    .opacity(0.07)
+                    .offset(x: 94, y: -14)
+                    .accessibilityHidden(true)
+            }
             ScrollViewReader { scroll in
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 24) {
@@ -338,6 +346,11 @@ private struct KokoProfileChoiceSurface: View {
     var body: some View {
         Image(uiImage: KokoProfileSelectionArtwork.skin(selected: selected))
             .resizable(capInsets: EdgeInsets(top: 18, leading: 18, bottom: 18, trailing: 18), resizingMode: .stretch)
+            .overlay {
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .stroke(selected ? KokoWelcomePalette.mint.opacity(0.85) : Color.white.opacity(0.16), lineWidth: 1)
+            }
+            .shadow(color: Color.black.opacity(0.16), radius: 10, y: 5)
             .accessibilityHidden(true)
     }
 }

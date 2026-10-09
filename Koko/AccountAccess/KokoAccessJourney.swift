@@ -29,7 +29,13 @@ final class KokoAccessJourney: ObservableObject {
 struct KokoLaunchLoading: View {
     var body: some View {
         ZStack {
-            KokoWelcomePalette.backdrop
+            KokoGradientBackdrop()
+            Image("KokoSocialAtlas")
+                .resizable().scaledToFit()
+                .frame(width: 280, height: 210)
+                .opacity(0.09)
+                .offset(x: 90, y: -120)
+                .accessibilityHidden(true)
             KokoBrandLoading(caption: "Tuning in")
         }.foregroundStyle(KokoInk.primary)
     }
@@ -42,7 +48,13 @@ struct KokoAccountLoading: View {
 
     var body: some View {
         ZStack {
-            KokoWelcomePalette.backdrop
+            KokoGradientBackdrop()
+            Image("KokoSocialAtlas")
+                .resizable().scaledToFit()
+                .frame(width: 280, height: 210)
+                .opacity(0.08)
+                .offset(x: 92, y: -120)
+                .accessibilityHidden(true)
             GeometryReader { viewport in
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 22) {

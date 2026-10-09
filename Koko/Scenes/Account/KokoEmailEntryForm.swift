@@ -105,7 +105,15 @@ struct KokoEmailEntryForm: View {
                 }.padding(.horizontal, 20).background(KokoWelcomePalette.backdrop)
             }
         }
-        .background(KokoWelcomePalette.backdrop.ignoresSafeArea())
+        .background {
+            KokoGradientBackdrop().ignoresSafeArea()
+            Image("KokoSocialAtlas")
+                .resizable().scaledToFit()
+                .frame(width: 220, height: 165)
+                .opacity(0.06)
+                .offset(x: 102, y: -20)
+                .accessibilityHidden(true)
+        }
         .foregroundStyle(KokoWelcomePalette.paper)
         .onDisappear { editing = nil }
     }
@@ -205,6 +213,10 @@ private struct KokoEmailFormField: View {
             .padding(.horizontal, 16).frame(minHeight: 56)
             .background {
                 Image("KokoAccountField").resizable().accessibilityHidden(true)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                            .stroke(KokoInk.line, lineWidth: 1)
+                    }
             }
             if let issue {
                 Text(issue)

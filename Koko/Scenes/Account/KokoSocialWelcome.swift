@@ -93,7 +93,15 @@ struct KokoSocialWelcome: View {
                     .frame(maxWidth: 500)
                     .frame(minHeight: geometry.size.height, alignment: .center)
                     .frame(maxWidth: .infinity)
-            }.background(KokoWelcomePalette.backdrop)
+            }.background {
+                KokoGradientBackdrop()
+                Image("KokoSocialAtlas")
+                    .resizable().scaledToFit()
+                    .frame(width: 260, height: 196)
+                    .opacity(0.08)
+                    .offset(x: 88, y: -18)
+                    .accessibilityHidden(true)
+            }
         }.foregroundStyle(KokoWelcomePalette.paper)
     }
 
