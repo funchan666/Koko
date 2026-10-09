@@ -27,22 +27,17 @@ final class KokoAccessJourney: ObservableObject {
 }
 
 struct KokoLaunchLoading: View {
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var turning = false
     var body: some View {
         ZStack {
             KokoWelcomePalette.backdrop
             KokoBrandLoading(caption: "Tuning in")
         }.foregroundStyle(KokoInk.primary)
-        .onAppear { if !reduceMotion { withAnimation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true)) { turning = true } } }
     }
 }
 
 struct KokoAccountLoading: View {
     @EnvironmentObject private var journey: KokoAccessJourney
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.kokoScreenInsets) private var screenInsets
-    @State private var gentlyFloating = false
     @AccessibilityFocusState private var loadingFocused: Bool
 
     var body: some View {
@@ -65,9 +60,7 @@ struct KokoAccountLoading: View {
         .accessibilityAddTraits(.isModal)
         .accessibilityFocused($loadingFocused)
         .onAppear {
-            gentlyFloating = !reduceMotion
             loadingFocused = true
         }
-        .onChange(of: reduceMotion) { reduced in gentlyFloating = !reduced }
     }
 }

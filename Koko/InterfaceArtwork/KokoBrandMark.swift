@@ -4,7 +4,7 @@ import SwiftUI
 struct KokoBrandMark: View {
     var size: CGFloat = 148
     var body: some View {
-        Image("KokoAppIcon")
+        Image("KokoBrandMark")
             .resizable()
             .scaledToFit()
             .frame(width: size, height: size)
