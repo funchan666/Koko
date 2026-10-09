@@ -7,7 +7,7 @@ struct KokoApp: App {
     @Environment(\.scenePhase) private var scenePhase
     var body: some Scene {
         WindowGroup {
-            KokoApplicationRoot()
+            KokoScreenCanvas { KokoApplicationRoot() }
                 .environmentObject(community)
                 .environmentObject(coinPurchases)
                 .task {
@@ -24,7 +24,6 @@ struct KokoApp: App {
                 .font(.custom("AvenirNext-Regular", size: 16, relativeTo: .body))
                 .foregroundStyle(KokoInk.primary)
                 .tint(KokoInk.accent)
-                .preferredColorScheme(.light)
         }
     }
 }

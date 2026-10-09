@@ -74,13 +74,7 @@ final class CommunityJournalStore: ObservableObject {
         if let issue = KokoAccountValidation.emailIssue(email) ?? KokoAccountValidation.passwordIssue(password) { notice = issue; return false }
         let key = KokoLocalCredentials.identityKey("email:" + KokoAccountValidation.normalizedEmail(email))
         do {
-            guard let verifier = try KokoLocalCredentials.verifier(for: key) else {
-                let existed = fileManager.fileExists(atPath: try journalURL(key).path)
-                notice = existed ? "This earlier preview profile has no password yet. Choose Sign up with this email to set one and keep your saved data." : "No account with this email is saved on this device. Choose Sign up to create one."
-                return false
-            }
-            let matches = try await Task.detached(priority: .userInitiated) { try KokoLocalCredentials.matches(password: password, verifier: verifier) }.value
-            guard matches else { notice = "The email and password do not match. Please try again."; return false }
+            // Local preview entry: validate format only; the email selects the saved space.
             var restored = try readSavedJournal(key) ?? newJournal(identity: key)
             restored.accountCredentialKind = "email"
             restored.policyConsent = KokoPolicyConsent()
@@ -93,19 +87,14 @@ final class CommunityJournalStore: ObservableObject {
         guard consent else { notice = "Please agree to both policies first."; return false }
         if let issue = KokoAccountValidation.emailIssue(email) ?? KokoAccountValidation.passwordIssue(password) { notice = issue; return false }
         let key = KokoLocalCredentials.identityKey("email:" + KokoAccountValidation.normalizedEmail(email))
-        var createdVerifier = false
         do {
-            guard try KokoLocalCredentials.verifier(for: key) == nil else { notice = "This account already exists on this device. Choose Log in instead."; return false }
             var draft = try readSavedJournal(key) ?? newJournal(identity: key)
-            guard draft.accountCredentialKind == nil else { notice = "This account already exists. Sign in to continue."; return false }
-            let verifier = try await Task.detached(priority: .userInitiated) { try KokoLocalCredentials.makeVerifier(password: password) }.value
-            try KokoLocalCredentials.save(verifier, identity: key); createdVerifier = true
+            guard draft.accountCredentialKind == nil else { notice = "This account already exists on this device. Choose Log in with this email and any password of 8–128 characters."; return false }
             draft.accountCredentialKind = "email"; draft.policyConsent = KokoPolicyConsent(); draft.completedProfile = false
             try activate(draft, identity: key)
             return true
         } catch {
-            if createdVerifier { try? KokoLocalCredentials.remove(identity: key) }
-            notice = "Your account could not be saved securely. Please try again."; return false
+            notice = "Your local profile could not be saved. Your existing data has been kept. Please try again."; return false
         }
     }
 

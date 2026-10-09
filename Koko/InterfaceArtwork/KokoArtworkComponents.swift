@@ -146,6 +146,7 @@ struct LocalPreviewNote: View {
 }
 
 struct KokoPage<Content: View>: View {
+    @Environment(\.kokoScreenInsets) private var screenInsets
     let title: String
     var subtitle: String? = nil
     var back: (() -> Void)? = nil
@@ -159,10 +160,10 @@ struct KokoPage<Content: View>: View {
                     if let subtitle { Text(subtitle).font(.custom("AvenirNext-Regular", size: 13)).foregroundStyle(KokoInk.secondary) }
                 }
                 Spacer(minLength: 0)
-            }.padding(.horizontal, 22).padding(.top, 10).padding(.bottom, 12)
+            }.padding(.horizontal, 22).padding(.top, screenInsets.top + 10).padding(.bottom, 12)
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) { content }
-                    .frame(maxWidth: 680).frame(maxWidth: .infinity).padding(.horizontal, 22).padding(.top, 6).padding(.bottom, 28)
+                    .frame(maxWidth: 680).frame(maxWidth: .infinity).padding(.horizontal, 22).padding(.top, 6).padding(.bottom, screenInsets.bottom + 28)
             }.scrollDismissesKeyboard(.interactively)
         }.background(ArtworkBackdrop())
     }
@@ -216,6 +217,7 @@ struct KokoToggleRow: View {
 }
 
 struct KokoModal<Content: View>: View {
+    @Environment(\.kokoScreenInsets) private var screenInsets
     let title: String
     var dismiss: () -> Void
     @ViewBuilder var content: Content
@@ -228,6 +230,7 @@ struct KokoModal<Content: View>: View {
                     content
                 }.padding(24).background(ArtworkSurface()).padding(22).frame(maxWidth: 580)
                     .frame(maxWidth: .infinity)
+                    .padding(.top, screenInsets.top).padding(.bottom, screenInsets.bottom)
             }.defaultScrollAnchorCompat()
         }.accessibilityElement(children: .contain)
     }

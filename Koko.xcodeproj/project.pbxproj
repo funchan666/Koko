@@ -18,6 +18,8 @@
 		1A2255A01462D5C08ABE861D /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4A7CFC9670699A99E3ACE93 /* AVFoundation.framework */; };
 		1ACF5C0757796CCA7F82CACB /* KokoAccessJourney.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32616A68685757D2BCD58505 /* KokoAccessJourney.swift */; };
 		1F4DD7F1A195BA2521764B61 /* KokoProfileEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A39787CDA7EFF7411C02669F /* KokoProfileEditor.swift */; };
+		29CBECEC0E222F184105E6ED /* KokoEmailEntryForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05609B9F9819CE3952BF09B2 /* KokoEmailEntryForm.swift */; };
+		3642C4593F2E2F5AF7C29330 /* KokoScreenCanvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EC9C1CC9438C1D1DAD45D6B /* KokoScreenCanvas.swift */; };
 		36573FB2C2D6581055971FBF /* PhotosUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D454D625C74ABE63049C69C /* PhotosUI.framework */; };
 		4C89F7AFADFDF97D3AE61820 /* KokoRoomDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110D413DD48909FA5FECBE90 /* KokoRoomDirectory.swift */; };
 		4ED2392074884F4B5F1279F7 /* KokoListeningRoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3EF066A304C24687CADA95D /* KokoListeningRoomView.swift */; };
@@ -37,6 +39,9 @@
 		91C2FDAFD4035BCF72C72F05 /* KokoPortraitFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24505E9F690E9BAFABC54096 /* KokoPortraitFiles.swift */; };
 		923955022F505EE264CB87D2 /* CommunityMedia in Resources */ = {isa = PBXBuildFile; fileRef = 4665480F255BE83161A2F512 /* CommunityMedia */; };
 		9559E50B14949FA885B79418 /* KokoDiscoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F2257407BDE96504412809 /* KokoDiscoverView.swift */; };
+		9D962CFBEE1F0B39CF252B2C /* KokoPolicyReadingStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D1E68730FEF5C8FFE9FD86C /* KokoPolicyReadingStyle.swift */; };
+		A175DBBB4BBF9481EB6C2B55 /* KokoSocialWelcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8799FDF897FA05A14EEDD2F7 /* KokoSocialWelcome.swift */; };
+		A1C791AC78ACB77E6067614E /* KokoNoticePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E247A52D29AC403CEEC4DE9 /* KokoNoticePanel.swift */; };
 		A5ADC1F099FEDAFA9F92085B /* KokoContentPhotography.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B8AC6B080F79FE5B98F937 /* KokoContentPhotography.swift */; };
 		AEF9636DD8110BB0F6705312 /* KokoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBC5077BC65DD61A1EE60C30 /* KokoApp.swift */; };
 		B14C5F79C348D9C8FF9FF0E5 /* KokoLocalCamera.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC15C7E32E9963AB871A5EB0 /* KokoLocalCamera.swift */; };
@@ -53,12 +58,15 @@
 
 /* Begin PBXFileReference section */
 		00428AC0B50887EAF3A0D331 /* KokoMomentDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoMomentDetail.swift; sourceTree = "<group>"; };
+		05609B9F9819CE3952BF09B2 /* KokoEmailEntryForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoEmailEntryForm.swift; sourceTree = "<group>"; };
 		0A54D05072A835A505EC9A41 /* KokoConsentRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoConsentRecord.swift; sourceTree = "<group>"; };
+		0E247A52D29AC403CEEC4DE9 /* KokoNoticePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoNoticePanel.swift; sourceTree = "<group>"; };
 		0FD4ADBC96DB97A716CD92B6 /* CommunityCoinAccounting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityCoinAccounting.swift; sourceTree = "<group>"; };
 		104893631BF045EB1A49E30A /* KokoAppleCoinPurchases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoAppleCoinPurchases.swift; sourceTree = "<group>"; };
 		110D413DD48909FA5FECBE90 /* KokoRoomDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoRoomDirectory.swift; sourceTree = "<group>"; };
 		1454FDA6FCE54129F3A45618 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		1C8032D00DF57EC520AB5DFC /* KokoWalletAndKeepsakes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoWalletAndKeepsakes.swift; sourceTree = "<group>"; };
+		1EC9C1CC9438C1D1DAD45D6B /* KokoScreenCanvas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoScreenCanvas.swift; sourceTree = "<group>"; };
 		24505E9F690E9BAFABC54096 /* KokoPortraitFiles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoPortraitFiles.swift; sourceTree = "<group>"; };
 		32616A68685757D2BCD58505 /* KokoAccessJourney.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoAccessJourney.swift; sourceTree = "<group>"; };
 		33B2AC1946F9E745B99229EB /* KokoPersonalSpace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoPersonalSpace.swift; sourceTree = "<group>"; };
@@ -68,10 +76,12 @@
 		470CCCEA13580CB0C5F74365 /* Koko.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Koko.entitlements; sourceTree = "<group>"; };
 		4B23C59ECFFEF181F764C6E4 /* videos */ = {isa = PBXFileReference; lastKnownFileType = folder; path = videos; sourceTree = SOURCE_ROOT; };
 		4B29F251639E2D3DF632E175 /* CommunityJournalStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityJournalStore.swift; sourceTree = "<group>"; };
+		4D1E68730FEF5C8FFE9FD86C /* KokoPolicyReadingStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoPolicyReadingStyle.swift; sourceTree = "<group>"; };
 		5D99C79A67A9F206EB53F95C /* KokoSceneNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoSceneNavigation.swift; sourceTree = "<group>"; };
 		5EDF54A40A17DA06C658B5B1 /* ListeningCommunity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListeningCommunity.swift; sourceTree = "<group>"; };
 		68F2257407BDE96504412809 /* KokoDiscoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoDiscoverView.swift; sourceTree = "<group>"; };
 		7009F39B1514A0F3CA64B225 /* KokoPrivateCallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoPrivateCallView.swift; sourceTree = "<group>"; };
+		8799FDF897FA05A14EEDD2F7 /* KokoSocialWelcome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoSocialWelcome.swift; sourceTree = "<group>"; };
 		87E6B102D163EBAD5E38840C /* KokoSettingsAndSafety.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoSettingsAndSafety.swift; sourceTree = "<group>"; };
 		9C1A509F4842A0B294BCF7B1 /* CommunityMediaCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityMediaCatalog.swift; sourceTree = "<group>"; };
 		9D454D625C74ABE63049C69C /* PhotosUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PhotosUI.framework; path = System/Library/Frameworks/PhotosUI.framework; sourceTree = SDKROOT; };
@@ -132,6 +142,7 @@
 			children = (
 				CBC5077BC65DD61A1EE60C30 /* KokoApp.swift */,
 				5D99C79A67A9F206EB53F95C /* KokoSceneNavigation.swift */,
+				1EC9C1CC9438C1D1DAD45D6B /* KokoScreenCanvas.swift */,
 			);
 			path = Application;
 			sourceTree = "<group>";
@@ -212,6 +223,7 @@
 				0A54D05072A835A505EC9A41 /* KokoConsentRecord.swift */,
 				F14DD0701426D1CAEC216DB6 /* KokoLegalWebReader.swift */,
 				B68EFF99805E034F436AC1AF /* KokoLocalCredentials.swift */,
+				4D1E68730FEF5C8FFE9FD86C /* KokoPolicyReadingStyle.swift */,
 				D493E3F30B0CDF83EC22BD74 /* KokoPortraitCamera.swift */,
 				24505E9F690E9BAFABC54096 /* KokoPortraitFiles.swift */,
 			);
@@ -289,7 +301,9 @@
 			isa = PBXGroup;
 			children = (
 				C79E50DB2512082521AF0B22 /* KokoAccountEntry.swift */,
+				05609B9F9819CE3952BF09B2 /* KokoEmailEntryForm.swift */,
 				A39787CDA7EFF7411C02669F /* KokoProfileEditor.swift */,
+				8799FDF897FA05A14EEDD2F7 /* KokoSocialWelcome.swift */,
 			);
 			path = Account;
 			sourceTree = "<group>";
@@ -299,6 +313,7 @@
 			children = (
 				FB801E150A7951D53A014273 /* KokoArtworkComponents.swift */,
 				A4B8AC6B080F79FE5B98F937 /* KokoContentPhotography.swift */,
+				0E247A52D29AC403CEEC4DE9 /* KokoNoticePanel.swift */,
 			);
 			path = InterfaceArtwork;
 			sourceTree = "<group>";
@@ -401,12 +416,15 @@
 				D2AD4CFDDBA33EB7AEE262B0 /* KokoConversationAudio.swift in Sources */,
 				00E6661C162602C839BB584F /* KokoConversationsView.swift in Sources */,
 				9559E50B14949FA885B79418 /* KokoDiscoverView.swift in Sources */,
+				29CBECEC0E222F184105E6ED /* KokoEmailEntryForm.swift in Sources */,
 				850A813F773962B3E0408CD6 /* KokoLegalWebReader.swift in Sources */,
 				4ED2392074884F4B5F1279F7 /* KokoListeningRoomView.swift in Sources */,
 				B14C5F79C348D9C8FF9FF0E5 /* KokoLocalCamera.swift in Sources */,
 				62DB7B6C0EF71310A758CFB5 /* KokoLocalCredentials.swift in Sources */,
 				1810BF41A6C23430877B25F2 /* KokoMomentDetail.swift in Sources */,
+				A1C791AC78ACB77E6067614E /* KokoNoticePanel.swift in Sources */,
 				0C97C14B6EA09021BBCE20DF /* KokoPersonalSpace.swift in Sources */,
+				9D962CFBEE1F0B39CF252B2C /* KokoPolicyReadingStyle.swift in Sources */,
 				B5C72A1F0C67B13447A00F53 /* KokoPortraitCamera.swift in Sources */,
 				91C2FDAFD4035BCF72C72F05 /* KokoPortraitFiles.swift in Sources */,
 				651CF805DF7AF6352D711583 /* KokoPrivateCallView.swift in Sources */,
@@ -414,7 +432,9 @@
 				81D32F4A375D7C96AFD2AD88 /* KokoRoomConnectionView.swift in Sources */,
 				4C89F7AFADFDF97D3AE61820 /* KokoRoomDirectory.swift in Sources */,
 				541C2E810749B8027BC12257 /* KokoSceneNavigation.swift in Sources */,
+				3642C4593F2E2F5AF7C29330 /* KokoScreenCanvas.swift in Sources */,
 				16FB46A2A4F3411EF2DF833F /* KokoSettingsAndSafety.swift in Sources */,
+				A175DBBB4BBF9481EB6C2B55 /* KokoSocialWelcome.swift in Sources */,
 				EAC16E867169C98B9A968EDB /* KokoWalletAndKeepsakes.swift in Sources */,
 				7A356EBC0E6E3856A5910F7F /* ListeningCommunity.swift in Sources */,
 			);

@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct KokoFirstRecordWelcome: View {
+    @Environment(\.kokoScreenInsets) private var screenInsets
     @EnvironmentObject private var community: CommunityJournalStore
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var arrived = false
@@ -28,6 +29,7 @@ struct KokoFirstRecordWelcome: View {
                     KokoAction(title: "Find my people", icon: 1) { community.acknowledgeWelcomeGift() }
                     Text("Your conversations are always free.").font(.custom("AvenirNext-Medium", size: 12)).foregroundStyle(KokoInk.secondary)
                 }.padding(26).background(ArtworkSurface()).frame(maxWidth: 480).padding(22).frame(maxWidth: .infinity)
+                    .padding(.top, screenInsets.top).padding(.bottom, screenInsets.bottom)
             }
         }.onAppear {
             if reduceMotion { arrived = true }

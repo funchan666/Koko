@@ -34,7 +34,12 @@ enum KokoAccountValidation {
     static func emailIssue(_ email: String) -> String? {
         let address = normalizedEmail(email)
         guard !address.isEmpty else { return "Enter your email address first." }
-        guard address.count <= 254, address.range(of: #"^[A-Z0-9._%+\-]+@[A-Z0-9.\-]+\.[A-Z]{2,}$"#, options: .caseInsensitive) != nil else { return "Enter a complete email address, such as name@example.com." }
+        // The pattern must be interpreted as a regex, not searched as literal text.
+        let emailPattern = #"^[A-Z0-9._%+\-]+@[A-Z0-9.\-]+\.[A-Z]{2,}$"#
+        guard address.count <= 254,
+              address.range(of: emailPattern, options: [.regularExpression, .caseInsensitive]) != nil else {
+            return "Enter a complete email address, such as name@example.com."
+        }
         return nil
     }
     static func passwordIssue(_ password: String) -> String? {

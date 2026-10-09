@@ -1,0 +1,33 @@
+{
+  "type": "Original social app welcome editorial artwork",
+  "goal": "Create a refined original raster hero for Koko native iOS welcome screen. This is artwork only, not a phone mockup, no interface, no text.",
+  "aspect_ratio": "1:1 square",
+  "visual_tone": {
+    "aesthetic": "Contemporary independent magazine campaign, tactile candid portrait photography with art-directed cut-paper composition. Friendly adult social connection, confident and understated.",
+    "color_palette": "deep forest ink #132A26, pale mint #B9EDCE, warm cream, tiny butter yellow accent",
+    "lighting": "natural late-afternoon window light, realistic skin texture"
+  },
+  "centerpiece": {
+    "description": "Two large overlapping elongated photographic windows with very rounded arch ends, subtly rotated in opposite directions. Left window starts near x=3%, y=5%, occupies 58% width and 77% height: an original fictional adult woman aged 28 with short wavy dark hair and a cream t-shirt, close-up candid laughing toward camera, relaxed genuine expression. Right window x=58%, y=12%, width 46%, height 61%: original fictional adult man aged 29 in sage shirt and headphones, smiling in a cozy sunlit room, like a friendly video conversation. A smaller cream-bordered oval portrait cameo of a fictional adult Black woman aged 27 in mint shirt overlaps at x=69%,y=63%, width 23%, friendly face only. Strong change of scale, portrait compositions close and intimate. Photographs have softly rounded arch ends, no rectangular card grid.",
+    "decoration": "A single delicate mint hand-drawn continuous looping stroke woven behind the portraits, and one tiny butter-yellow abstract four-point sparkle near upper right. Original artwork only; no stock icons, no speech bubble, no emoji."
+  },
+  "layout": {
+    "safe_area": "All faces entirely within upper 73% and at least 8% from outer image edges. Lower 20% contains only deep forest ink fading very subtly from the photographic shadows, absolutely no objects; this empty area is for native text. Top and bottom outer edges pure uniform #132A26, sides mostly same. No thick outer margin: portraits large, almost edge to edge.",
+    "text": "NONE. Do not render letters, words, logo, labels, numbers, status indicators, controls or buttons."
+  },
+  "constraints": {
+    "avoid": [
+      "phone frame",
+      "app screenshot",
+      "generic bento grid",
+      "fake live badges",
+      "plastic CGI faces",
+      "heavy bloom",
+      "neon gradients",
+      "thick drop shadows",
+      "huge empty margins",
+      "flowers",
+      "third-party brands"
+    ]
+  }
+}

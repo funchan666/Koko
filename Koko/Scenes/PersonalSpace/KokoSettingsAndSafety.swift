@@ -25,7 +25,7 @@ struct KokoSettingsView: View {
             if let confirmation {
                 KokoModal(title: confirmation, dismiss: { self.confirmation = nil }) {
                     let deleting = confirmation == "Delete your local profile?"
-                    Text(deleting ? "This permanently removes this account's local profile, messages, album, rooms, remaining coins (including purchased coins), purchase records and keepsakes. Completed consumable purchases cannot restore this deleted balance. Other local accounts are kept." : "Your local data stays here. Use your registered email and password, or the same Apple account, to return.")
+                    Text(deleting ? "This permanently removes this account's local profile, messages, album, rooms, remaining coins (including purchased coins), purchase records and keepsakes. Completed consumable purchases cannot restore this deleted balance. Other local accounts are kept." : "Your local data stays here. Use the same email with any password of 8–128 characters, or the same Apple account, to return.")
                     KokoAction(title: deleting ? "Delete this local profile" : "Continue") {
                         if deleting { community.deleteLocalAccount() } else { community.signOut() }
                     }
@@ -72,9 +72,9 @@ struct KokoPreferencesView: View {
                     KokoAction(title: "Clear local conversations", emphasis: false) { clearingMessages = true }
                 } else if kind == "Account" {
                     Text(community.currentMember?.publicName ?? "Your profile").font(.custom("AvenirNext-Bold", size: 27))
-                    Text("Email accounts use the password registered on this device. A salted password verifier is kept in the device Keychain. Mailbox verification and cross-device account access are not connected yet.")
+                    Text("Email entry checks a valid email format and an 8–128 character password only. The email selects your local profile. It does not check a saved password or verify mailbox ownership.")
                     Text("Apple sign-in, when configured, uses genuine Apple authorization. Koko interactions remain local in this build.")
-                    KokoAction(title: "Password help", emphasis: false) { community.notice = "Use the password registered on this device. Email password recovery is not connected yet. An older preview profile without a password can set its first one through Sign up with the same email." }
+                    KokoAction(title: "Password help", emphasis: false) { community.notice = "Use the same email and any password of 8–128 characters. No password matching or reset is needed for this local preview." }
                 } else {
                     Artwork(sheet: .scenes, tile: 3).frame(height: 240)
                     Text("koko").font(.custom("AvenirNext-Bold", size: 40))

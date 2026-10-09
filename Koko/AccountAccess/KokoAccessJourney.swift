@@ -2,6 +2,8 @@ import SwiftUI
 
 @MainActor
 final class KokoAccessJourney: ObservableObject {
+    @Published var usesDarkWelcomeAppearance = false
+    @Published var showsPolicyReader = false
     @Published private(set) var transitioning = false
     @Published private(set) var transitionCaption = "Preparing your space"
     @Published private(set) var progress = 0
@@ -61,26 +63,5 @@ struct KokoAccountLoading: View {
                 }.accessibilityHidden(true)
             }.padding(26).background(ArtworkSurface()).frame(maxWidth: 460).padding(22)
         }.accessibilityElement(children: .combine).accessibilityAddTraits(.isModal)
-    }
-}
-
-struct KokoFirstVisitGuide: View {
-    let finished: () -> Void
-    @State private var page = 0
-    private let titles = ["Find your\nfrequency.", "Good stories\nneed company.", "A little space\nthat's yours."]
-    private let descriptions = ["Drop into a listening room. A familiar song can start a new conversation.", "Share a moment, swap a story, and meet people at your own pace. Conversation is always free.", "Bring your interests and make yourself at home. Choose the little details that feel like you."]
-    var body: some View {
-        KokoPage(title: "koko", subtitle: "GOOD COMPANY, AT YOUR PACE", back: page > 0 ? { page -= 1 } : nil) {
-            Artwork(sheet: .arrival, tile: page).frame(height: 300)
-            HStack {
-                ForEach(0..<3) { index in
-                    Text(String(format: "%02d", index + 1)).font(.custom("AvenirNext-DemiBold", size: 12))
-                        .frame(width: 44, height: 36).background(ArtworkSurface(tile: index == page ? 3 : 2))
-                }
-            }.accessibilityLabel("Introduction page \(page + 1) of 3")
-            Text(titles[page]).font(.custom("AvenirNext-Bold", size: 36)).lineSpacing(-2)
-            Text(descriptions[page]).font(.custom("AvenirNext-Regular", size: 16)).foregroundStyle(KokoInk.secondary)
-            KokoAction(title: page == 2 ? "Make myself at home" : "Next", icon: 12) { if page == 2 { finished() } else { page += 1 } }
-        }
     }
 }

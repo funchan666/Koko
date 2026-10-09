@@ -18,43 +18,46 @@ struct KokoAccountEntry: View {
     private var registration: Bool { destination == "Sign up" }
     var body: some View {
         ZStack {
-            KokoPage(title: "koko", subtitle: "GOOD COMPANY, AT YOUR PACE", back: welcome ? nil : { passwordDraft = ""; repeatedPassword = ""; destination = "Welcome" }) {
-                Artwork(sheet: .arrival, tile: welcome ? 2 : 3).frame(height: welcome ? 235 : 145)
-                Text(welcome ? "A little closer.\nA little more you." : (registration ? "Make room\nfor yourself." : "Good to have\nyou here."))
-                    .font(.custom("AvenirNext-Bold", size: 35)).lineSpacing(-2)
+            Group {
                 if welcome {
-                    Text("Find a conversation, share a moment, make yourself at home.").foregroundStyle(KokoInk.secondary)
-                    KokoAction(title: "Log in", icon: 12) { guard requireConsent() else { return }; destination = "Log in" }
-                    KokoAction(title: appleEntry.authorizing ? "Waiting for Apple…" : "Continue with Apple", emphasis: false) {
-                        guard requireConsent() else { return }
-                        appleEntry.start { identity, name in
-                            journey.enter(caption: "Your space is taking shape.") {
-                                _ = community.enterAppleIdentity(identity, fullName: name, consent: agreed)
-                            }
-                        } failure: { community.notice = $0 }
-                    }.disabled(appleEntry.authorizing)
-                    Button("New here? Sign up") { guard requireConsent() else { return }; destination = "Sign up" }
-                        .font(.custom("AvenirNext-DemiBold", size: 14)).buttonStyle(.plain).frame(maxWidth: .infinity, minHeight: 44)
-                } else {
-                    KokoField(label: "Email address", value: $emailAddress, keyboard: .emailAddress)
-                    KokoField(label: "Password · 8–128 characters", value: $passwordDraft, secure: true)
-                    if registration { KokoField(label: "Confirm password", value: $repeatedPassword, secure: true) }
-                    KokoAction(title: registration ? "Sign up" : "Start", icon: 12, action: submit)
-                    KokoAction(title: registration ? "Already have an account? Log in" : "No account yet? Sign up", emphasis: false) {
-                        destination = registration ? "Log in" : "Sign up"; passwordDraft = ""; repeatedPassword = ""
-                    }
-                    if !registration {
-                        Button("Password help") { community.notice = "Use the password you registered on this device. Koko does not email password resets yet. Earlier preview profiles can set their first password through Sign up using the same email." }
-                            .font(.custom("AvenirNext-Medium", size: 12)).buttonStyle(.plain).frame(minHeight: 44)
-                    }
-                    Text("Your account stays signed in on this device until you choose to sign out.")
-                        .font(.custom("AvenirNext-Regular", size: 12)).foregroundStyle(KokoInk.secondary)
-                }
-                KokoConsentFooter(agreed: $agreed) { document = $0 }
+                    KokoSocialWelcome(agreed: $agreed, authorizing: appleEntry.authorizing,
+                        logIn: { guard requireConsent() else { return }; destination = "Log in" },
+                        appleSignIn: beginAppleSignIn,
+                        signUp: { guard requireConsent() else { return }; destination = "Sign up" },
+                        openPolicy: { document = $0 })
+                } else { credentialPage }
             }.disabled(appleEntry.authorizing || journey.transitioning)
+                .accessibilityHidden(showConsentPrompt || document != nil)
             if showConsentPrompt { KokoConsentRequiredPanel(dismiss: { showConsentPrompt = false }) { document = $0 } }
             if let document { KokoLegalWebPage(document: document) { self.document = nil }.id(document) }
-        }
+        }.onAppear(perform: updateWelcomeAppearance)
+            .onChange(of: destination) { _ in updateWelcomeAppearance() }
+            .onChange(of: document) { _ in updateWelcomeAppearance() }
+            .onChange(of: showConsentPrompt) { _ in updateWelcomeAppearance() }
+            .onDisappear { journey.usesDarkWelcomeAppearance = false }
+    }
+    private func updateWelcomeAppearance() {
+        journey.usesDarkWelcomeAppearance = document == nil
+    }
+    private var credentialPage: some View {
+        KokoEmailEntryForm(registration: registration,
+                           emailAddress: $emailAddress, passwordDraft: $passwordDraft,
+                           repeatedPassword: $repeatedPassword, agreed: $agreed,
+                           back: {
+                               passwordDraft = ""; repeatedPassword = ""; destination = "Welcome"
+                           }, switchMode: {
+                               destination = registration ? "Log in" : "Sign up"
+                               passwordDraft = ""; repeatedPassword = ""
+                           }, submit: submit, openPolicy: { document = $0 })
+            .id(destination)
+    }
+    private func beginAppleSignIn() {
+        guard requireConsent() else { return }
+        appleEntry.start { identity, name in
+            journey.enter(caption: "Your space is taking shape.") {
+                _ = community.enterAppleIdentity(identity, fullName: name, consent: agreed)
+            }
+        } failure: { community.notice = $0 }
     }
     private func requireConsent() -> Bool {
         guard agreed else { showConsentPrompt = true; return false }

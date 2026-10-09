@@ -1,0 +1,28 @@
+{
+  "type": "Original flat raster UI control atlas for Koko welcome screen",
+  "goal": "One transparent bitmap atlas with 2 columns and 2 rows, four equal square quadrants. These are production button and consent skins. Must be genuinely transparent outside the drawn assets.",
+  "aspect_ratio": "1:1 square",
+  "visual_tone": {
+    "aesthetic": "Crisp flat minimal precision, confident social app, no gloss, no shadows, no gradients, no 3D bevels",
+    "color_palette": "Mint #B9EDCE, dark green #102522, soft sage #9CC1B2"
+  },
+  "centerpiece": {
+    "description": "Top-left quadrant: centered wide horizontal rounded-rectangle button skin with uniform mint #B9EDCE fill, width 90% of quadrant, height 30% of quadrant, modest 12% of height corner radius, perfectly flat, no text or icon. Top-right quadrant: identical size and radius button skin, deep green #102522 interior, thin clearly visible soft-sage #9CC1B2 outline, no text/icon. Bottom-left quadrant: centered compact square checkbox, softly rounded corners, thin soft-sage outline, transparent interior, occupying 42% of quadrant width, no shadow. Bottom-right quadrant: identically sized mint-filled square checkbox with one crisp dark-green checkmark, modest rounded corners. All four exact positions centered in their equal quadrants, no dividers, no labels."
+  },
+  "constraints": {
+    "must_keep": [
+      "Exact 2x2 equal square-cell atlas",
+      "Transparent canvas",
+      "Two buttons identical dimensions",
+      "Two checkbox squares identical dimensions",
+      "No horizontal lines crossing button interiors"
+    ],
+    "avoid": [
+      "Text, numbers, logos, watermark",
+      "Plastic/glass effects",
+      "Shadows",
+      "White background",
+      "App screenshots or device frames"
+    ]
+  }
+}

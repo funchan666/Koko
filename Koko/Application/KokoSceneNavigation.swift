@@ -20,35 +20,40 @@ struct KokoApplicationRoot: View {
     @EnvironmentObject private var purchases: KokoAppleCoinPurchases
     @EnvironmentObject private var community: CommunityJournalStore
     @StateObject private var accessJourney = KokoAccessJourney()
-    @AppStorage("koko.introduction.completed") private var introductionCompleted = false
     @State private var openingApp = true
+    private var showsFeedback: Bool { community.notice != nil || purchases.purchaseMessage != nil }
     var body: some View {
         ZStack {
-            if openingApp { KokoLaunchLoading() }
-            else if !introductionCompleted && community.journal == nil {
-                KokoFirstVisitGuide { introductionCompleted = true }
-            } else if let journal = community.journal {
-                if !community.hasCurrentPolicyConsent { KokoConsentRenewalGate() }
-                else if journal.completedProfile && !community.requiresAppleProfileReview { KokoMainShell().id(journal.member.id) }
-                else { KokoProfileEditor(isOnboarding: true) }
-            } else { KokoAccountEntry() }
-            if accessJourney.transitioning { KokoAccountLoading().zIndex(90) }
+            Group {
+                if openingApp { KokoLaunchLoading() }
+                else if let journal = community.journal {
+                    if !community.hasCurrentPolicyConsent { KokoConsentRenewalGate() }
+                    else if journal.completedProfile && !community.requiresAppleProfileReview { KokoMainShell().id(journal.member.id) }
+                    else { KokoProfileEditor(isOnboarding: true) }
+                } else { KokoAccountEntry() }
+            }
+            .allowsHitTesting(!showsFeedback)
+            .accessibilityHidden(showsFeedback)
+            if accessJourney.transitioning {
+                KokoAccountLoading().accessibilityHidden(showsFeedback).zIndex(90)
+            }
             if let message = purchases.purchaseMessage {
-                KokoModal(title: "Your Apple purchase", dismiss: { purchases.purchaseMessage = nil }) {
-                    Text(message)
-                    KokoAction(title: "Got it") { purchases.purchaseMessage = nil }
-                }.zIndex(99)
+                KokoNoticePanel(heading: "Purchase update", message: message,
+                                dismiss: { purchases.purchaseMessage = nil })
+                    .id(message)
+                    .allowsHitTesting(community.notice == nil)
+                    .accessibilityHidden(community.notice != nil)
+                    .zIndex(99)
             }
             if let notice = community.notice {
-                KokoModal(title: "A little note", dismiss: { community.notice = nil }) {
-                    Text(notice).fixedSize(horizontal: false, vertical: true)
-                    KokoAction(title: "Got it") { community.notice = nil }
-                }.zIndex(100)
+                KokoNoticePanel(heading: "Please note", message: notice,
+                                dismiss: { community.notice = nil })
+                    .id(notice).zIndex(100)
             }
         }.environmentObject(accessJourney)
+            .preferredColorScheme(showsFeedback || accessJourney.showsPolicyReader || (accessJourney.usesDarkWelcomeAppearance && community.journal == nil) ? .dark : .light)
             .task {
                 guard openingApp else { return }
-                if community.journal != nil { introductionCompleted = true }
                 community.refreshAppleCredentialState()
                 do { try await Task.sleep(nanoseconds: 1_600_000_000) } catch { return }
                 openingApp = false
@@ -58,6 +63,7 @@ struct KokoApplicationRoot: View {
 }
 
 struct KokoMainShell: View {
+    @Environment(\.kokoScreenInsets) private var screenInsets
     @EnvironmentObject private var community: CommunityJournalStore
     @StateObject private var navigation = KokoSceneNavigation()
     var body: some View {
@@ -72,7 +78,8 @@ struct KokoMainShell: View {
                     case 2: KokoConversationsView()
                     default: KokoPersonalSpace()
                     }
-                }
+                }.environment(\.kokoScreenInsets, EdgeInsets(top: screenInsets.top, leading: screenInsets.leading,
+                                                            bottom: 0, trailing: screenInsets.trailing))
                 HStack(spacing: 2) {
                     ForEach(0..<4) { index in
                         Button { navigation.selectedTab = index } label: {
@@ -83,7 +90,7 @@ struct KokoMainShell: View {
                                 .background(ArtworkSurface(tile: navigation.selectedTab == index ? 3 : 2))
                         }.buttonStyle(KokoPressStyle()).accessibilityAddTraits(navigation.selectedTab == index ? .isSelected : [])
                     }
-                }.padding(.horizontal, 12).padding(.bottom, 4).background(ArtworkBackdrop())
+                }.padding(.horizontal, 12).padding(.bottom, screenInsets.bottom + 4).background(ArtworkBackdrop())
             }
         }.background(ArtworkBackdrop())
             .overlay {

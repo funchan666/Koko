@@ -1,0 +1,6 @@
+{
+  "mode": "Garden Host-Native / built-in imagegen",
+  "final_prompt": "Production original bitmap UI skin for Koko, square 1024x1024, entirely OPAQUE RGB artwork. An empty minimalist dark forest green #183C34 modal panel fills the canvas edge to edge. A precise muted sage hairline border inset 8px from all four edges, rounded corners radius64px, outside border the tiny corner area is very dark forest #132A26. Interior UNIFORM solid opaque #183C34 with NO transparency NO black hole NO hollow frame NO gradient NO texture. Absolutely no objects, no icons, no text, no decoration, no typography, no shadow, no buttons. Flat polished raster interface surface. This is a filled panel, not a border asset.",
+  "transparent_background": false,
+  "asset": "Koko/Resources/KokoArtwork.xcassets/KokoConsentSurface.imageset/KokoConsentSurface.png"
+}

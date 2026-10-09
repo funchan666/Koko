@@ -1,0 +1,45 @@
+{
+  "type": "Original social app welcome campaign artwork",
+  "goal": "Create a production bitmap hero asset, not a screenshot, for a native social voice/video app welcome page. Make it feel like meeting real people, confident contemporary editorial design.",
+  "aspect_ratio": "4:3 landscape",
+  "brand": {
+    "industry": "Adult friendship, voice and video conversations",
+    "name": "Do not display any brand or app name"
+  },
+  "visual_tone": {
+    "aesthetic": "Candid photographic portrait collage, independent youth culture magazine, warm human connection, elegantly asymmetric, tactile photographic prints. Absolutely no glossy 3D interface styling.",
+    "color_palette": "Deep green-black #102522 background, natural warm skin tones, fresh mint #B9EDCE accents, cream clothing, tiny restrained coral accent.",
+    "lighting": "Soft window light, candid flash photography, genuine relaxed expressions, natural skin detail"
+  },
+  "centerpiece": {
+    "type": "Original fictional adult friends in three photographic portrait windows",
+    "description": "Large slightly tilted portrait of a smiling 26-year-old woman with shoulder-length dark hair wearing a cream top, occupying left-center; a smaller portrait at upper right of a 28-year-old man with curly dark hair, medium brown skin, listening with headphones, laughing naturally; a small lower-right candid portrait of a 25-year-old Black woman with braids and a seafoam shirt waving hello. All fully clothed, casual, not glamour models. Faces in central safe area; social video conversation energy. Picture windows have subtly rounded corners as part of this raster artwork, uneven overlaps, one small original flat mint speech-bubble sticker bridging the pictures, with no text. Portrait arrangement feels composed and spacious, not a collage template.",
+    "scale": "People and prints occupy 82% of width and 80% of height. Leave all four edges clean solid #102522, especially bottom 12% clean solid dark for a seamless transition into native copy below."
+  },
+  "slogan": {
+    "main": "NO TEXT. Native app will draw all text.",
+    "sub": "NO TEXT"
+  },
+  "logo_placement": {
+    "position": "No logo, no app name, no wordmark",
+    "size": "None"
+  },
+  "constraints": {
+    "must_keep": [
+      "Exactly three distinct fictional adults",
+      "Faces sharp and warm, realistic editorial photography",
+      "Entire outer border uniform #102522 with no texture at edges",
+      "No smartphone frames or app controls",
+      "Strong asymmetrical composition with larger left portrait"
+    ],
+    "avoid": [
+      "Text, letters, numbers, watermarks, brand names",
+      "Neon or purple gradients",
+      "Sculptural empty rooms or doors",
+      "Heavy plastic bevels, glossy bubbles, huge shadows",
+      "Live indicators, fake names, follower counts",
+      "Romantic poses, seduction, teens",
+      "Repeated faces, distorted hands"
+    ]
+  }
+}

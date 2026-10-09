@@ -1,0 +1,7 @@
+{
+  "type": "Original raster text input skin for Koko native iOS",
+  "goal": "One flat empty dark green input surface, 3:1 wide bitmap. This is the input background only; all text and interaction will be native.",
+  "composition": "Single full-canvas filled rounded rectangle, extremely fine muted sage outline inset 6px, radius50px at1536width. All outside corner pixels very dark forest #132A26. Entire center fully opaque uniform #20463D. Refined minimal almost flat surface. No transparent pixels.",
+  "palette": "page backdrop #132A26, field fill #20463D, hairline edge #5E8877",
+  "constraints": "NO text, NO icons, NO placeholders, NO buttons, NO shadow, NO white margins, NO gradients, NO 3D bevels, NO glow. One surface only, no atlas."
+}
