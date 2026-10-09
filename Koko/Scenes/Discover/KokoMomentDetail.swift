@@ -37,7 +37,6 @@ struct KokoMomentDetail: View {
                         } else {
                             KokoContentImage(asset: asset, fullResolution: true, fitInside: true).frame(height: 430)
                         }
-                        LocalPreviewNote(text: "KOKO COLLECTION · CURATED FOR LOCAL PREVIEW")
                     } else {
                         Artwork(sheet: .collection, tile: moment.coverTile).frame(height: 290)
                         Text("This item is not available in the bundled collection.")
@@ -51,7 +50,7 @@ struct KokoMomentDetail: View {
                     }
                     Text("What did it bring to mind?").font(.custom("AvenirNext-Bold", size: 20))
                     let comments = (community.journal?.momentComments[moment.id] ?? []).filter { !(community.journal?.hiddenContentKeys.contains($0.id) ?? false) }
-                    if comments.isEmpty { Text("Your words can be the first. Comments are saved locally.").font(.custom("AvenirNext-Regular", size: 14)).foregroundStyle(KokoInk.secondary) }
+                    if comments.isEmpty { Text("Your words can be the first. Comments stay with this moment.").font(.custom("AvenirNext-Regular", size: 14)).foregroundStyle(KokoInk.secondary) }
                     ForEach(comments) { comment in
                         KokoCard {
                             VStack(alignment: .leading, spacing: 8) {
@@ -61,7 +60,7 @@ struct KokoMomentDetail: View {
                                     Text(comment.postedAt, style: .date).font(.custom("AvenirNext-Regular", size: 11)).foregroundStyle(KokoInk.secondary)
                                     Spacer()
                                     if comment.authorMemberID == community.myID {
-                                        Button("Remove locally") { community.update { $0.momentComments[moment.id]?.removeAll { $0.id == comment.id } } }
+                                        Button("Remove comment") { community.update { $0.momentComments[moment.id]?.removeAll { $0.id == comment.id } } }
                                             .font(.custom("AvenirNext-Medium", size: 11)).buttonStyle(.plain)
                                     } else { Button("Report") { safetyMember = comment.authorMemberID; safetyTarget = comment.id }.buttonStyle(.plain) }
                                 }
@@ -69,7 +68,7 @@ struct KokoMomentDetail: View {
                         }
                     }
                     KokoField(label: "Your comment · up to 500 characters", value: $commentDraft, multiline: true)
-                    KokoAction(title: "Add comment locally", icon: 12) {
+                    KokoAction(title: "Add comment", icon: 12) {
                         let text = commentDraft.trimmingCharacters(in: .whitespacesAndNewlines)
                         guard !text.isEmpty, text.count <= 500 else { community.notice = "Write a comment from 1 to 500 characters."; return }
                         let comment = ConversationEntry(authorMemberID: community.myID, messageText: text)

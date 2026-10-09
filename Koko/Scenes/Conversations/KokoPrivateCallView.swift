@@ -41,7 +41,7 @@ struct KokoPrivateCallView: View {
                     } else { Artwork(sheet: .arrival, tile: 1).frame(height: 210) }
                     KokoCard(tint: 3) {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text(prepared ? "Your local setup is ready." : "A moment before hello.").font(.custom("AvenirNext-Bold", size: 22))
+                            Text(prepared ? "Your setup is ready." : "A moment before hello.").font(.custom("AvenirNext-Bold", size: 22))
                             Text("Check your microphone\(channel == .video ? " and camera" : "") here. A calling service isn't connected yet, so nobody is being called.").font(.custom("AvenirNext-Regular", size: 14))
                         }
                     }

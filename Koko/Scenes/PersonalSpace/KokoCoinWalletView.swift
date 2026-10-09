@@ -62,7 +62,7 @@ struct KokoWalletView: View {
     private var coinPacks: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Choose your collection").font(.custom("AvenirNext-Bold", size: 22))
-            Text("Prices below are US reference prices until you tap Buy. Apple then confirms availability and your local price before payment.")
+            Text("Prices below are US reference prices until you tap Buy. Apple then confirms availability and your storefront price before payment.")
                 .font(.custom("AvenirNext-Regular", size: 12)).foregroundStyle(KokoInk.secondary)
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                 ForEach(KokoCoinCatalog.packs) { pack in
@@ -107,7 +107,7 @@ struct KokoWalletView: View {
             Text("Pay once to own a decoration. Wearing it, switching it or taking it off is free; no expiry or renewal.").font(.custom("AvenirNext-Regular", size: 13))
             ForEach(KokoCommunity.keepsakes.filter(\.wearable)) { item in spendingRow(item) }
             KokoAction(title: "Visit the little shop", icon: 8) { navigation.open(.shop) }
-            Text("Rooms and gifting are local features in this version. Gifts do not transfer money or earnings to another person.").font(.custom("AvenirNext-Regular", size: 12)).foregroundStyle(KokoInk.secondary)
+            Text("Rooms and gifting are available in this version. Gifts do not transfer money or earnings to another person.").font(.custom("AvenirNext-Regular", size: 12)).foregroundStyle(KokoInk.secondary)
         }
     }
     private func spendingRow(_ item: RoomKeepsake) -> some View {

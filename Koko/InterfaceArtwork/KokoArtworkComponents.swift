@@ -132,18 +132,14 @@ struct KokoControlSurface: View {
 struct KokoGradientBackdrop: View {
     var body: some View {
         ZStack {
-            LinearGradient(
-                colors: [KokoInk.canvas, Color(red: 11 / 255, green: 32 / 255, blue: 34 / 255), KokoInk.canvas],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            RadialGradient(
-                colors: [KokoInk.coral.opacity(0.12), Color.clear],
-                center: .topTrailing,
-                startRadius: 8,
-                endRadius: 300
-            )
+            Color(red: 7 / 255, green: 28 / 255, blue: 30 / 255)
+            Image("KokoSocialBackdrop")
+                .resizable()
+                .scaledToFill()
+                .opacity(0.24)
+                .overlay(Color.black.opacity(0.30))
         }
+        .clipped()
         .accessibilityHidden(true)
     }
 }
@@ -176,19 +172,7 @@ struct KokoTabIcon: View {
 
 struct KokoTabSelectionSurface: View {
     var body: some View {
-        RoundedRectangle(cornerRadius: 22, style: .continuous)
-            .fill(
-                LinearGradient(
-                    colors: [KokoInk.accent, KokoInk.peach.opacity(0.92)],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-            )
-            .overlay {
-                RoundedRectangle(cornerRadius: 22, style: .continuous)
-                    .stroke(KokoInk.paper.opacity(0.88), lineWidth: 1)
-            }
-            .shadow(color: KokoInk.coral.opacity(0.22), radius: 10, y: 5)
+        KokoControlSurface(highlighted: true)
             .accessibilityHidden(true)
     }
 }
@@ -203,18 +187,7 @@ struct KokoSocialTag: View {
             .padding(.horizontal, 14)
             .padding(.vertical, 9)
             .background {
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(
-                        LinearGradient(
-                            colors: highlighted ? [KokoInk.accent, KokoInk.peach.opacity(0.92)] : [KokoInk.panelRaised, KokoInk.panel],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .stroke(highlighted ? KokoInk.paper.opacity(0.72) : KokoInk.line, lineWidth: 1)
-                    }
+                KokoControlSurface(highlighted: highlighted)
             }
     }
 }
@@ -334,7 +307,7 @@ struct KokoChoiceRail: View {
 }
 
 struct LocalPreviewNote: View {
-    var text = "LOCAL PREVIEW · SAVED ON THIS DEVICE"
+    var text = "ROOM PREVIEW · SAVED ON THIS DEVICE"
     var body: some View { Text(text).font(.custom("AvenirNext-Medium", size: 10, relativeTo: .caption2)).tracking(0.7).foregroundStyle(KokoInk.secondary).fixedSize(horizontal: false, vertical: true) }
 }
 
@@ -359,11 +332,18 @@ struct KokoPage<Content: View>: View {
             }
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 18) { content }
-                    .frame(maxWidth: 620).frame(maxWidth: .infinity)
+                    .frame(maxWidth: 620, minHeight: 0, alignment: .leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 22).padding(.top, 2).padding(.bottom, screenInsets.bottom + 24)
-            }.scrollDismissesKeyboard(.interactively)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .clipped()
+            .scrollDismissesKeyboard(.interactively)
                 .padding(.top, showsHeader ? 0 : screenInsets.top + 10)
-        }.background(ArtworkBackdrop()).foregroundStyle(KokoInk.primary)
+        }
+        .frame(maxWidth: .infinity, alignment: .topLeading)
+        .clipped()
+        .background(ArtworkBackdrop()).foregroundStyle(KokoInk.primary)
     }
 }
 

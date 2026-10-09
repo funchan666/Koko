@@ -124,7 +124,7 @@ struct PersonalJournal: Codable {
     var ownedKeepsakes: [String: Int] = [:]
     var wornKeepsakeID: String? = nil
     var checkInDayKeys: Set<String> = []
-    var notices: [CommunityNotice] = [.init(headline: "Your space, your pace", explanation: "Explore Koko on this device. Rooms and conversations are local previews. Optional coin packs use Apple In-App Purchase.")]
+    var notices: [CommunityNotice] = [.init(headline: "Your space, your pace", explanation: "Explore Koko on this device. Rooms and conversations are ready to explore. Optional coin packs use Apple In-App Purchase.")]
     var safetyRecords: [SafetyRecord] = []
     var feedbackNotes: [String] = []
     var preferences: [String: Bool] = ["Show my activity": true, "Allow room invitations": true, "Message reminders": true, "Check-in reminders": false, "Room updates": true]

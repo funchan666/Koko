@@ -20,7 +20,11 @@ final class CommunityJournalStore: ObservableObject {
         if let savedIdentity = UserDefaults.standard.string(forKey: sessionPreference) {
             do {
                 let data = try Data(contentsOf: journalURL(savedIdentity))
-                journal = try JSONDecoder().decode(PersonalJournal.self, from: data)
+                var restored = try JSONDecoder().decode(PersonalJournal.self, from: data)
+                if ensureSuppliedPortrait(&restored, identity: savedIdentity) {
+                    try persist(restored, identity: savedIdentity)
+                }
+                journal = restored
                 activeIdentity = savedIdentity
             } catch {
                 storageUnavailable = true
@@ -104,7 +108,7 @@ final class CommunityJournalStore: ObservableObject {
             try activate(draft, identity: key)
             return true
         } catch {
-            notice = "Your local profile could not be saved. Your existing data has been kept. Please try again."; return false
+            notice = "Your profile could not be saved. Your existing data has been kept. Please try again."; return false
         }
     }
 
@@ -153,13 +157,41 @@ final class CommunityJournalStore: ObservableObject {
     }
     private func newJournal(identity: String) -> PersonalJournal {
         var value = PersonalJournal(member: .init(id: identity, publicName: "", hometownLabel: "", spokenLanguage: "English", adultAge: 0, genderLabel: "", introductionLine: "", portraitTile: 0, interests: []))
+        _ = ensureSuppliedPortrait(&value, identity: identity)
         value.welcomeGiftEligible = !UserDefaults.standard.bool(forKey: "koko.firstVisitGift." + identity)
         return value
     }
-    private func activate(_ value: PersonalJournal, identity: String) throws {
+    private func activate(_ input: PersonalJournal, identity: String) throws {
+        var value = input
+        _ = ensureSuppliedPortrait(&value, identity: identity)
         try persist(value, identity: identity)
         activeIdentity = identity; journal = value; storageUnavailable = false
         UserDefaults.standard.set(identity, forKey: sessionPreference)
+    }
+
+    /// Gives a new device account one supplied photograph while keeping every
+    /// sample host and previously saved account on a different portrait.
+    @discardableResult
+    private func ensureSuppliedPortrait(_ value: inout PersonalJournal, identity: String) -> Bool {
+        guard value.member.portraitFileName == nil, value.member.suppliedPortraitPhotoKey == nil else { return false }
+        let used = reservedPortraitKeys(excluding: identity)
+        guard let key = KokoMediaLibrary.photos.first(where: { !used.contains($0.id) })?.id else { return false }
+        value.member.suppliedPortraitPhotoKey = key
+        return true
+    }
+
+    private func reservedPortraitKeys(excluding identity: String) -> Set<String> {
+        var used = Set(KokoCommunity.members.compactMap(\.suppliedPortraitPhotoKey))
+        guard let base = try? fileManager.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+            .appendingPathComponent("KokoCommunity", isDirectory: true),
+              let urls = try? fileManager.contentsOfDirectory(at: base, includingPropertiesForKeys: nil) else { return used }
+        for url in urls where url.pathExtension == "json" && url.deletingPathExtension().lastPathComponent != identity {
+            guard let data = try? Data(contentsOf: url),
+                  let saved = try? JSONDecoder().decode(PersonalJournal.self, from: data),
+                  let key = saved.member.suppliedPortraitPhotoKey else { continue }
+            used.insert(key)
+        }
+        return used
     }
     @discardableResult
     func update(_ change: (inout PersonalJournal) -> Void) -> Bool {
@@ -283,7 +315,7 @@ final class CommunityJournalStore: ObservableObject {
     }
     func report(_ subjectKey: String, reason: String) {
         if update({ $0.safetyRecords.append(.init(subjectKey: subjectKey, selectedReason: reason)); $0.hiddenContentKeys.insert(subjectKey) }) {
-            notice = "Hidden on this device. Your report is saved locally; it has not been sent to a moderation service."
+            notice = "Hidden on this device. Your report is saved here; it has not been sent to a moderation service."
         }
     }
     func clearTransientCache() {

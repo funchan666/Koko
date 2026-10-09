@@ -67,9 +67,13 @@ struct KokoMainShell: View {
     @EnvironmentObject private var community: CommunityJournalStore
     @StateObject private var navigation = KokoSceneNavigation()
     var body: some View {
-        VStack(spacing: 0) {
+        GeometryReader { viewport in
+            VStack(spacing: 0) {
             if let destination = navigation.journey.last {
-                destinationView(destination).id(destination)
+                destinationView(destination)
+                    .id(destination)
+                    .frame(maxWidth: .infinity, alignment: .top)
+                    .clipped()
             } else {
                 Group {
                     switch navigation.selectedTab {
@@ -80,6 +84,8 @@ struct KokoMainShell: View {
                     }
                 }.environment(\.kokoScreenInsets, EdgeInsets(top: screenInsets.top, leading: screenInsets.leading,
                                                             bottom: 0, trailing: screenInsets.trailing))
+                .frame(maxWidth: .infinity, alignment: .top)
+                .clipped()
                 HStack(spacing: 6) {
                     ForEach(0..<4) { index in
                         Button { navigation.selectedTab = index } label: {
@@ -95,19 +101,14 @@ struct KokoMainShell: View {
                 }
                 .padding(.horizontal, 16).padding(.top, 10).padding(.bottom, screenInsets.bottom + 6)
                 .background {
-                    LinearGradient(
-                        colors: [Color(red: 11 / 255, green: 34 / 255, blue: 35 / 255), KokoInk.canvas, Color(red: 20 / 255, green: 52 / 255, blue: 47 / 255)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                    Artwork(sheet: .social, tile: 0)
-                        .frame(width: 120, height: 84)
-                        .opacity(0.06)
-                        .offset(x: -8, y: 12)
+                    Color(red: 7 / 255, green: 28 / 255, blue: 30 / 255)
                         .accessibilityHidden(true)
                 }
             }
-        }.background(ArtworkBackdrop())
+        }
+            .frame(width: viewport.size.width, height: viewport.size.height, alignment: .top)
+            .clipped()
+            .background(ArtworkBackdrop())
             .overlay {
                 if let request = community.coinSpendRequest {
                     KokoCoinSpendConfirmation(request: request)
@@ -119,6 +120,8 @@ struct KokoMainShell: View {
                 guard identifier != nil else { return }
                 if navigation.journey.last != .wallet { navigation.open(.wallet) }
             }
+        }
+        .ignoresSafeArea(.container, edges: .all)
     }
     @ViewBuilder private func destinationView(_ destination: KokoDestination) -> some View {
         switch destination {

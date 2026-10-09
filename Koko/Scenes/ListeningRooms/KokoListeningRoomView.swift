@@ -92,7 +92,7 @@ struct KokoListeningRoomView: View {
                         ForEach(0..<room.seatLimit, id: \.self) { position in seatView(position, room: room) }
                     }.padding(.vertical, 8)
                     HStack {
-                        Text("LOCAL PREVIEW · MICROPHONE OFF")
+                        Text("ROOM PREVIEW · MICROPHONE OFF")
                             .font(.custom("AvenirNext-DemiBold", size: 9)).tracking(0.6).foregroundStyle(KokoInk.secondary)
                         Spacer()
                         Button("People") { panel = "Room audience" }.font(.custom("AvenirNext-DemiBold", size: 12)).buttonStyle(.plain)
@@ -168,7 +168,7 @@ struct KokoListeningRoomView: View {
                 }
                 KokoAction(title: "Buy coins in wallet", emphasis: false) { panel = nil; navigation.open(.wallet) }
             case "Invite a sample guest":
-                Text("Choose a sample participant for this seat. This is local room setup; no invitation is sent.")
+                Text("Choose a sample participant for this seat. This is room setup; no invitation is sent.")
                 let candidates = community.members.filter { !room.seatAssignments.values.contains($0.id) }
                 ForEach(candidates) { member in
                     KokoAction(title: "Seat " + member.publicName, emphasis: false) {
@@ -179,7 +179,7 @@ struct KokoListeningRoomView: View {
                 }
                 if candidates.isEmpty { Text("Every available sample guest already has a seat.") }
             case "Take this seat?":
-                Text("Check your microphone permission and prepare a local seat request. Nothing is sent to the host.")
+                Text("Check your microphone permission and prepare a seat request. Nothing is sent to the host.")
                 KokoAction(title: "Prepare seat \((selectedSeat ?? 0) + 1)", icon: 13) {
                     let seat = selectedSeat; panel = nil; music.stop()
                     navigation.open(.roomConnection(roomID, seat))
@@ -188,7 +188,7 @@ struct KokoListeningRoomView: View {
                 if let seat = selectedSeat, let memberID = room.seatAssignments[seat] {
                     if let member = community.member(memberID) { KokoMemberRow(member: member) }
                     if memberID == community.myID || isHost || room.moderatorMemberIDs.contains(community.myID) {
-                        KokoAction(title: memberID == community.myID ? "Manage my microphone" : (room.mutedSeatNumbers.contains(seat) ? "Unmute seat locally" : "Mute seat locally"), icon: 13) {
+                        KokoAction(title: memberID == community.myID ? "Manage my microphone" : (room.mutedSeatNumbers.contains(seat) ? "Unmute seat" : "Mute seat"), icon: 13) {
                             if memberID == community.myID {
                                 panel = nil; music.stop(); navigation.open(.roomConnection(roomID, seat)); return
                             }
@@ -210,16 +210,15 @@ struct KokoListeningRoomView: View {
                 }
             case "Room audience":
                 ForEach(Array(Set(room.seatAssignments.values)).sorted(), id: \.self) { memberID in if let member = community.member(memberID) { KokoMemberRow(member: member) } }
-                LocalPreviewNote(text: "SAMPLE OCCUPANTS · NO REAL-TIME AUDIENCE CONNECTED")
             case "Voice connection":
                 Artwork(sheet: .arrival, tile: 1).frame(height: 140)
-                Text("Request a seat, check your microphone, and try the local stage controls. Voice and video are always free.")
+                Text("Request a seat, check your microphone, and try the room controls. Voice and video are always free.")
                 KokoAction(title: "Open connection panel", icon: 13) { panel = nil; music.stop(); navigation.open(.roomConnection(roomID, nil)) }
                 if room.seatAssignments.values.contains(community.myID), !isHost { KokoAction(title: "Leave my seat", emphasis: false) { community.leaveSeat(in: roomID); panel = nil } }
             case "Room music":
                 Text("Music plays on this device only. Audio files can be added later.").font(.custom("AvenirNext-Regular", size: 13))
                 ForEach(KokoRoomMusicPlayer.tracks, id: \.self) { track in
-                    KokoMenuRow(title: track, detail: music.currentTrack == track ? "Playing locally" : "Local audio placeholder", icon: 14) { music.play(track) { community.notice = $0 } }
+                    KokoMenuRow(title: track, detail: music.currentTrack == track ? "Playing on this device" : "Audio placeholder", icon: 14) { music.play(track) { community.notice = $0 } }
                 }
                 HStack { KokoAction(title: "Quieter", emphasis: false) { music.adjustVolume(-0.1) }; Text("\(Int(music.volume * 100))%"); KokoAction(title: "Louder", emphasis: false) { music.adjustVolume(0.1) } }
                 KokoAction(title: music.muted ? "Unmute music" : "Mute music", emphasis: false) { music.toggleMute() }
@@ -236,14 +235,14 @@ struct KokoListeningRoomView: View {
                 KokoField(label: "A note for everyone", value: $roomNote, multiline: true)
                 KokoAction(title: "Save room note") { var updated = room; updated.hostNote = String(roomNote.prefix(200)); _ = community.saveRoom(updated); panel = nil }
             case "Room ranking":
-                Text("Local contributions").font(.custom("AvenirNext-Bold", size: 18))
+                Text("Your contributions").font(.custom("AvenirNext-Bold", size: 18))
                 let spent = (community.journal?.walletHistory ?? []).filter { $0.detailLine.contains(room.roomTitle) && $0.tokenChange < 0 }.reduce(0) { $0 - $1.tokenChange }
                 Text("Your gifts in this room: \(spent) coins")
                 Text("Other members have no recorded contributions on this device.").foregroundStyle(KokoInk.secondary)
             case "More rooms":
                 ForEach(community.rooms.filter { $0.id != roomID }) { other in KokoRoomCard(room: other) }
             default:
-                Text("You can return whenever you like. Your local messages and gifts will be kept.")
+                Text("You can return whenever you like. Your messages and gifts will be kept.")
                 KokoAction(title: "Leave room") { music.stop(); community.leaveSeat(in: roomID); navigation.back() }
                 KokoAction(title: "Stay a little longer", emphasis: false) { panel = nil }
             }

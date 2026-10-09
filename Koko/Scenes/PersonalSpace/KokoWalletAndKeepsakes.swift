@@ -27,7 +27,6 @@ struct KokoKeepsakeCollection: View {
                         }.buttonStyle(KokoPressStyle())
                     }
                 }
-                LocalPreviewNote()
             }
             if let keepsake = chosen {
                 KokoModal(title: keepsake.keepsakeName, dismiss: { chosen = nil }) {
@@ -44,7 +43,7 @@ struct KokoKeepsakeCollection: View {
                                         guard ($0.ownedKeepsakes[keepsake.id] ?? 0) > 0 else { return }
                                         $0.ownedKeepsakes[keepsake.id, default: 0] -= 1
                                         var changed = $0.roomOverrides[room.id] ?? room
-                                        changed.roomConversation.append(.init(authorMemberID: sender, messageText: "Gifted \(keepsake.keepsakeName) from backpack · local preview", attachmentTile: keepsake.artworkTile))
+                                        changed.roomConversation.append(.init(authorMemberID: sender, messageText: "Gifted \(keepsake.keepsakeName) from backpack", attachmentTile: keepsake.artworkTile))
                                         $0.roomOverrides[room.id] = changed
                                     }
                                     chosen = nil
@@ -85,7 +84,7 @@ struct KokoLevelView: View {
             Artwork(sheet: .collection, tile: 12).frame(height: 205)
             Text("Level \(community.activityLevel)").font(.custom("AvenirNext-Bold", size: 42))
             Text("\(community.activityPoints) activity points · \(200 - community.activityPoints % 200) to your next level")
-            KokoCard { VStack(alignment: .leading, spacing: 12) { Text("A little goes a long way").font(.custom("AvenirNext-Bold", size: 21)); Text("Daily check-in: +10 points"); Text("Create a local room: +20 points"); Text("Every 200 points opens the next level.").foregroundStyle(KokoInk.secondary) } }
+            KokoCard { VStack(alignment: .leading, spacing: 12) { Text("A little goes a long way").font(.custom("AvenirNext-Bold", size: 21)); Text("Daily check-in: +10 points"); Text("Create a room: +20 points"); Text("Every 200 points opens the next level.").foregroundStyle(KokoInk.secondary) } }
             KokoAction(title: "Check in today", icon: 15) { navigation.open(.checkIn) }
         }
     }
@@ -100,15 +99,14 @@ struct KokoRankingView: View {
             Artwork(sheet: .navigation, tile: 15).frame(height: 140)
             KokoChoiceRail(choices: ["Rooms", "My activity", "My gifts"], selection: $category)
             if category == "Rooms" {
-                LocalPreviewNote(text: "SAMPLE ROOM ORDER · BASED ON LOCAL OCCUPIED SEATS")
                 ForEach(Array(community.rooms.sorted { $0.seatAssignments.count > $1.seatAssignments.count }.enumerated()), id: \.element.id) { index, room in
                     HStack { Text(String(format: "%02d", index + 1)).font(.custom("AvenirNext-Bold", size: 23)); KokoRoomCard(room: room) }
                 }
             } else if category == "My activity" {
-                KokoCard(tint: 3) { VStack(alignment: .leading, spacing: 10) { Text("\(community.activityPoints) points").font(.custom("AvenirNext-Bold", size: 32)); Text("Level \(community.activityLevel) · Your local activity") } }
+                KokoCard(tint: 3) { VStack(alignment: .leading, spacing: 10) { Text("\(community.activityPoints) points").font(.custom("AvenirNext-Bold", size: 32)); Text("Level \(community.activityLevel) · Your activity") } }
             } else {
                 let records = (community.journal?.walletHistory ?? []).filter { $0.tokenChange < 0 }
-                if records.isEmpty { KokoEmpty(title: "A gesture waiting to happen", detail: "Your local gift and keepsake contributions appear here.") }
+                if records.isEmpty { KokoEmpty(title: "A gesture waiting to happen", detail: "Your gift and keepsake contributions appear here.") }
                 ForEach(records) { record in KokoCard { HStack { Text(record.detailLine); Spacer(); Text("\(-record.tokenChange)") } } }
             }
         }

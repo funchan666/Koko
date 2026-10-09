@@ -9,37 +9,34 @@ struct KokoConversationsView: View {
     var body: some View {
         ZStack {
             KokoPage {
-                HStack(spacing: 10) {
-                    shortcut("System", detail: "\(community.journal?.notices.filter { !$0.hasBeenRead }.count ?? 0) unread", icon: 10, destination: .notices)
-                    shortcut("People", detail: "\(community.friends.count) friends", icon: 3, destination: .friends("Friends"))
-                    shortcut("Ranking", detail: "Community", icon: 15, destination: .ranking)
-                }
+                KokoConversationPulseRail(
+                    unread: community.journal?.notices.filter { !$0.hasBeenRead }.count ?? 0,
+                    friendCount: community.friends.count
+                )
                 HStack(spacing: 10) {
                     KokoSearchField(prompt: "Search conversations", query: $search)
                     KokoIconAction(icon: 3, label: "My album") { navigation.open(.album) }
                 }
-                HStack {
-                    KokoSectionTitle(title: "Conversations")
-                    if !community.conversations.isEmpty { KokoIconAction(icon: 6, label: "Clear conversations") { confirmClear = true } }
+                KokoConversationSectionHeading(title: "Conversations", subtitle: "Keep the thread going", members: community.conversations.compactMap { community.member($0.correspondentID) }) {
+                    if !community.conversations.isEmpty { confirmClear = true }
                 }
                 if filtered.isEmpty {
-                    KokoEmpty(title: search.isEmpty ? "A hello starts here" : "No conversations found", detail: search.isEmpty ? "Explore a profile to try a local conversation. Messages stay on this device." : "Try another name or phrase.", art: 2)
-                    KokoAction(title: "Discover people", icon: 4) { navigation.open(.search) }
+                    KokoFirstHelloCard(searching: !search.isEmpty) { navigation.open(.search) }
                 }
                 ForEach(filtered) { conversation in
-                    KokoMenuRow(title: community.member(conversation.correspondentID)?.publicName ?? "Conversation", detail: conversation.entries.last.map { $0.messageText.isEmpty && $0.attachmentPhotoKey != nil ? "Photo from the collection" : $0.messageText } ?? (conversation.compositionDraft.isEmpty ? "A new local conversation" : "Draft: " + conversation.compositionDraft), icon: 2) {
+                    KokoMenuRow(title: community.member(conversation.correspondentID)?.publicName ?? "Conversation", detail: conversation.entries.last.map { $0.messageText.isEmpty && $0.attachmentPhotoKey != nil ? "Photo from the collection" : $0.messageText } ?? (conversation.compositionDraft.isEmpty ? "A new conversation" : "Draft: " + conversation.compositionDraft), icon: 2) {
                         community.update { journal in if let index = journal.privateConversations.firstIndex(where: { $0.id == conversation.id }) { journal.privateConversations[index].unreadEntries = 0 } }
                         navigation.open(.conversation(conversation.correspondentID))
                     }
                 }
-                KokoSectionTitle(title: "Friends’ rooms")
                 let friendsRooms = community.rooms.filter { community.friends.contains($0.hostMemberID) }
+                KokoConversationSectionHeading(title: "Friends’ rooms", subtitle: "People you already know are here", members: friendsRooms.compactMap { community.member($0.hostMemberID) })
                 if friendsRooms.isEmpty {
-                    KokoMenuRow(title: "Bring your people together", detail: "Rooms from local mutual connections appear here.", icon: 1) { navigation.open(.friends("Friends")) }
+                    KokoFriendsRoomInviteCard { navigation.open(.friends("Friends")) }
                 } else { ForEach(friendsRooms) { KokoRoomCard(room: $0) } }
             }
             if confirmClear {
-                KokoModal(title: "Clear your local conversations?", dismiss: { confirmClear = false }) {
+                KokoModal(title: "Clear your conversations?", dismiss: { confirmClear = false }) {
                     Text("This removes all conversation entries and drafts from this device. Your friendships stay.")
                     KokoAction(title: "Clear conversations") { community.update { $0.privateConversations = [] }; confirmClear = false }
                     KokoAction(title: "Keep them", emphasis: false) { confirmClear = false }
@@ -47,17 +44,106 @@ struct KokoConversationsView: View {
             }
         }
     }
-    private func shortcut(_ title: String, detail: String, icon: Int, destination: KokoDestination) -> some View {
-        Button { navigation.open(destination) } label: {
-            VStack(spacing: 8) {
-                Artwork(sheet: .navigation, tile: icon).frame(width: 28, height: 28).foregroundStyle(KokoInk.accent)
-                Text(title).font(.custom("AvenirNext-DemiBold", size: 13, relativeTo: .subheadline))
-                Text(detail).font(.custom("AvenirNext-Regular", size: 10, relativeTo: .caption2)).foregroundStyle(KokoInk.secondary)
-            }.multilineTextAlignment(.center).frame(maxWidth: .infinity).padding(.horizontal, 5).padding(.vertical, 16).background(ArtworkSurface())
-        }.buttonStyle(KokoPressStyle())
-    }
 
 }
+
+private struct KokoConversationPulseRail: View {
+    @EnvironmentObject private var community: CommunityJournalStore
+    @EnvironmentObject private var navigation: KokoSceneNavigation
+    let unread: Int
+    let friendCount: Int
+    var body: some View {
+        HStack(spacing: 10) {
+            pulseButton(title: "Inbox", detail: unread == 0 ? "All caught up" : "\(unread) to open", icon: 10) { navigation.open(.notices) }
+            pulseButton(title: "Friends", detail: "\(friendCount) nearby", icon: 3) { navigation.open(.friends("Friends")) }
+            pulseButton(title: "Pulse", detail: "Community", icon: 15) { navigation.open(.ranking) }
+        }
+    }
+    private func pulseButton(title: String, detail: String, icon: Int, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 7) {
+                    Artwork(sheet: .navigation, tile: icon).frame(width: 25, height: 25)
+                    Spacer(minLength: 0)
+                    Artwork(sheet: .social, tile: icon % 4).frame(width: 23, height: 20).opacity(0.9)
+                }
+                Text(title).font(.custom("AvenirNext-Bold", size: 13, relativeTo: .subheadline))
+                Text(detail).font(.custom("AvenirNext-Medium", size: 9, relativeTo: .caption2)).foregroundStyle(KokoInk.secondary).lineLimit(1)
+            }
+            .foregroundStyle(KokoInk.primary)
+            .padding(12).frame(maxWidth: .infinity, minHeight: 104, alignment: .leading)
+            .background(ArtworkSurface(tile: title == "Inbox" ? 3 : 2))
+            .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous).stroke(KokoInk.accent.opacity(0.3), lineWidth: 1))
+            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        }.buttonStyle(KokoPressStyle())
+    }
+}
+
+private struct KokoConversationSectionHeading: View {
+    let title: String
+    let subtitle: String
+    let members: [CommunityMember]
+    var clear: (() -> Void)? = nil
+    var body: some View {
+        HStack(spacing: 10) {
+            HStack(spacing: -8) {
+                ForEach(Array(members.prefix(3)), id: \.id) { member in
+                    KokoMemberPortrait(member: member).frame(width: 34, height: 34).clipShape(Circle())
+                        .overlay(Circle().stroke(KokoInk.canvas, lineWidth: 2))
+                }
+                if members.isEmpty { Artwork(sheet: .social, tile: title == "Conversations" ? 2 : 1).frame(width: 34, height: 34) }
+            }.frame(width: 66, height: 36, alignment: .leading)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title).font(.custom("AvenirNext-Bold", size: 20, relativeTo: .title3))
+                Text(subtitle).font(.custom("AvenirNext-Medium", size: 10)).foregroundStyle(KokoInk.secondary)
+            }
+            Spacer(minLength: 0)
+            if let clear {
+                Button(action: clear) {
+                    Artwork(sheet: .navigation, tile: 6).frame(width: 24, height: 24)
+                }.buttonStyle(.plain).accessibilityLabel("Clear conversations")
+            }
+        }
+    }
+}
+
+private struct KokoFirstHelloCard: View {
+    let searching: Bool
+    let action: () -> Void
+    var body: some View {
+        VStack(spacing: 10) {
+            Artwork(sheet: .social, tile: 2).frame(width: 76, height: 62)
+            Text(searching ? "No one matches that yet" : "A hello starts here").font(.custom("AvenirNext-Bold", size: 19))
+            Text(searching ? "Try another name or look around the community." : "Find someone nearby, then send a small hello.")
+                .font(.custom("AvenirNext-Regular", size: 12)).foregroundStyle(KokoInk.secondary).multilineTextAlignment(.center)
+            KokoAction(title: "Find someone to talk to", icon: 4, action: action).frame(maxWidth: 270)
+        }.frame(maxWidth: .infinity).padding(22).background(ArtworkSurface(tile: 3))
+            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 24, style: .continuous).stroke(KokoInk.accent.opacity(0.3), lineWidth: 1))
+    }
+}
+
+private struct KokoFriendsRoomInviteCard: View {
+    @EnvironmentObject private var community: CommunityJournalStore
+    let action: () -> Void
+    var body: some View {
+        HStack(spacing: 12) {
+            HStack(spacing: -8) {
+                ForEach(Array(community.members.prefix(3)), id: \.id) { member in
+                    KokoMemberPortrait(member: member).frame(width: 38, height: 38).clipShape(Circle()).overlay(Circle().stroke(KokoInk.canvas, lineWidth: 2))
+                }
+            }.frame(width: 76, alignment: .leading)
+            VStack(alignment: .leading, spacing: 5) {
+                Text("Bring your people together").font(.custom("AvenirNext-Bold", size: 15))
+                Text("Open a room and make space for a shared hello.").font(.custom("AvenirNext-Medium", size: 10)).foregroundStyle(KokoInk.secondary).lineLimit(2)
+                Button("See your friends →", action: action).font(.custom("AvenirNext-Bold", size: 10)).foregroundStyle(KokoInk.coral).buttonStyle(.plain)
+            }
+            Spacer(minLength: 0)
+        }.padding(15).background(ArtworkSurface(tile: 3)).clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous).stroke(KokoInk.accent.opacity(0.3), lineWidth: 1))
+    }
+}
+
 
 struct KokoConversationDetail: View {
     @EnvironmentObject private var community: CommunityJournalStore
@@ -71,7 +157,7 @@ struct KokoConversationDetail: View {
     @State private var showClear = false
     var body: some View {
         ZStack {
-            KokoPage(title: community.member(memberID)?.publicName ?? "Conversation", subtitle: "LOCAL CONVERSATION · NO REMOTE DELIVERY", back: navigation.back) {
+            KokoPage(title: community.member(memberID)?.publicName ?? "Conversation", subtitle: "CONVERSATION · DELIVERY ISN’T CONNECTED YET", back: navigation.back) {
                 HStack {
                     KokoAction(title: "Voice call", icon: 13) { navigation.open(.call(memberID, .voice)) }
                     KokoAction(title: "Video call", icon: 0) { navigation.open(.call(memberID, .video)) }
@@ -99,7 +185,7 @@ struct KokoConversationDetail: View {
                                 if let tile = entry.attachmentTile { Artwork(sheet: .collection, tile: tile).frame(height: 160) }
                                 if !entry.messageText.isEmpty { Text(entry.messageText) }
                                 Text(entry.postedAt, style: .time).font(.custom("AvenirNext-Regular", size: 10))
-                                Text("Saved locally").font(.custom("AvenirNext-Medium", size: 9)).foregroundStyle(KokoInk.secondary)
+                                Text("Saved on this device").font(.custom("AvenirNext-Medium", size: 9)).foregroundStyle(KokoInk.secondary)
                             }
                         }
                         if entry.authorMemberID != community.myID { Spacer(minLength: 30) }
@@ -111,14 +197,13 @@ struct KokoConversationDetail: View {
                 KokoField(label: "Write something kind", value: $draft, multiline: true)
                 HStack {
                     KokoIconAction(icon: 7, label: "Attach photo") { showAttachmentPicker = true }
-                    KokoAction(title: "Save message locally", icon: 12) { if community.sendMessage(draft, memberID: memberID, photoKey: attachment) { draft = ""; attachment = nil } }
+                    KokoAction(title: "Save message", icon: 12) { if community.sendMessage(draft, memberID: memberID, photoKey: attachment) { draft = ""; attachment = nil } }
                 }
             }
             if showAttachmentPicker {
                 KokoModal(title: "Choose a photo", dismiss: { showAttachmentPicker = false }) {
                     KokoCollectionPhotoPicker(selectedPhotoKey: $attachment)
                     KokoAction(title: "Attach selection") { guard attachment != nil else { community.notice = "Choose a photo first."; return }; showAttachmentPicker = false }
-                    LocalPreviewNote(text: "COLLECTION PHOTOS · SAVED ON THIS DEVICE")
                 }
             }
             if let photo = KokoMediaLibrary.asset(viewingPhotoKey) {
@@ -129,7 +214,7 @@ struct KokoConversationDetail: View {
             }
             if showSafety { KokoSafetyPanel(subjectKey: "conversation-" + memberID, memberID: memberID) { showSafety = false; if community.journal?.blockedMembers.contains(memberID) == true { navigation.back() } } }
             if showClear {
-                KokoModal(title: "Clear this local chat?", dismiss: { showClear = false }) {
+                KokoModal(title: "Clear this chat?", dismiss: { showClear = false }) {
                     Text("Messages and the saved draft will be removed from this device.")
                     KokoAction(title: "Clear chat") { community.update { $0.privateConversations.removeAll { $0.correspondentID == memberID } }; draft = ""; attachment = nil; showClear = false }
                 }

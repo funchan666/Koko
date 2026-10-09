@@ -131,7 +131,7 @@ extension CommunityJournalStore {
             journal.coinBalance = (journal.coinBalance ?? 0) - total
             let purpose: String
             if var room = destinationRoom {
-                room.roomConversation.append(.init(authorMemberID: sender, messageText: "Gifted \(item.keepsakeName) ×\(request.quantity) · local room", attachmentTile: item.artworkTile))
+                room.roomConversation.append(.init(authorMemberID: sender, messageText: "Gifted \(item.keepsakeName) ×\(request.quantity) · room gesture", attachmentTile: item.artworkTile))
                 journal.roomOverrides[room.id] = room
                 purpose = item.keepsakeName + " ×\(request.quantity) · " + room.roomTitle
             } else {

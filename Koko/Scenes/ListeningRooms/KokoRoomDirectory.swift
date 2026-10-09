@@ -5,10 +5,12 @@ struct KokoRoomDirectory: View {
     @EnvironmentObject private var navigation: KokoSceneNavigation
     @State private var topic = "All"
     @State private var audience = "Voice rooms"
+    @State private var category = "For you"
     @State private var search = ""
     @State private var choosingTopic = false
     private let roomColumns = [
-        GridItem(.adaptive(minimum: 150, maximum: 260), spacing: 14, alignment: .top)
+        GridItem(.flexible(minimum: 0), spacing: 12, alignment: .top),
+        GridItem(.flexible(minimum: 0), spacing: 12, alignment: .top)
     ]
     private var filtered: [ListeningRoom] {
         let query = search.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -20,6 +22,19 @@ struct KokoRoomDirectory: View {
                     + (community.member(room.hostMemberID)?.publicName ?? "")).localizedCaseInsensitiveContains(query))
         }
     }
+    private func selectCategory(_ selected: String) {
+        category = selected
+        if selected == "Following" {
+            audience = "Following"
+            topic = "All"
+        } else if selected == "For you" {
+            audience = "Voice rooms"
+            topic = "All"
+        } else {
+            audience = "Voice rooms"
+            topic = selected
+        }
+    }
     var body: some View {
         ZStack {
             KokoPage {
@@ -27,18 +42,19 @@ struct KokoRoomDirectory: View {
                     KokoSearchField(prompt: "Search voice rooms", query: $search)
                     KokoIconAction(icon: 7, label: "Create a voice room") { navigation.open(.createRoom(false)) }
                 }
+                KokoVoiceCategoryRail(selection: $category) { selected in
+                    selectCategory(selected)
+                }
                 HStack(spacing: 10) {
-                    KokoChoiceRail(choices: ["Voice rooms", "Following"], selection: $audience)
+                    Text(category == "For you" ? "Find a room with a real hello" : "\(category) conversations")
+                        .font(.custom("AvenirNext-DemiBold", size: 12))
+                        .foregroundStyle(KokoInk.secondary)
+                    Spacer(minLength: 0)
                     KokoIconAction(icon: 11, label: "Room topic: " + topic) { choosingTopic = true }
+                        .frame(width: 52)
                 }
-                if topic != "All" {
-                    HStack {
-                        Text(topic).font(.custom("AvenirNext-DemiBold", size: 12)).foregroundStyle(KokoInk.accent)
-                        Spacer()
-                        KokoIconAction(icon: 6, label: "Clear topic filter") { topic = "All" }
-                    }
-                }
-                KokoSectionTitle(title: "Voice rooms", detail: "\(filtered.count) previews")
+                KokoVoiceSectionHeading(rooms: filtered)
+
                 LazyVGrid(columns: roomColumns, spacing: 14) {
                     ForEach(filtered) { room in KokoVoiceRoomCard(room: room) }
                 }
@@ -46,8 +62,11 @@ struct KokoRoomDirectory: View {
                     KokoEmpty(title: "No rooms here yet", detail: "Choose another topic or start a room of your own.", art: 1)
                     KokoAction(title: "Create a voice room", icon: 7) { navigation.open(.createRoom(false)) }
                 }
-                KokoMenuRow(title: "Room ranking", icon: 15) { navigation.open(.ranking) }
-                LocalPreviewNote(text: "LOCAL ROOM PREVIEWS · NO AUDIO IS BROADCAST")
+                KokoVoiceCommunityCard {
+                    navigation.open(.ranking)
+                } create: {
+                    navigation.open(.createRoom(false))
+                }
             }
             .allowsHitTesting(!choosingTopic)
             .accessibilityHidden(choosingTopic)
@@ -55,7 +74,10 @@ struct KokoRoomDirectory: View {
                 KokoModal(title: "Room topics", dismiss: { choosingTopic = false }) {
                     ForEach(KokoCommunity.topics, id: \.self) { option in
                         KokoAction(title: option == "All" ? "All topics" : option, emphasis: topic == option) {
-                            topic = option; choosingTopic = false
+                            topic = option
+                            audience = "Voice rooms"
+                            category = option == "All" ? "For you" : option
+                            choosingTopic = false
                         }
                     }
                 }
@@ -65,38 +87,41 @@ struct KokoRoomDirectory: View {
 }
 
 private struct KokoVoiceRoomCover: View {
+    @EnvironmentObject private var community: CommunityJournalStore
     let room: ListeningRoom
+    private var host: CommunityMember? { community.member(room.hostMemberID) }
     var body: some View {
         ZStack(alignment: .bottomLeading) {
-            Artwork(sheet: .social, tile: 0)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(KokoInk.panel)
-                .clipped()
-            LinearGradient(
-                colors: [Color.black.opacity(0.64), Color.clear, KokoInk.canvas.opacity(0.18)],
-                startPoint: .bottomLeading,
-                endPoint: .topTrailing
-            )
-            VStack(alignment: .leading, spacing: 7) {
-                HStack(spacing: 6) {
-                    Artwork(sheet: .navigation, tile: 1, ink: KokoInk.accent).frame(width: 18, height: 18)
-                    Text("VOICE ROOM").tracking(1.1)
-                    Text("/ PREVIEW").foregroundStyle(KokoInk.secondary)
-                }
-                .font(.custom("AvenirNext-Bold", size: 9, relativeTo: .caption2))
-                .foregroundStyle(KokoInk.primary)
-                Text(room.conversationTopic.uppercased())
-                    .font(.custom("AvenirNext-DemiBold", size: 10, relativeTo: .caption2))
-                    .tracking(1.3)
-                    .foregroundStyle(KokoInk.accent)
+            if let host {
+                KokoMemberCoverPhoto(member: host)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                KokoPhotoPlaceholder().frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .padding(12)
+            Color.black.opacity(0.18)
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 7) {
+                    KokoSocialTag(title: "VOICE ROOM", highlighted: true)
+                    Spacer(minLength: 0)
+                    Text("\(room.seatAssignments.count)/\(room.seatLimit) IN")
+                        .font(.custom("AvenirNext-Bold", size: 9)).tracking(0.7)
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 9).padding(.vertical, 7)
+                        .background(Color.black.opacity(0.58)).clipShape(Capsule())
+                }
+                Spacer(minLength: 0)
+                HStack(spacing: 8) {
+                    Artwork(sheet: .navigation, tile: 1, ink: .white).frame(width: 20, height: 20)
+                    Text("LIVE CONVERSATION").font(.custom("AvenirNext-Bold", size: 10)).tracking(1)
+                    Spacer(minLength: 0)
+                    if let host {
+                        KokoMemberPortrait(member: host).frame(width: 28, height: 28).clipShape(Circle())
+                    }
+                }.foregroundStyle(.white)
+            }.padding(13)
         }
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(KokoInk.accent.opacity(0.35), lineWidth: 1)
-        }
+        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous).stroke(KokoInk.accent.opacity(0.55), lineWidth: 1))
         .accessibilityHidden(true)
     }
 }
@@ -105,36 +130,117 @@ struct KokoVoiceRoomCard: View {
     @EnvironmentObject private var community: CommunityJournalStore
     @EnvironmentObject private var navigation: KokoSceneNavigation
     let room: ListeningRoom
+    private var host: CommunityMember? { community.member(room.hostMemberID) }
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            Button { navigation.open(.room(room.id)) } label: {
-                KokoVoiceRoomCover(room: room).frame(height: 148)
-            }.buttonStyle(KokoPressStyle()).accessibilityLabel("Enter voice room preview: " + room.roomTitle)
-            VStack(alignment: .leading, spacing: 9) {
-                Text(room.roomTitle).font(.custom("AvenirNext-Bold", size: 16, relativeTo: .headline))
-                    .fixedSize(horizontal: false, vertical: true)
-                if !room.conversationPrompt.isEmpty {
+        Button { navigation.open(.room(room.id)) } label: {
+            VStack(alignment: .leading, spacing: 0) {
+                KokoVoiceRoomCover(room: room).frame(height: 166)
+                VStack(alignment: .leading, spacing: 9) {
+                    HStack(alignment: .top, spacing: 6) {
+                        Text(room.roomTitle).font(.custom("AvenirNext-Bold", size: 16, relativeTo: .headline)).lineLimit(2)
+                        Spacer(minLength: 0)
+                        Artwork(sheet: .social, tile: 1).frame(width: 25, height: 22)
+                    }
                     Text(room.conversationPrompt).font(.custom("AvenirNext-Regular", size: 11, relativeTo: .caption))
                         .foregroundStyle(KokoInk.secondary).lineLimit(2)
-                }
-                if let host = community.member(room.hostMemberID) {
-                    Button { navigation.open(.profile(host.id)) } label: {
+                    if let host {
                         HStack(spacing: 7) {
-                            KokoMemberPortrait(member: host).frame(width: 30, height: 30)
-                            Text(host.publicName).font(.custom("AvenirNext-DemiBold", size: 11)).lineLimit(1)
+                            KokoMemberPortrait(member: host).frame(width: 30, height: 30).clipShape(Circle())
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text(host.publicName).font(.custom("AvenirNext-DemiBold", size: 11)).lineLimit(1)
+                                Text("Host · open to chat").font(.custom("AvenirNext-Medium", size: 9)).foregroundStyle(KokoInk.secondary)
+                            }
+                            Spacer(minLength: 0)
                         }
-                    }.buttonStyle(KokoPressStyle()).accessibilityLabel("View host " + host.publicName)
-                }
-                HStack(spacing: 6) {
-                    KokoSocialTag(title: "Voice")
-                    Spacer(minLength: 0)
-                    Text("Preview").font(.custom("AvenirNext-Medium", size: 10, relativeTo: .caption2)).foregroundStyle(KokoInk.secondary)
+                    }
+                    HStack(spacing: 8) {
+                        Text(room.conversationTopic.uppercased()).font(.custom("AvenirNext-Bold", size: 9)).tracking(0.8)
+                            .foregroundStyle(KokoInk.accent)
+                        Spacer(minLength: 0)
+                        Text("Join the room →").font(.custom("AvenirNext-Bold", size: 9)).foregroundStyle(KokoInk.coral)
+                    }
+                }.padding(12)
+            }
+            .foregroundStyle(KokoInk.primary)
+            .background(ArtworkSurface(tile: 3))
+            .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous).stroke(KokoInk.accent.opacity(0.34), lineWidth: 1))
+            .shadow(color: .black.opacity(0.16), radius: 12, y: 7)
+        }.buttonStyle(KokoPressStyle()).accessibilityLabel("Enter voice room preview: " + room.roomTitle)
+    }
+}
+
+private struct KokoVoiceCategoryRail: View {
+    @Binding var selection: String
+    let select: (String) -> Void
+    private let categories: [(String, Int)] = [
+        ("For you", 0), ("Following", 1), ("Conversation", 2), ("Music", 3), ("Creative", 0), ("After hours", 1)
+    ]
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 9) {
+                ForEach(categories, id: \.0) { category, tile in
+                    Button { select(category) } label: {
+                        HStack(spacing: 7) {
+                            Artwork(sheet: .social, tile: tile).frame(width: 22, height: 22)
+                            Text(category).font(.custom("AvenirNext-DemiBold", size: 11)).fixedSize(horizontal: true, vertical: false)
+                        }
+                        .foregroundStyle(selection == category ? KokoInk.onMint : KokoInk.primary)
+                        .padding(.horizontal, 12).padding(.vertical, 10)
+                        .background(KokoControlSurface(highlighted: selection == category))
+                    }.buttonStyle(KokoPressStyle())
+                        .accessibilityAddTraits(selection == category ? .isSelected : [])
                 }
             }
         }
-        .padding(10)
-        .foregroundStyle(KokoInk.primary)
-        .background(ArtworkSurface(tile: 2))
+    }
+}
+
+private struct KokoVoiceSectionHeading: View {
+    @EnvironmentObject private var community: CommunityJournalStore
+    let rooms: [ListeningRoom]
+    var body: some View {
+        HStack(spacing: 10) {
+            HStack(spacing: -7) {
+                ForEach(Array(rooms.prefix(3)), id: \.id) { room in
+                    if let host = community.member(room.hostMemberID) {
+                        KokoMemberPortrait(member: host).frame(width: 32, height: 32).clipShape(Circle())
+                            .overlay(Circle().stroke(KokoInk.canvas, lineWidth: 2))
+                    }
+                }
+            }.frame(width: 58, height: 34, alignment: .leading)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Voice rooms").font(.custom("AvenirNext-Bold", size: 20, relativeTo: .title3))
+                Text("Hear people thinking out loud").font(.custom("AvenirNext-Medium", size: 10)).foregroundStyle(KokoInk.secondary)
+            }
+            Spacer(minLength: 0)
+            Text("\(rooms.count) rooms").font(.custom("AvenirNext-Bold", size: 10)).foregroundStyle(KokoInk.coral)
+        }
+    }
+}
+
+private struct KokoVoiceCommunityCard: View {
+    @EnvironmentObject private var community: CommunityJournalStore
+    let ranking: () -> Void
+    let create: () -> Void
+    var body: some View {
+        HStack(spacing: 12) {
+            HStack(spacing: -8) {
+                ForEach(Array(community.members.prefix(3)), id: \.id) { member in
+                    KokoMemberPortrait(member: member).frame(width: 36, height: 36).clipShape(Circle()).overlay(Circle().stroke(KokoInk.canvas, lineWidth: 2))
+                }
+            }.frame(width: 72, alignment: .leading)
+            VStack(alignment: .leading, spacing: 3) {
+                Text("Make room for a hello").font(.custom("AvenirNext-Bold", size: 15))
+                Text("Start a voice room or see who is getting heard.").font(.custom("AvenirNext-Medium", size: 10)).foregroundStyle(KokoInk.secondary).lineLimit(2)
+                HStack(spacing: 10) {
+                    Button("Open ranking", action: ranking).font(.custom("AvenirNext-Bold", size: 9)).foregroundStyle(KokoInk.coral).buttonStyle(.plain)
+                    Button("Create room", action: create).font(.custom("AvenirNext-Bold", size: 9)).foregroundStyle(KokoInk.accent).buttonStyle(.plain)
+                }
+            }
+            Spacer(minLength: 0)
+        }.padding(14).background(ArtworkSurface(tile: 3)).clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous).stroke(KokoInk.accent.opacity(0.28), lineWidth: 1))
     }
 }
 
@@ -163,7 +269,6 @@ struct KokoRoomComposer: View {
             Text("Seats at your table").font(.custom("AvenirNext-DemiBold", size: 16))
             KokoChoiceRail(choices: ["3", "4", "6", "8", "9", "12"], selection: $seats)
             KokoToggleRow(title: "Public room", enabled: $publicRoom)
-            LocalPreviewNote(text: "CREATES A ROOM ON THIS DEVICE. NO AUDIO OR VIDEO IS BROADCAST.")
             KokoAction(title: "Open my room", icon: 1) {
                 let title = roomTitle.trimmingCharacters(in: .whitespacesAndNewlines)
                 guard !title.isEmpty, title.count <= 50, conversationPrompt.count <= 240, let audience = Int(targetAudience), (1...999).contains(audience) else { community.notice = "Add a room name up to 50 characters, a description up to 240 characters, and an audience goal from 1 to 999."; return }

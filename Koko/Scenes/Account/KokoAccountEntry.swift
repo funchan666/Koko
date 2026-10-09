@@ -134,7 +134,7 @@ struct KokoPolicyView: View {
                 Artwork(sheet: .arrival, tile: 1).frame(height: 210)
                 Text("Make room for one another.").font(.custom("AvenirNext-Bold", size: 26))
                 Text("Respect people's boundaries. Do not share harassment, hate, exploitation, threats, scams or private information. Report or block content that makes you uncomfortable.")
-                Text("Koko is for adults. Local reports remain on this device until a moderation service is connected.").foregroundStyle(KokoInk.secondary)
+                Text("Koko is for adults. Reports remain on this device until a moderation service is connected.").foregroundStyle(KokoInk.secondary)
             }
         } else { KokoLegalWebPage(document: kind == "Privacy" ? .privacy : .terms, close: onBack) }
     }

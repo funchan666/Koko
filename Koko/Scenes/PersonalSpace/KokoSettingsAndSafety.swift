@@ -17,16 +17,16 @@ struct KokoSettingsView: View {
                 KokoMenuRow(title: "Community guidelines", icon: 2) { navigation.open(.policy("Community guidelines")) }
                 KokoMenuRow(title: "Privacy notice", icon: 11) { navigation.open(.policy("Privacy")) }
                 KokoMenuRow(title: "Terms of Service", icon: 11) { navigation.open(.policy("Terms of Service")) }
-                KokoMenuRow(title: "About Koko", detail: "Version 1.0 · Local preview", icon: 1) { navigation.open(.preferences("About Koko")) }
-                KokoAction(title: "Switch local account", emphasis: false) { confirmation = "Switch accounts?" }
+                KokoMenuRow(title: "About Koko", detail: "Version 1.0 · Preview", icon: 1) { navigation.open(.preferences("About Koko")) }
+                KokoAction(title: "Switch account", emphasis: false) { confirmation = "Switch accounts?" }
                 KokoAction(title: "Sign out", emphasis: false) { confirmation = "Sign out?" }
-                KokoAction(title: "Delete local profile", emphasis: false) { confirmation = "Delete your local profile?" }
+                KokoAction(title: "Delete profile", emphasis: false) { confirmation = "Delete your profile?" }
             }
             if let confirmation {
                 KokoModal(title: confirmation, dismiss: { self.confirmation = nil }) {
-                    let deleting = confirmation == "Delete your local profile?"
-                    Text(deleting ? "This permanently removes this account's local profile, messages, album, rooms, remaining coins (including purchased coins), purchase records and keepsakes. Completed consumable purchases cannot restore this deleted balance. Other local accounts are kept." : "Your local data stays here. Use the same email with any password of 8–128 characters, or the same Apple account, to return.")
-                    KokoAction(title: deleting ? "Delete this local profile" : "Continue") {
+                    let deleting = confirmation == "Delete your profile?"
+                    Text(deleting ? "This permanently removes this account's profile, messages, album, rooms, remaining coins, purchase records and keepsakes. Completed consumable purchases cannot restore this deleted balance. Other accounts are kept." : "Your data stays here. Use the same email with any password of 8–128 characters, or the same Apple account, to return.")
+                    KokoAction(title: deleting ? "Delete this profile" : "Continue") {
                         if deleting { community.deleteLocalAccount() } else { community.signOut() }
                     }
                     KokoAction(title: "Keep me here", emphasis: false) { self.confirmation = nil }
@@ -63,28 +63,28 @@ struct KokoPreferencesView: View {
                             } else { community.update { $0.preferences[option] = value } }
                         }))
                     }
-                    Text(kind == "Privacy" ? "These choices are stored on this device. Remote profile visibility will be connected with the live service." : "Check-in reminders are local notifications at 8 p.m. Message and room preferences are saved for the future live service.")
+                    Text(kind == "Privacy" ? "These choices are stored on this device. Remote profile visibility will be connected with the live service." : "Check-in reminders arrive at 8 p.m. Message and room preferences are saved for the future live service.")
                         .font(.custom("AvenirNext-Regular", size: 13)).foregroundStyle(KokoInk.secondary)
                 } else if kind == "Storage" {
                     Artwork(sheet: .navigation, tile: 9).frame(height: 140)
                     KokoCard { VStack(alignment: .leading, spacing: 10) { Text("Saved on this device").font(.custom("AvenirNext-Bold", size: 22)); Text("\(community.conversations.count) conversations"); Text("\((community.journal?.albumTiles.count ?? 0) + (community.journal?.albumPhotoKeys?.count ?? 0)) album images"); Text("\(community.journal?.createdRooms.count ?? 0) rooms created") } }
                     KokoAction(title: "Clear media cache", emphasis: false) { community.clearTransientCache() }
-                    KokoAction(title: "Clear local conversations", emphasis: false) { clearingMessages = true }
+                    KokoAction(title: "Clear conversations", emphasis: false) { clearingMessages = true }
                 } else if kind == "Account" {
                     Text(community.currentMember?.publicName ?? "Your profile").font(.custom("AvenirNext-Bold", size: 27))
-                    Text("Email entry checks a valid email format and an 8–128 character password only. The email selects your local profile. It does not check a saved password or verify mailbox ownership.")
-                    Text("Apple sign-in, when configured, uses genuine Apple authorization. Koko interactions remain local in this build.")
-                    KokoAction(title: "Password help", emphasis: false) { community.notice = "Use the same email and any password of 8–128 characters. No password matching or reset is needed for this local preview." }
+                    Text("Email entry checks a valid email format and an 8–128 character password only. The email selects your profile. It does not check a saved password or verify mailbox ownership.")
+                    Text("Apple sign-in, when configured, uses genuine Apple authorization. Koko interactions stay on this device in this build.")
+                    KokoAction(title: "Password help", emphasis: false) { community.notice = "Use the same email and any password of 8–128 characters. No password matching or reset is needed for this preview." }
                 } else {
                     Artwork(sheet: .scenes, tile: 3).frame(height: 240)
                     Text("koko").font(.custom("AvenirNext-Bold", size: 40))
                     Text("Good company, at your pace.").font(.custom("AvenirNext-DemiBold", size: 21))
                     Text("Version 1.0 · Original artwork · Native SwiftUI")
-                    Text("This is a local interactive preview. Sample profiles and rooms are local. Optional coin packs use genuine Apple In-App Purchase, with the wallet currently stored on this device.").foregroundStyle(KokoInk.secondary)
+                    Text("This is an interactive preview with sample profiles and rooms. Optional coin packs use genuine Apple In-App Purchase, with the wallet currently stored on this device.").foregroundStyle(KokoInk.secondary)
                     KokoAction(title: "Leave feedback", icon: 2) { navigation.open(.feedback) }
                 }
             }
-            if clearingMessages { KokoModal(title: "Clear conversations?", dismiss: { clearingMessages = false }) { Text("This removes all locally saved chat entries and drafts for this account."); KokoAction(title: "Clear now") { community.update { $0.privateConversations = [] }; clearingMessages = false } } }
+            if clearingMessages { KokoModal(title: "Clear conversations?", dismiss: { clearingMessages = false }) { Text("This removes all saved chat entries and drafts for this account."); KokoAction(title: "Clear now") { community.update { $0.privateConversations = [] }; clearingMessages = false } } }
         }
     }
 }
@@ -116,7 +116,7 @@ struct KokoFeedbackView: View {
             Artwork(sheet: .scenes, tile: 2).frame(height: 180)
             KokoChoiceRail(choices: ["Something to improve", "A problem", "An idea"], selection: $topic)
             KokoField(label: "What's on your mind? · up to 1000 characters", value: $message, multiline: true)
-            KokoAction(title: "Save feedback locally", icon: 12) {
+            KokoAction(title: "Save feedback", icon: 12) {
                 let trimmed = message.trimmingCharacters(in: .whitespacesAndNewlines)
                 guard !trimmed.isEmpty, trimmed.count <= 1000 else { community.notice = "Write a note from 1 to 1000 characters."; return }
                 if community.update({ $0.feedbackNotes.append(topic + ": " + trimmed) }) { message = ""; community.notice = "Your feedback is saved on this device. It has not been sent to a support team." }

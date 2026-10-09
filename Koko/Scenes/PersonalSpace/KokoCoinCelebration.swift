@@ -9,7 +9,7 @@ struct KokoCoinSpendConfirmation: View {
             KokoModal(title: "A little gesture, on purpose", dismiss: { community.coinSpendRequest = nil }) {
                 Artwork(sheet: .collection, tile: item.artworkTile).frame(height: 150)
                 Text(item.keepsakeName + " ×\(request.quantity)").font(.custom("AvenirNext-Bold", size: 24))
-                Text(request.roomID == nil ? "This item goes into your backpack." : "This is an optional gift for a local room. No message, call or conversation requires it.")
+                Text(request.roomID == nil ? "This item goes into your backpack." : "This is an optional room gift. No message, call or conversation requires it.")
                 KokoCard(tint: 3) {
                     VStack(spacing: 12) {
                         balanceLine("Available", community.coinBalance)

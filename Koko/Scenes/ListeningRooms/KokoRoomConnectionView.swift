@@ -22,11 +22,11 @@ struct KokoRoomConnectionView: View {
             if let room {
                 KokoCard(tint: 3) {
                     VStack(alignment: .leading, spacing: 10) {
-                        Text(localStageStartedAt != nil ? "Your local stage" : (requestPlacedAt != nil ? "Your request is waiting" : "Bring your voice to the table.")).font(.custom("AvenirNext-Bold", size: 23))
-                        Text("Local room setup · no host is contacted and no audio is sent. Voice, video and seat requests are free.").font(.custom("AvenirNext-Regular", size: 13))
+                        Text(localStageStartedAt != nil ? "Your room stage" : (requestPlacedAt != nil ? "Your request is waiting" : "Bring your voice to the table.")).font(.custom("AvenirNext-Bold", size: 23))
+                        Text("Room setup · no host is contacted and no audio is sent. Voice, video and seat requests are free.").font(.custom("AvenirNext-Regular", size: 13))
                         if let started = localStageStartedAt ?? requestPlacedAt {
                             TimelineView(.periodic(from: .now, by: 1)) { context in
-                                Text("\(localStageStartedAt != nil ? "Device-check time" : "Local wait") · \(duration(since: started, now: context.date))")
+                                Text("\(localStageStartedAt != nil ? "Device-check time" : "Waiting") · \(duration(since: started, now: context.date))")
                                     .font(.custom("AvenirNext-DemiBold", size: 16)).monospacedDigit()
                             }
                         }
@@ -38,8 +38,8 @@ struct KokoRoomConnectionView: View {
                         KokoAction(title: pending ? "Checking microphone…" : (isHost ? "Prepare my host seat" : "Request a seat"), icon: 13, action: requestSeat).disabled(pending)
                     } else {
                         if let member = community.currentMember { KokoMemberRow(member: member) }
-                        Text("This request is saved only for this open panel. You can cancel, or try the local stage controls yourself.").font(.custom("AvenirNext-Regular", size: 13))
-                        KokoAction(title: "Try the local stage", icon: 13, action: enterStage).disabled(pending)
+                        Text("This request is saved only for this open panel. You can cancel, or try the room controls yourself.").font(.custom("AvenirNext-Regular", size: 13))
+                        KokoAction(title: "Try the room stage", icon: 13, action: enterStage).disabled(pending)
                         KokoAction(title: "Cancel request", emphasis: false) { pause(); requestPlacedAt = nil }
                     }
                     Text(audio.explanation).font(.custom("AvenirNext-Regular", size: 12)).foregroundStyle(KokoInk.secondary)

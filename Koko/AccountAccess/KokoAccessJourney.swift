@@ -30,13 +30,6 @@ struct KokoLaunchLoading: View {
     var body: some View {
         ZStack {
             KokoGradientBackdrop()
-            RadialGradient(
-                colors: [KokoInk.accent.opacity(0.16), Color.clear],
-                center: .center,
-                startRadius: 12,
-                endRadius: 300
-            )
-            .accessibilityHidden(true)
             KokoBrandLoading(caption: "Tuning in")
         }.foregroundStyle(KokoInk.primary)
     }
@@ -50,13 +43,6 @@ struct KokoAccountLoading: View {
     var body: some View {
         ZStack {
             KokoGradientBackdrop()
-            RadialGradient(
-                colors: [KokoInk.accent.opacity(0.13), Color.clear],
-                center: .center,
-                startRadius: 12,
-                endRadius: 320
-            )
-            .accessibilityHidden(true)
             GeometryReader { viewport in
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 22) {

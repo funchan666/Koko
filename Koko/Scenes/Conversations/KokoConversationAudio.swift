@@ -100,7 +100,7 @@ final class KokoConversationAudio: ObservableObject {
         }
         guard revision == attempt else { return false }
         requesting = false; listening = ready
-        explanation = ready ? "Microphone is active for this local level check. No audio is recorded or sent." : "The microphone couldn't start. Check your audio device and try again."
+        explanation = ready ? "Microphone is active for this level check. No audio is recorded or sent." : "The microphone couldn't start. Check your audio device and try again."
         refreshRoute()
         return ready
     }
