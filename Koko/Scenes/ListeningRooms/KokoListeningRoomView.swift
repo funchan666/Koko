@@ -110,7 +110,7 @@ struct KokoListeningRoomView: View {
                     roomTool(14, "Music", "Room music")
                     roomTool(8, "Gifts", "Send a little something")
                 }
-                KokoRoomComposer(message: $roomMessage, send: { sendRoomMessage(roomMessage) }, gift: { panel = "Send a little something" })
+                KokoLiveRoomComposer(message: $roomMessage, send: { sendRoomMessage(roomMessage) }, gift: { panel = "Send a little something" })
             }.padding(.horizontal, 18).padding(.top, 12).padding(.bottom, screenInsets.bottom + 8)
                 .background(KokoInk.canvas.opacity(0.92))
         }

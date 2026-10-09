@@ -68,7 +68,7 @@ struct KokoLiveRoomStage: View {
                 }
                 Text("Recorded video · messages & gifts stay on this device")
                     .font(.custom("AvenirNext-Medium", size: 10)).foregroundStyle(.white.opacity(0.75))
-                KokoRoomComposer(message: $message, send: { onSendMessage(message) }, gift: { onOpenPanel("Send a little something") })
+                KokoLiveRoomComposer(message: $message, send: { onSendMessage(message) }, gift: { onOpenPanel("Send a little something") })
             }
             .padding(.horizontal, 18).padding(.top, screenInsets.top + 8).padding(.bottom, screenInsets.bottom + 10)
             KokoRoomBarrage(entries: room.roomConversation)
@@ -133,7 +133,7 @@ struct KokoLiveRoomStage: View {
     }
 }
 
-struct KokoRoomComposer: View {
+struct KokoLiveRoomComposer: View {
     @Binding var message: String
     let send: () -> Bool
     let gift: () -> Void
