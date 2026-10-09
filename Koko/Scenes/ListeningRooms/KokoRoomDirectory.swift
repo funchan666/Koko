@@ -7,6 +7,9 @@ struct KokoRoomDirectory: View {
     @State private var audience = "Voice rooms"
     @State private var search = ""
     @State private var choosingTopic = false
+    private let roomColumns = [
+        GridItem(.adaptive(minimum: 150, maximum: 260), spacing: 14, alignment: .top)
+    ]
     private var filtered: [ListeningRoom] {
         let query = search.trimmingCharacters(in: .whitespacesAndNewlines)
         return community.rooms.filter { room in
@@ -20,12 +23,6 @@ struct KokoRoomDirectory: View {
     var body: some View {
         ZStack {
             KokoPage {
-                KokoSocialHero(
-                    eyebrow: "Room for a hello",
-                    title: "Pull up a chair",
-                    detail: "Small voice rooms for real conversations and easy first hellos.",
-                    artwork: 0
-                )
                 HStack(spacing: 10) {
                     KokoSearchField(prompt: "Search voice rooms", query: $search)
                     KokoIconAction(icon: 7, label: "Create a voice room") { navigation.open(.createRoom(false)) }
@@ -41,7 +38,8 @@ struct KokoRoomDirectory: View {
                         KokoIconAction(icon: 6, label: "Clear topic filter") { topic = "All" }
                     }
                 }
-                LazyVStack(spacing: 26) {
+                KokoSectionTitle(title: "Voice rooms", detail: "\(filtered.count) previews")
+                LazyVGrid(columns: roomColumns, spacing: 14) {
                     ForEach(filtered) { room in KokoVoiceRoomCard(room: room) }
                 }
                 if filtered.isEmpty {
@@ -66,6 +64,43 @@ struct KokoRoomDirectory: View {
     }
 }
 
+private struct KokoVoiceRoomCover: View {
+    let room: ListeningRoom
+    var body: some View {
+        ZStack(alignment: .bottomLeading) {
+            Artwork(sheet: .social, tile: 0)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(KokoInk.panel)
+                .clipped()
+            LinearGradient(
+                colors: [Color.black.opacity(0.64), Color.clear, KokoInk.canvas.opacity(0.18)],
+                startPoint: .bottomLeading,
+                endPoint: .topTrailing
+            )
+            VStack(alignment: .leading, spacing: 7) {
+                HStack(spacing: 6) {
+                    Artwork(sheet: .navigation, tile: 1, ink: KokoInk.accent).frame(width: 18, height: 18)
+                    Text("VOICE ROOM").tracking(1.1)
+                    Text("/ PREVIEW").foregroundStyle(KokoInk.secondary)
+                }
+                .font(.custom("AvenirNext-Bold", size: 9, relativeTo: .caption2))
+                .foregroundStyle(KokoInk.primary)
+                Text(room.conversationTopic.uppercased())
+                    .font(.custom("AvenirNext-DemiBold", size: 10, relativeTo: .caption2))
+                    .tracking(1.3)
+                    .foregroundStyle(KokoInk.accent)
+            }
+            .padding(12)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(KokoInk.accent.opacity(0.35), lineWidth: 1)
+        }
+        .accessibilityHidden(true)
+    }
+}
+
 struct KokoVoiceRoomCard: View {
     @EnvironmentObject private var community: CommunityJournalStore
     @EnvironmentObject private var navigation: KokoSceneNavigation
@@ -73,35 +108,33 @@ struct KokoVoiceRoomCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             Button { navigation.open(.room(room.id)) } label: {
-                KokoRoomHostCover(room: room).frame(height: 248)
+                KokoVoiceRoomCover(room: room).frame(height: 148)
             }.buttonStyle(KokoPressStyle()).accessibilityLabel("Enter voice room preview: " + room.roomTitle)
-            VStack(alignment: .leading, spacing: 7) {
-                Text(room.conversationTopic.uppercased())
-                    .font(.custom("AvenirNext-DemiBold", size: 10)).tracking(1.2).foregroundStyle(KokoInk.accent)
-                Text(room.roomTitle).font(.custom("AvenirNext-Bold", size: 22, relativeTo: .title2))
+            VStack(alignment: .leading, spacing: 9) {
+                Text(room.roomTitle).font(.custom("AvenirNext-Bold", size: 16, relativeTo: .headline))
                     .fixedSize(horizontal: false, vertical: true)
                 if !room.conversationPrompt.isEmpty {
-                    Text(room.conversationPrompt).font(.custom("AvenirNext-Regular", size: 13))
+                    Text(room.conversationPrompt).font(.custom("AvenirNext-Regular", size: 11, relativeTo: .caption))
                         .foregroundStyle(KokoInk.secondary).lineLimit(2)
                 }
-            }
-            HStack(spacing: 12) {
                 if let host = community.member(room.hostMemberID) {
                     Button { navigation.open(.profile(host.id)) } label: {
-                        HStack(spacing: 10) {
-                            KokoMemberPortrait(member: host).frame(width: 52, height: 52)
-                            VStack(alignment: .leading, spacing: 3) {
-                                Text(host.publicName).font(.custom("AvenirNext-DemiBold", size: 14)).lineLimit(1)
-                                Text("Room host").font(.custom("AvenirNext-Regular", size: 11)).foregroundStyle(KokoInk.secondary)
-                            }
+                        HStack(spacing: 7) {
+                            KokoMemberPortrait(member: host).frame(width: 30, height: 30)
+                            Text(host.publicName).font(.custom("AvenirNext-DemiBold", size: 11)).lineLimit(1)
                         }
                     }.buttonStyle(KokoPressStyle()).accessibilityLabel("View host " + host.publicName)
                 }
-                Spacer(minLength: 0)
-                KokoAction(title: "Enter", icon: 1) { navigation.open(.room(room.id)) }
-                    .fixedSize(horizontal: true, vertical: false)
+                HStack(spacing: 6) {
+                    KokoSocialTag(title: "Voice")
+                    Spacer(minLength: 0)
+                    Text("Preview").font(.custom("AvenirNext-Medium", size: 10, relativeTo: .caption2)).foregroundStyle(KokoInk.secondary)
+                }
             }
-        }.foregroundStyle(KokoInk.primary)
+        }
+        .padding(10)
+        .foregroundStyle(KokoInk.primary)
+        .background(ArtworkSurface(tile: 2))
     }
 }
 

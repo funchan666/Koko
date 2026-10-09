@@ -275,7 +275,7 @@ final class CommunityJournalStore: ObservableObject {
         let departingSeats = room.seatAssignments.filter { $0.value == myID }.map(\.key)
         room.seatAssignments = room.seatAssignments.filter { $0.value != myID }
         room.mutedSeatNumbers.subtract(departingSeats)
-        saveRoom(room)
+        _ = saveRoom(room)
     }
     func block(_ memberID: String) {
         guard memberID != myID else { return }

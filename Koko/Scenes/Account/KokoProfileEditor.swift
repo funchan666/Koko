@@ -111,7 +111,15 @@ struct KokoProfileEditor: View {
                         .accessibilityLabel("Your profile photo")
                     VStack(spacing: 8) {
                         PhotosPicker(selection: $selectedPhoto, matching: .images, photoLibrary: .shared()) {
-                            controlLabel(importingPhoto ? "Opening photo…" : "Choose photo", selected: true)
+                            Text("Choose photo")
+                                .font(.custom("AvenirNext-DemiBold", size: 13, relativeTo: .body))
+                                .foregroundStyle(KokoWelcomePalette.backdrop)
+                                .multilineTextAlignment(.center)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 12)
+                                .frame(maxWidth: .infinity, minHeight: 48)
+                                .background(KokoProfileChoiceSurface(selected: true))
                         }.buttonStyle(KokoPressStyle()).disabled(importingPhoto)
                         Button { editing = nil; showingCamera = true } label: { controlLabel("Take photo") }
                             .buttonStyle(KokoPressStyle()).disabled(importingPhoto)

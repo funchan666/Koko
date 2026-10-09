@@ -107,7 +107,7 @@ extension CommunityJournalStore {
     func requestKeepsake(_ keepsake: RoomKeepsake, quantity: Int = 1, roomID: String? = nil) {
         guard prepareCoinWallet(), (1...99).contains(quantity),
               let item = KokoCommunity.keepsakes.first(where: { $0.id == keepsake.id }) else { return }
-        if item.wearable && ((journal?.ownedKeepsakes[item.id] ?? 0) > 0 || quantity != 1 || roomID != nil) {
+        if item.wearable && roomID == nil && ((journal?.ownedKeepsakes[item.id] ?? 0) > 0 || quantity != 1) {
             notice = "This decoration is already yours. You can wear it from your backpack without another charge."; return
         }
         if let roomID, room(roomID) == nil { notice = "This room is no longer available."; return }
@@ -123,7 +123,7 @@ extension CommunityJournalStore {
               let item = KokoCommunity.keepsakes.first(where: { $0.id == request.keepsakeID }) else { return }
         let total = item.tokenCost * request.quantity
         guard coinBalance >= total else { coinShortfall = .init(requiredCoins: total, purpose: item.keepsakeName); return }
-        if item.wearable && (journal?.ownedKeepsakes[item.id] ?? 0) > 0 { notice = "This decoration is already in your backpack."; return }
+        if item.wearable && request.roomID == nil && (journal?.ownedKeepsakes[item.id] ?? 0) > 0 { notice = "This decoration is already in your backpack."; return }
         let destinationRoom = request.roomID.flatMap { room($0) }
         guard request.roomID == nil || destinationRoom != nil else { notice = "This room is no longer available. No coins were spent."; return }
         let sender = myID

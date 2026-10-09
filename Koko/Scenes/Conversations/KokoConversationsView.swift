@@ -9,12 +9,6 @@ struct KokoConversationsView: View {
     var body: some View {
         ZStack {
             KokoPage {
-                KokoSocialHero(
-                    eyebrow: "Keep the thread",
-                    title: "Your people are here",
-                    detail: "Pick up a local conversation, share a photo, or send a small hello.",
-                    artwork: 1
-                )
                 HStack(spacing: 10) {
                     shortcut("System", detail: "\(community.journal?.notices.filter { !$0.hasBeenRead }.count ?? 0) unread", icon: 10, destination: .notices)
                     shortcut("People", detail: "\(community.friends.count) friends", icon: 3, destination: .friends("Friends"))

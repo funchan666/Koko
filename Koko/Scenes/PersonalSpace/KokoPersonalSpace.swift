@@ -7,12 +7,6 @@ struct KokoPersonalSpace: View {
     var body: some View {
         ZStack {
             KokoPage {
-                KokoSocialHero(
-                    eyebrow: "Your corner of Koko",
-                    title: "A little more you",
-                    detail: "Keep the people, rooms, and little moments that feel like yours close by.",
-                    artwork: 3
-                )
                 if let member = community.currentMember {
                     KokoCard {
                         HStack(alignment: .top, spacing: 16) {

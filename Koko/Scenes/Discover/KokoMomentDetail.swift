@@ -158,8 +158,9 @@ final class KokoMomentPlayback: ObservableObject {
 
 struct KokoMovieSurface: UIViewRepresentable {
     let player: AVPlayer
-    func makeUIView(context: Context) -> KokoMovieLayerView { let view = KokoMovieLayerView(); view.movieLayer.videoGravity = .resizeAspect; view.movieLayer.player = player; return view }
-    func updateUIView(_ view: KokoMovieLayerView, context: Context) { view.movieLayer.player = player }
+    var videoGravity: AVLayerVideoGravity = .resizeAspect
+    func makeUIView(context: Context) -> KokoMovieLayerView { let view = KokoMovieLayerView(); view.movieLayer.videoGravity = videoGravity; view.movieLayer.player = player; return view }
+    func updateUIView(_ view: KokoMovieLayerView, context: Context) { view.movieLayer.videoGravity = videoGravity; view.movieLayer.player = player }
     static func dismantleUIView(_ view: KokoMovieLayerView, coordinator: ()) { view.movieLayer.player = nil }
 }
 

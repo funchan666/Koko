@@ -118,7 +118,7 @@ struct KokoRoomConnectionView: View {
     }
     private func muteStage() {
         audio.mute()
-        if var room, let seat = mySeat, !room.mutedSeatNumbers.contains(seat) { room.mutedSeatNumbers.insert(seat); community.saveRoom(room) }
+        if var room, let seat = mySeat, !room.mutedSeatNumbers.contains(seat) { room.mutedSeatNumbers.insert(seat); _ = community.saveRoom(room) }
     }
     private func pause() { muteStage(); camera.stop(); pending = false }
     private func releaseGuestSeat() { if !isHost, mySeat != nil { community.leaveSeat(in: roomID) } }

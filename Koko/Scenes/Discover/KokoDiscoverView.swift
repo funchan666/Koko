@@ -20,15 +20,13 @@ struct KokoDiscoverView: View {
         }
     }
 
+    private let roomColumns = [
+        GridItem(.adaptive(minimum: 150, maximum: 260), spacing: 14, alignment: .top)
+    ]
+
     var body: some View {
         ZStack {
             KokoPage {
-                KokoSocialHero(
-                    eyebrow: "Live together",
-                    title: "Find your kind of room",
-                    detail: "Join a live conversation, meet the host, and make a little space for yourself.",
-                    artwork: 2
-                )
                 HStack(spacing: 10) {
                     KokoSearchField(prompt: "Search live rooms", query: $roomSearch)
                     KokoIconAction(icon: 0, label: "Create a live room") { navigation.open(.createRoom(true)) }
@@ -44,7 +42,8 @@ struct KokoDiscoverView: View {
                         KokoIconAction(icon: 6, label: "Clear topic filter") { roomTopic = "All" }
                     }
                 }
-                LazyVStack(spacing: 24) {
+                KokoSectionTitle(title: "Live rooms", detail: "\(visibleRooms.count) previews")
+                LazyVGrid(columns: roomColumns, spacing: 14) {
                     ForEach(visibleRooms) { room in KokoLiveRoomCard(room: room) }
                 }
                 if visibleRooms.isEmpty {
@@ -52,6 +51,18 @@ struct KokoDiscoverView: View {
                     KokoAction(title: "Create a live room", icon: 0) { navigation.open(.createRoom(true)) }
                 }
                 LocalPreviewNote(text: "LOCAL ROOM PREVIEWS · NO LIVE BROADCAST IS CONNECTED")
+                HStack {
+                    KokoSectionTitle(title: "Community updates", detail: "Fresh from Koko")
+                    Spacer(minLength: 0)
+                }
+                LazyVGrid(columns: roomColumns, spacing: 14) {
+                    ForEach(Array(community.moments.prefix(4))) { moment in
+                        KokoMomentCard(moment: moment)
+                    }
+                }
+                KokoMenuRow(title: "See all updates", detail: "Photos and videos from the community", icon: 4) {
+                    navigation.open(.momentsCollection)
+                }
                 HStack {
                     KokoSectionTitle(title: "Meet the hosts")
                     Spacer(minLength: 8)
@@ -128,30 +139,33 @@ struct KokoLiveRoomCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             Button { navigation.open(.room(room.id)) } label: {
-                KokoRoomHostCover(room: room).frame(height: 280)
+                KokoRoomHostCover(room: room).frame(height: 148)
             }.buttonStyle(KokoPressStyle()).accessibilityLabel("Open live room preview: " + room.roomTitle)
-            VStack(alignment: .leading, spacing: 12) {
-                Text(room.roomTitle).font(.custom("AvenirNext-Bold", size: 22, relativeTo: .title2))
+            VStack(alignment: .leading, spacing: 9) {
+                Text(room.roomTitle).font(.custom("AvenirNext-Bold", size: 16, relativeTo: .headline))
                     .fixedSize(horizontal: false, vertical: true)
-                HStack(spacing: 12) {
-                    if let host = community.member(room.hostMemberID) {
-                        Button { navigation.open(.profile(host.id)) } label: {
-                            HStack(spacing: 10) {
-                                KokoMemberPortrait(member: host).frame(width: 56, height: 56)
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(host.publicName).font(.custom("AvenirNext-DemiBold", size: 14)).lineLimit(1)
-                                    Text(room.conversationTopic).font(.custom("AvenirNext-Regular", size: 12))
-                                        .foregroundStyle(KokoInk.secondary).lineLimit(1)
-                                }
-                            }
-                        }.buttonStyle(KokoPressStyle()).accessibilityLabel("View host " + host.publicName)
-                    }
-                    Spacer(minLength: 0)
-                    KokoAction(title: "Enter", icon: 0) { navigation.open(.room(room.id)) }
-                        .fixedSize(horizontal: true, vertical: false)
+                if let host = community.member(room.hostMemberID) {
+                    Button { navigation.open(.profile(host.id)) } label: {
+                        HStack(spacing: 7) {
+                            KokoMemberPortrait(member: host).frame(width: 30, height: 30)
+                            Text(host.publicName).font(.custom("AvenirNext-DemiBold", size: 11)).lineLimit(1)
+                        }
+                    }.buttonStyle(KokoPressStyle()).accessibilityLabel("View host " + host.publicName)
                 }
-            }.padding(.horizontal, 2)
-        }.foregroundStyle(KokoInk.primary)
+                Text(room.conversationPrompt)
+                    .font(.custom("AvenirNext-Regular", size: 11, relativeTo: .caption))
+                    .foregroundStyle(KokoInk.secondary)
+                    .lineLimit(2)
+                HStack(spacing: 6) {
+                    KokoSocialTag(title: room.conversationTopic)
+                    Spacer(minLength: 0)
+                    Text("Preview").font(.custom("AvenirNext-Medium", size: 10, relativeTo: .caption2)).foregroundStyle(KokoInk.secondary)
+                }
+            }
+        }
+        .padding(10)
+        .foregroundStyle(KokoInk.primary)
+        .background(ArtworkSurface(tile: room.isVideoStage ? 3 : 2))
     }
 }
 

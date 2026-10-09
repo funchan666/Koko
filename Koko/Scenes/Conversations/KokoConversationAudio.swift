@@ -29,7 +29,7 @@ final class KokoConversationAudioPipeline: @unchecked Sendable {
             stopOnQueue()
             do {
                 let session = AVAudioSession.sharedInstance()
-                try session.setCategory(.playAndRecord, mode: .voiceChat, options: [.allowBluetooth])
+                try session.setCategory(.playAndRecord, mode: .voiceChat, options: [.allowBluetoothHFP])
                 try session.setActive(true); ownsSession = true
                 try session.overrideOutputAudioPort(speaker ? .speaker : .none)
                 let next = AVAudioEngine()
