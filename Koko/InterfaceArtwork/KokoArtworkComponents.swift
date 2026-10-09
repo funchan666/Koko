@@ -3,6 +3,8 @@ import UIKit
 
 enum KokoInk {
     static let primary = KokoWelcomePalette.paper
+    // Keep the palette vocabulary explicit for artwork overlays and controls.
+    static let paper = KokoWelcomePalette.paper
     static let secondary = KokoWelcomePalette.quiet
     static let accent = KokoWelcomePalette.mint
     static let coral = Color(red: 0.98, green: 0.48, blue: 0.39)
