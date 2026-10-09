@@ -63,6 +63,7 @@ struct KokoListeningRoomView: View {
             }.padding(.horizontal, 18).padding(.top, screenInsets.top + 8).padding(.bottom, 12)
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 18) {
+                    KokoVoiceRoomHeroCard(room: room)
                     HStack(spacing: 10) {
                         if let host = community.member(room.hostMemberID) {
                             Button { navigation.open(.profile(host.id)) } label: {
@@ -247,6 +248,36 @@ struct KokoListeningRoomView: View {
                 KokoAction(title: "Stay a little longer", emphasis: false) { panel = nil }
             }
         }
+    }
+}
+
+
+private struct KokoVoiceRoomHeroCard: View {
+    let room: ListeningRoom
+    var body: some View {
+        ZStack(alignment: .bottomLeading) {
+            Image("KokoVoiceRoomHero")
+                .resizable()
+                .scaledToFill()
+                .frame(height: 190)
+                .clipped()
+            LinearGradient(colors: [.clear, Color.black.opacity(0.82)], startPoint: .top, endPoint: .bottom)
+            VStack(alignment: .leading, spacing: 5) {
+                HStack(spacing: 7) {
+                    Artwork(sheet: .tabs, tile: 1).frame(width: 23, height: 23)
+                    Text("VOICE ROOM · LIVE CHAT").font(.custom("AvenirNext-Bold", size: 10)).tracking(1.2)
+                }.foregroundStyle(KokoInk.accent)
+                Text("Pull up a chair")
+                    .font(.custom("AvenirNext-Bold", size: 24))
+                Text("Talk, listen, and leave a little room for someone new.")
+                    .font(.custom("AvenirNext-Medium", size: 12)).foregroundStyle(.white.opacity(0.8))
+            }.padding(16)
+        }
+        .frame(maxWidth: .infinity)
+        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 24, style: .continuous).stroke(KokoInk.accent.opacity(0.45), lineWidth: 1))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Voice room artwork for \(room.roomTitle)")
     }
 }
 

@@ -21,19 +21,28 @@ struct KokoDiscoverView: View {
     }
 
     private let roomColumns = [
-        GridItem(.adaptive(minimum: 150, maximum: 260), spacing: 14, alignment: .top)
+        GridItem(.flexible(minimum: 0), spacing: 12, alignment: .top),
+        GridItem(.flexible(minimum: 0), spacing: 12, alignment: .top)
     ]
 
     var body: some View {
         ZStack {
             KokoPage {
-                HStack(spacing: 10) {
-                    KokoSearchField(prompt: "Search live rooms", query: $roomSearch)
-                    KokoIconAction(icon: 0, label: "Create a live room") { navigation.open(.createRoom(true)) }
+                KokoLiveDirectoryHero(roomCount: visibleRooms.count) {
+                    navigation.open(.createRoom(true))
                 }
                 HStack(spacing: 10) {
+                    KokoSearchField(prompt: "Search the live floor", query: $roomSearch)
+                        .frame(minWidth: 0, maxWidth: .infinity)
+                    KokoIconAction(icon: 11, label: "Room topic: " + roomTopic)
+                        { choosingTopic = true }
+                        .frame(width: 52)
+                }
+                .frame(minWidth: 0, maxWidth: .infinity)
+                HStack(spacing: 10) {
                     KokoChoiceRail(choices: ["Live rooms", "Following"], selection: $roomAudience)
-                    KokoIconAction(icon: 11, label: "Room topic: " + roomTopic) { choosingTopic = true }
+                    Spacer(minLength: 0)
+                    Text("Swipe into a room").font(.custom("AvenirNext-Medium", size: 10)).foregroundStyle(KokoInk.secondary)
                 }
                 if roomTopic != "All" {
                     HStack {
@@ -132,40 +141,86 @@ struct KokoRoomHostCover: View {
     }
 }
 
+private struct KokoLiveDirectoryHero: View {
+    let roomCount: Int
+    let create: () -> Void
+    var body: some View {
+        ZStack(alignment: .bottomLeading) {
+            Image("KokoLiveDirectoryHero").resizable().scaledToFill().frame(height: 205).clipped()
+            LinearGradient(colors: [.clear, Color.black.opacity(0.88)], startPoint: .top, endPoint: .bottom)
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 8) {
+                    Text("ON AIR NOW").font(.custom("AvenirNext-Bold", size: 10)).tracking(1.6).foregroundStyle(KokoInk.coral)
+                    Circle().fill(KokoInk.coral).frame(width: 6, height: 6).shadow(color: KokoInk.coral, radius: 6)
+                    Text("\(roomCount) rooms to drop into").font(.custom("AvenirNext-Medium", size: 10)).foregroundStyle(.white.opacity(0.72))
+                }
+                Text("Find your people\nin the moment").font(.custom("AvenirNext-Bold", size: 27)).lineSpacing(-2)
+                Text("Watch. React. Join the room.")
+                    .font(.custom("AvenirNext-Medium", size: 12))
+                    .foregroundStyle(.white.opacity(0.82))
+                    .lineLimit(1)
+                Button(action: create) {
+                    HStack(spacing: 5) { Artwork(sheet: .navigation, tile: 0, ink: KokoInk.onMint).frame(width: 16, height: 16); Text("Go live") }
+                        .font(.custom("AvenirNext-Bold", size: 11)).padding(.horizontal, 12).padding(.vertical, 9)
+                        .background(KokoInk.accent).foregroundStyle(KokoInk.onMint).clipShape(Capsule())
+                }.buttonStyle(.plain)
+            }.padding(17)
+        }.frame(maxWidth: .infinity).clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 26, style: .continuous).stroke(KokoInk.accent.opacity(0.38), lineWidth: 1))
+            .accessibilityElement(children: .combine).accessibilityLabel("On air now. \(roomCount) live rooms.")
+    }
+}
+
 struct KokoLiveRoomCard: View {
     @EnvironmentObject private var community: CommunityJournalStore
     @EnvironmentObject private var navigation: KokoSceneNavigation
     let room: ListeningRoom
+    private var artName: String {
+        let slot = room.id.utf8.reduce(0) { ($0 + Int($1)) % 4 } + 1
+        return "KokoLiveRoomTile\(slot)"
+    }
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            Button { navigation.open(.room(room.id)) } label: {
-                KokoRoomHostCover(room: room).frame(height: 148)
-            }.buttonStyle(KokoPressStyle()).accessibilityLabel("Open live room preview: " + room.roomTitle)
-            VStack(alignment: .leading, spacing: 9) {
-                Text(room.roomTitle).font(.custom("AvenirNext-Bold", size: 16, relativeTo: .headline))
-                    .fixedSize(horizontal: false, vertical: true)
-                if let host = community.member(room.hostMemberID) {
-                    Button { navigation.open(.profile(host.id)) } label: {
-                        HStack(spacing: 7) {
-                            KokoMemberPortrait(member: host).frame(width: 30, height: 30)
+        Button { navigation.open(.room(room.id)) } label: {
+            VStack(alignment: .leading, spacing: 0) {
+                ZStack(alignment: .topLeading) {
+                    Image(artName).resizable().scaledToFill().frame(height: 152).clipped()
+                    LinearGradient(colors: [.clear, Color.black.opacity(0.72)], startPoint: .center, endPoint: .bottom)
+                    HStack(spacing: 6) {
+                        Circle().fill(KokoInk.coral).frame(width: 6, height: 6)
+                        Text("LIVE").font(.custom("AvenirNext-Bold", size: 10)).tracking(1.2)
+                        Spacer(minLength: 0)
+                        Text("JOIN ROOM").font(.custom("AvenirNext-Bold", size: 9)).tracking(0.9)
+                    }.padding(.horizontal, 11).padding(.vertical, 8).background(Color.black.opacity(0.48)).clipShape(Capsule()).padding(11)
+                }
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack(alignment: .top, spacing: 8) {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(room.roomTitle).font(.custom("AvenirNext-Bold", size: 17)).lineLimit(2).minimumScaleFactor(0.82)
+                            Text(room.conversationPrompt).font(.custom("AvenirNext-Regular", size: 11)).foregroundStyle(KokoInk.secondary).lineLimit(2)
+                        }
+                        Spacer(minLength: 0)
+                        Artwork(sheet: .navigation, tile: 0).frame(width: 25, height: 25)
+                    }
+                    HStack(spacing: 7) {
+                        if let host = community.member(room.hostMemberID) {
+                            KokoMemberPortrait(member: host).frame(width: 28, height: 28).clipShape(Circle())
                             Text(host.publicName).font(.custom("AvenirNext-DemiBold", size: 11)).lineLimit(1)
                         }
-                    }.buttonStyle(KokoPressStyle()).accessibilityLabel("View host " + host.publicName)
-                }
-                Text(room.conversationPrompt)
-                    .font(.custom("AvenirNext-Regular", size: 11, relativeTo: .caption))
-                    .foregroundStyle(KokoInk.secondary)
-                    .lineLimit(2)
-                HStack(spacing: 6) {
-                    KokoSocialTag(title: room.conversationTopic)
-                    Spacer(minLength: 0)
-                    Text("Preview").font(.custom("AvenirNext-Medium", size: 10, relativeTo: .caption2)).foregroundStyle(KokoInk.secondary)
-                }
-            }
-        }
-        .padding(10)
-        .foregroundStyle(KokoInk.primary)
-        .background(ArtworkSurface(tile: room.isVideoStage ? 3 : 2))
+                        Spacer(minLength: 0)
+                        Text("\(room.seatAssignments.count) in room").font(.custom("AvenirNext-Medium", size: 10)).foregroundStyle(KokoInk.secondary)
+                    }
+                    HStack(spacing: 7) {
+                        KokoSocialTag(title: room.conversationTopic)
+                        Spacer(minLength: 0)
+                        Text("Tap to enter →").font(.custom("AvenirNext-Bold", size: 10)).foregroundStyle(KokoInk.accent)
+                    }
+                }.padding(12)
+            }.foregroundStyle(KokoInk.primary).background(ArtworkSurface(tile: 3))
+                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+                .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous).stroke(KokoInk.accent.opacity(0.35), lineWidth: 1))
+                .shadow(color: .black.opacity(0.18), radius: 14, y: 8)
+        }.buttonStyle(KokoPressStyle()).accessibilityLabel("Enter live room: " + room.roomTitle)
     }
 }
 
