@@ -215,7 +215,7 @@ final class CommunityJournalStore: ObservableObject {
         var newPortrait: String?
         let oldPortrait = currentMember?.portraitFileName
         do {
-            if let portraitJPEG { newPortrait = try KokoPortraitFiles.save(portraitJPEG); revised.portraitFileName = newPortrait }
+            if let portraitJPEG { newPortrait = try KokoPortraitFiles.save(portraitJPEG); revised.portraitFileName = newPortrait; revised.suppliedPortraitPhotoKey = nil }
             if update({ $0.member = revised; $0.completedProfile = true }) {
                 requiresAppleProfileReview = false
                 if let oldPortrait, oldPortrait != revised.portraitFileName { KokoPortraitFiles.remove(oldPortrait) }

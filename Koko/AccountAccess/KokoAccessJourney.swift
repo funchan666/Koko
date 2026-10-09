@@ -31,13 +31,8 @@ struct KokoLaunchLoading: View {
     @State private var turning = false
     var body: some View {
         ZStack {
-            ArtworkBackdrop()
-            VStack(spacing: 24) {
-                Artwork(sheet: .arrival, tile: 0).frame(width: 145, height: 145)
-                    .opacity(turning && !reduceMotion ? 0.68 : 1)
-                Text("koko").font(.custom("AvenirNext-Bold", size: 43)).tracking(-2)
-                Text("Tuning in to good company.").font(.custom("AvenirNext-Medium", size: 13)).foregroundStyle(KokoInk.secondary)
-            }
+            KokoWelcomePalette.backdrop
+            KokoBrandLoading(caption: "Tuning in")
         }.foregroundStyle(KokoInk.primary)
         .onAppear { if !reduceMotion { withAnimation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true)) { turning = true } } }
     }
@@ -56,18 +51,7 @@ struct KokoAccountLoading: View {
             GeometryReader { viewport in
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 22) {
-                        Image("KokoConversationArrival")
-                            .resizable().scaledToFit()
-                            .frame(width: min(200, max(120, viewport.size.width - 80)), height: 200)
-                            .scaleEffect(reduceMotion || !gentlyFloating ? 1 : 1.035)
-                            .offset(y: reduceMotion || !gentlyFloating ? 0 : -6)
-                            .animation(reduceMotion ? nil : .easeInOut(duration: 1.4).repeatForever(autoreverses: true), value: gentlyFloating)
-                            .accessibilityHidden(true)
-                        Text(journey.transitionCaption)
-                            .font(.custom("AvenirNext-DemiBold", size: 21, relativeTo: .title3))
-                            .foregroundStyle(KokoWelcomePalette.paper)
-                            .multilineTextAlignment(.center)
-                            .fixedSize(horizontal: false, vertical: true)
+                        KokoBrandLoading(caption: journey.transitionCaption)
                     }
                     .padding(.horizontal, 32)
                     .padding(.top, screenInsets.top + 24)

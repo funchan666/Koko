@@ -5,9 +5,6 @@ import CryptoKit
 extension CommunityJournalStore {
     var coinBalance: Int { max(0, journal?.coinBalance ?? 0) }
     var coinAdjustmentDue: Int { max(0, -(journal?.coinBalance ?? 0)) }
-    var welcomeGiftNeedsPresentation: Bool {
-        hasCompletedAccountEntry && journal?.welcomeGiftGrantedAt != nil && journal?.welcomeGiftAcknowledged != true
-    }
     var purchaseAccountToken: UUID? {
         guard journal != nil else { return nil }
         let digest = SHA256.hash(data: Data(("koko.coin-owner.v1:" + myID).utf8))
@@ -34,16 +31,46 @@ extension CommunityJournalStore {
     }
 
     func welcomeOnFirstHomeVisit() {
-        guard hasCompletedAccountEntry, prepareCoinWallet(),
-              journal?.welcomeGiftEligible == true, journal?.welcomeGiftGrantedAt == nil else { return }
+        guard hasCompletedAccountEntry, prepareCoinWallet(), let currentJournal = journal else { return }
+        let messageID = "welcome-coins." + myID
+
+        // Migrate an existing welcome gift to the inbox without crediting the wallet again.
+        if let grantedAt = currentJournal.welcomeGiftGrantedAt {
+            guard !currentJournal.notices.contains(where: { $0.id == messageID }) else { return }
+            let originalAmount = currentJournal.walletHistory.first {
+                $0.detailLine == "Your first record · welcome gift" && $0.tokenChange > 0
+            }?.tokenChange
+            let message = welcomeCoinMessage(id: messageID, coins: originalAmount,
+                                             recordedAt: grantedAt,
+                                             alreadyRead: currentJournal.welcomeGiftAcknowledged == true)
+            update {
+                $0.notices.insert(message, at: 0)
+                $0.welcomeGiftAcknowledged = true
+            }
+            return
+        }
+
+        guard currentJournal.welcomeGiftEligible == true else { return }
+        let gift = KokoCoinCatalog.firstVisitGift
+        guard gift > 0, (currentJournal.coinBalance ?? 0) <= Int.max - gift else { return }
+        let grantedAt = Date()
+        let message = welcomeCoinMessage(id: messageID, coins: gift, recordedAt: grantedAt)
+        // Gift, ledger record and unread system message commit in the same atomic journal write.
         if update({
-            $0.coinBalance = ($0.coinBalance ?? 0) + KokoCoinCatalog.firstVisitGift
-            $0.welcomeGiftGrantedAt = Date()
+            $0.coinBalance = ($0.coinBalance ?? 0) + gift
+            $0.welcomeGiftGrantedAt = grantedAt
             $0.welcomeGiftEligible = false
-            $0.walletHistory.insert(.init(detailLine: "Your first record · welcome gift", tokenChange: KokoCoinCatalog.firstVisitGift), at: 0)
+            $0.welcomeGiftAcknowledged = true
+            $0.walletHistory.insert(.init(detailLine: "Your first record · welcome gift", tokenChange: gift, recordedAt: grantedAt), at: 0)
+            if !$0.notices.contains(where: { $0.id == messageID }) { $0.notices.insert(message, at: 0) }
         }) { UserDefaults.standard.set(true, forKey: "koko.firstVisitGift." + myID) }
     }
-    func acknowledgeWelcomeGift() { update { $0.welcomeGiftAcknowledged = true } }
+
+    private func welcomeCoinMessage(id: String, coins: Int?, recordedAt: Date, alreadyRead: Bool = false) -> CommunityNotice {
+        let creditLine = coins.map { "Your welcome gift of \($0) coins has been added to your wallet." }
+            ?? "Your welcome coins have been added to your wallet."
+        return CommunityNotice(id: id, headline: "Welcome to Koko", explanation: creditLine + " Use them for optional gifts and keepsakes. Chats and calls are always free.", hasBeenRead: alreadyRead, createdAt: recordedAt)
+    }
 
     /// Apple signature and ownership checks happen before this method. Credit and deduplication share one atomic write.
     func recordVerifiedPurchase(_ credit: VerifiedCoinCredit, ownerToken: UUID) -> Bool {

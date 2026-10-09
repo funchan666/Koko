@@ -66,8 +66,10 @@ struct Artwork: View {
         Group {
             if sheet == .navigation {
                 // The original monochrome bitmap supplies the glyph; this only masks its black matte.
-                Image(uiImage: OriginalArtwork.image(sheet, tile)).resizable().scaledToFit()
-                    .luminanceToAlpha().colorMultiply(ink)
+                ink.mask {
+                    Image(uiImage: OriginalArtwork.image(sheet, tile)).resizable().scaledToFit()
+                        .luminanceToAlpha()
+                }
             } else {
                 Image(uiImage: OriginalArtwork.image(sheet, tile)).resizable().scaledToFit()
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
@@ -212,25 +214,29 @@ struct LocalPreviewNote: View {
 
 struct KokoPage<Content: View>: View {
     @Environment(\.kokoScreenInsets) private var screenInsets
-    let title: String
+    var title: String? = nil
     var subtitle: String? = nil
     var back: (() -> Void)? = nil
     @ViewBuilder var content: Content
+    private var showsHeader: Bool { title != nil || back != nil }
     var body: some View {
         VStack(spacing: 0) {
-            HStack(spacing: 12) {
-                if let back { KokoIconAction(icon: 5, label: "Back", action: back) }
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(title).font(.custom("AvenirNext-Bold", size: 26, relativeTo: .title)).foregroundStyle(KokoInk.primary)
-                    if let subtitle { Text(subtitle).font(.custom("AvenirNext-Regular", size: 12, relativeTo: .subheadline)).foregroundStyle(KokoInk.secondary) }
-                }.fixedSize(horizontal: false, vertical: true)
-                Spacer(minLength: 0)
-            }.padding(.horizontal, 22).padding(.top, screenInsets.top + 8).padding(.bottom, 18)
+            if showsHeader {
+                HStack(spacing: 12) {
+                    if let back { KokoIconAction(icon: 5, label: "Back", action: back) }
+                    VStack(alignment: .leading, spacing: 4) {
+                        if let title { Text(title).font(.custom("AvenirNext-Bold", size: 26, relativeTo: .title)).foregroundStyle(KokoInk.primary) }
+                        if let subtitle { Text(subtitle).font(.custom("AvenirNext-Regular", size: 12, relativeTo: .subheadline)).foregroundStyle(KokoInk.secondary) }
+                    }.fixedSize(horizontal: false, vertical: true)
+                    Spacer(minLength: 0)
+                }.padding(.horizontal, 22).padding(.top, screenInsets.top + 8).padding(.bottom, 18)
+            }
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 18) { content }
                     .frame(maxWidth: 620).frame(maxWidth: .infinity)
                     .padding(.horizontal, 22).padding(.top, 2).padding(.bottom, screenInsets.bottom + 24)
             }.scrollDismissesKeyboard(.interactively)
+                .padding(.top, showsHeader ? 0 : screenInsets.top + 10)
         }.background(ArtworkBackdrop()).foregroundStyle(KokoInk.primary)
     }
 }

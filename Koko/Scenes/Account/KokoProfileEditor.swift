@@ -18,10 +18,8 @@ struct KokoProfileEditor: View {
     @State private var birthDay = ""
     @State private var introduction = ""
     @State private var chosenInterests: Set<String> = []
-    @State private var portraitTile = 0
     @State private var selectedPhoto: PhotosPickerItem?
     @State private var portraitJPEG: Data?
-    @State private var usingArtwork = false
     @State private var importingPhoto = false
     @State private var showingCamera = false
     @State private var choosingCountry = false
@@ -52,7 +50,7 @@ struct KokoProfileEditor: View {
                             Text(page == .basics ? "Make it yours." : "A little about you.")
                                 .font(.custom("AvenirNext-Bold", size: 32, relativeTo: .largeTitle))
                                 .tracking(-1).accessibilityAddTraits(.isHeader)
-                            Text(page == .basics ? "A face. A name. Your kind of company." : "A few details to start with.")
+                            Text(page == .basics ? "Your photo. Your name. Your kind of company." : "A few details to start with.")
                                 .font(.custom("AvenirNext-Regular", size: 13, relativeTo: .subheadline))
                                 .foregroundStyle(KokoWelcomePalette.quiet)
                         }.id("profile-heading")
@@ -76,7 +74,7 @@ struct KokoProfileEditor: View {
             if choosingCountry { countryPicker }
             if showingCamera {
                 KokoPortraitCameraPage(close: { showingCamera = false }) { jpeg in
-                    portraitRevision = UUID(); selectedPhoto = nil; portraitJPEG = jpeg; usingArtwork = false; showingCamera = false
+                    portraitRevision = UUID(); selectedPhoto = nil; portraitJPEG = jpeg; showingCamera = false
                 }
             }
         }
@@ -101,7 +99,7 @@ struct KokoProfileEditor: View {
         VStack(alignment: .leading, spacing: 22) {
             VStack(spacing: 14) {
                 HStack(spacing: 22) {
-                    portrait.frame(width: 100, height: 108).clipped()
+                    portrait.frame(width: 100, height: 100).clipped()
                         .accessibilityLabel("Your profile photo")
                     VStack(spacing: 8) {
                         PhotosPicker(selection: $selectedPhoto, matching: .images, photoLibrary: .shared()) {
@@ -111,20 +109,6 @@ struct KokoProfileEditor: View {
                             .buttonStyle(KokoPressStyle()).disabled(importingPhoto)
                     }
                 }
-                HStack(spacing: 12) {
-                    ForEach(0..<4) { tile in
-                        Button {
-                            portraitRevision = UUID(); selectedPhoto = nil; importingPhoto = false
-                            portraitTile = tile; usingArtwork = true; portraitJPEG = nil
-                        } label: {
-                            Artwork(sheet: .collection, tile: tile).frame(width: 44, height: 46)
-                                .padding(5)
-                                .background(KokoProfileChoiceSurface(selected: usingArtwork && portraitTile == tile))
-                        }.buttonStyle(KokoPressStyle())
-                            .accessibilityLabel("Portrait option \(tile + 1)")
-                            .accessibilityAddTraits(usingArtwork && portraitTile == tile ? .isSelected : [])
-                    }
-                }.frame(maxWidth: .infinity)
             }
             profileField(.name, title: "Display name", placeholder: "What should we call you?", value: $displayName)
             VStack(alignment: .leading, spacing: 10) {
@@ -277,16 +261,15 @@ struct KokoProfileEditor: View {
         if page == .basics { page = .preferences } else { save() }
     }
     @ViewBuilder private var portrait: some View {
-        if let jpeg = portraitJPEG, let image = UIImage(data: jpeg) { Image(uiImage: image).resizable().scaledToFit() }
-        else if !usingArtwork, let draft { KokoMemberPortrait(member: draft) }
-        else { Artwork(sheet: .collection, tile: portraitTile) }
+        if let jpeg = portraitJPEG, let image = UIImage(data: jpeg) { KokoPortraitPhoto(image: image) }
+        else if let draft { KokoMemberPortrait(member: draft) }
+        else { KokoPhotoPlaceholder() }
     }
     private func loadDraft() {
         guard draft == nil, let member = community.currentMember else { return }
         draft = member; displayName = member.publicName; gender = member.genderLabel
         countryCode = member.homeCountryCode ?? ""; introduction = member.introductionLine
-        chosenInterests = Set(member.interests); portraitTile = member.portraitTile
-        usingArtwork = member.portraitFileName == nil
+        chosenInterests = Set(member.interests)
         if let birthday = member.birthday {
             let values = KokoAccountValidation.birthdayCalendar.dateComponents([.year, .month, .day], from: birthday)
             birthYear = String(values.year ?? 0); birthMonth = String(values.month ?? 0); birthDay = String(values.day ?? 0)
@@ -300,7 +283,7 @@ struct KokoProfileEditor: View {
                 guard let data = try await selection.loadTransferable(type: Data.self) else { throw KokoPortraitFiles.PortraitFailure.unreadable }
                 let jpeg = try await Task.detached(priority: .userInitiated) { try KokoPortraitFiles.preparedJPEG(from: data) }.value
                 guard portraitRevision == revision else { return }
-                portraitJPEG = jpeg; usingArtwork = false; importingPhoto = false
+                portraitJPEG = jpeg; importingPhoto = false
             } catch {
                 guard portraitRevision == revision else { return }
                 importingPhoto = false; community.notice = "This photo couldn't be imported. Try another photo, or take a new one."
@@ -313,8 +296,6 @@ struct KokoProfileEditor: View {
         member.genderLabel = gender; member.homeCountryCode = countryCode
         member.hometownLabel = countryName; member.introductionLine = introduction.trimmingCharacters(in: .whitespacesAndNewlines)
         member.interests = interestOptions.filter { chosenInterests.contains($0) }
-        member.portraitTile = portraitTile
-        if usingArtwork { member.portraitFileName = nil }
         guard let year = Int(birthYear), let month = Int(birthMonth), let day = Int(birthDay),
               (1900...2100).contains(year), (1...12).contains(month), (1...31).contains(day) else {
             community.notice = "Enter your full birthday using year, month and day."; return

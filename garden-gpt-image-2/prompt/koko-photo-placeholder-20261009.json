@@ -1,0 +1,11 @@
+{
+  "workflow": "Garden / Image 2 Host-Native",
+  "theme": "Koko profile photo upload placeholder",
+  "palette": [
+    "#132A26",
+    "#B9EDCE"
+  ],
+  "design": "A single rounded square, custom mint camera and plus, no person or default avatar, no text, flat forest background.",
+  "asset": "KokoPhotoPlaceholder",
+  "prompt": "Create an original Koko social app profile-photo upload placeholder, a single square raster asset. Dark forest-green #132A26 background, subtle sage border on a softly rounded square inset 5 percent. In the center an elegant minimal mint camera outline with a small plus sign integrated near its top right, drawn specifically for Koko, not a stock system icon. Small empty portrait frame behind the camera but absolutely no human, no face, no head silhouette, no default avatar. The camera emblem occupies the middle 40 percent with generous breathing room. Flat editorial premium mobile UI, crisp simple thick strokes legible at 80 points, colors mint #B9EDCE and forest only. No text, no lettering, no gradients, no 3D, no shadows, no white background, no texture noise. Opaque background. Output one complete centered placeholder tile, not a mockup."
+}

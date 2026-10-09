@@ -8,9 +8,9 @@ struct KokoConversationsView: View {
     var filtered: [PrivateConversation] { community.conversations.filter { search.isEmpty || (community.member($0.correspondentID)?.publicName.localizedCaseInsensitiveContains(search) ?? false) || ($0.entries.last?.messageText.localizedCaseInsensitiveContains(search) ?? false) } }
     var body: some View {
         ZStack {
-            KokoPage(title: "Messages", subtitle: "Keep a good conversation going.") {
+            KokoPage {
                 HStack(spacing: 10) {
-                    shortcut("Notices", detail: "\(community.journal?.notices.filter { !$0.hasBeenRead }.count ?? 0) unread", icon: 10, destination: .notices)
+                    shortcut("System", detail: "\(community.journal?.notices.filter { !$0.hasBeenRead }.count ?? 0) unread", icon: 10, destination: .notices)
                     shortcut("People", detail: "\(community.friends.count) friends", icon: 3, destination: .friends("Friends"))
                     shortcut("Ranking", detail: "Community", icon: 15, destination: .ranking)
                 }
@@ -155,7 +155,7 @@ struct KokoNoticesView: View {
     @EnvironmentObject private var community: CommunityJournalStore
     @EnvironmentObject private var navigation: KokoSceneNavigation
     var body: some View {
-        KokoPage(title: "Little updates", back: navigation.back) {
+        KokoPage(title: "System messages", back: navigation.back) {
             KokoAction(title: "Mark all as read", emphasis: false) { community.update { for index in $0.notices.indices { $0.notices[index].hasBeenRead = true } } }
             ForEach(community.journal?.notices ?? []) { notice in
                 KokoCard(tint: notice.hasBeenRead ? 2 : 3) {

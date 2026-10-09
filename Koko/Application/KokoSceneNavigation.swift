@@ -4,7 +4,7 @@ import AuthenticationServices
 enum KokoDestination: Hashable {
     case search, room(String), createRoom(Bool), moment(String), profile(String), conversation(String), call(String, KokoConversationChannel), roomConnection(String, Int?)
     case wallet, shop, backpack, checkIn, level, settings, editProfile, album, friends(String), notices, ranking
-    case feedback, blacklist, preferences(String), policy(String), savedMoments
+    case feedback, blacklist, preferences(String), policy(String), savedMoments, momentsCollection
 }
 
 @MainActor
@@ -85,7 +85,7 @@ struct KokoMainShell: View {
                         Button { navigation.selectedTab = index } label: {
                             VStack(spacing: 5) {
                                 Artwork(sheet: .navigation, tile: index, ink: navigation.selectedTab == index ? KokoInk.onMint : KokoInk.secondary).frame(width: 26, height: 26)
-                                Text(["Discover", "Rooms", "Messages", "My space"][index]).font(.custom(navigation.selectedTab == index ? "AvenirNext-Bold" : "AvenirNext-Medium", size: 11))
+                                Text(["Live", "Rooms", "Messages", "My space"][index]).font(.custom(navigation.selectedTab == index ? "AvenirNext-Bold" : "AvenirNext-Medium", size: 11))
                             }.foregroundStyle(navigation.selectedTab == index ? KokoInk.onMint : KokoInk.secondary)
                                 .frame(maxWidth: .infinity, minHeight: 60).contentShape(Rectangle())
                                 .background { if navigation.selectedTab == index { KokoControlSurface(highlighted: true) } }
@@ -94,15 +94,10 @@ struct KokoMainShell: View {
                 }.padding(.horizontal, 16).padding(.top, 10).padding(.bottom, screenInsets.bottom + 6).background(ArtworkBackdrop())
             }
         }.background(ArtworkBackdrop())
-            .allowsHitTesting(!community.welcomeGiftNeedsPresentation)
-            .accessibilityHidden(community.welcomeGiftNeedsPresentation)
             .overlay {
                 if let request = community.coinSpendRequest {
                     KokoCoinSpendConfirmation(request: request)
-                        .allowsHitTesting(!community.welcomeGiftNeedsPresentation)
-                        .accessibilityHidden(community.welcomeGiftNeedsPresentation)
                 }
-                if community.welcomeGiftNeedsPresentation { KokoFirstRecordWelcome() }
             }
             .environmentObject(navigation)
             .task { community.welcomeOnFirstHomeVisit() }
@@ -114,6 +109,7 @@ struct KokoMainShell: View {
     @ViewBuilder private func destinationView(_ destination: KokoDestination) -> some View {
         switch destination {
         case .search: KokoDiscoverySearch()
+        case .momentsCollection: KokoMomentsCollection()
         case .room(let id): KokoListeningRoomView(roomID: id)
         case .createRoom(let video): KokoRoomComposer(videoStage: video)
         case .moment(let id): KokoMomentDetail(momentID: id)

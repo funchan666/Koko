@@ -6,7 +6,7 @@ struct KokoPersonalSpace: View {
     @State private var confirmLogout = false
     var body: some View {
         ZStack {
-            KokoPage(title: "My space", subtitle: "A little more you.") {
+            KokoPage {
                 if let member = community.currentMember {
                     KokoCard {
                         HStack(alignment: .top, spacing: 16) {
@@ -72,32 +72,63 @@ struct KokoMemberProfile: View {
     @State private var showSample = false
     var body: some View {
         ZStack {
-            KokoPage(title: "Meet someone", back: navigation.back) {
+            KokoPage(title: "Profile", back: navigation.back) {
                 if let member = community.member(memberID) {
-                    KokoMemberPortrait(member: member).frame(height: 235)
-                    Text(member.publicName).font(.custom("AvenirNext-Bold", size: 34))
-                    Text("\(member.adultAge) · \(member.hometownLabel) · \(member.spokenLanguage)").foregroundStyle(KokoInk.secondary)
-                    Text(member.introductionLine).font(.custom("AvenirNext-Medium", size: 19))
-                    Text(member.interests.joined(separator: "  /  ")).font(.custom("AvenirNext-DemiBold", size: 12)).foregroundStyle(KokoInk.accent)
+                    KokoMemberCoverPhoto(member: member)
+                        .frame(height: 330)
+                        .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack(alignment: .bottom, spacing: 12) {
+                            KokoMemberPortrait(member: member).frame(width: 78, height: 86)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(member.publicName).font(.custom("AvenirNext-Bold", size: 28, relativeTo: .title2))
+                                Text("\(member.adultAge) · \(member.hometownLabel) · \(member.spokenLanguage)")
+                                    .font(.custom("AvenirNext-Regular", size: 12)).foregroundStyle(KokoInk.secondary)
+                            }
+                            Spacer(minLength: 0)
+                        }
+                        if !member.introductionLine.isEmpty {
+                            Text(member.introductionLine).font(.custom("AvenirNext-Medium", size: 18, relativeTo: .body))
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                ForEach(member.interests, id: \.self) { interest in
+                                    Text(interest).font(.custom("AvenirNext-DemiBold", size: 12))
+                                        .foregroundStyle(KokoInk.onMint)
+                                        .padding(.horizontal, 14).padding(.vertical, 10)
+                                        .background(KokoControlSurface(highlighted: true))
+                                }
+                            }
+                        }
+                    }.padding(18).background(ArtworkSurface())
                     if memberID != community.myID {
-                        HStack {
+                        HStack(spacing: 10) {
                             KokoAction(title: community.following.contains(memberID) ? "Following" : "Follow", icon: 7) { community.toggleFollow(memberID) }
                             KokoIconAction(icon: 11, label: "Report or block") { safety = true }
                         }
-                        KokoAction(title: "Message", icon: 2, emphasis: false) { navigation.open(.conversation(memberID)) }
-                        HStack {
-                            KokoAction(title: "Voice call", icon: 13, emphasis: false) { navigation.open(.call(memberID, .voice)) }
-                            KokoAction(title: "Video call", icon: 0, emphasis: false) { navigation.open(.call(memberID, .video)) }
+                        KokoAction(title: "Send a hello", icon: 2, emphasis: false) { navigation.open(.conversation(memberID)) }
+                        KokoCard(tint: 3) {
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("Make a moment together").font(.custom("AvenirNext-Bold", size: 18))
+                                Text("Voice and video previews are ready when you are.")
+                                    .font(.custom("AvenirNext-Regular", size: 13)).foregroundStyle(KokoInk.secondary)
+                                HStack(spacing: 10) {
+                                    KokoAction(title: "Voice", icon: 13, emphasis: false) { navigation.open(.call(memberID, .voice)) }
+                                    KokoAction(title: "Video", icon: 0, emphasis: false) { navigation.open(.call(memberID, .video)) }
+                                }
+                            }
                         }
                         KokoCard {
                             VStack(alignment: .leading, spacing: 10) {
+                                Text("A little context").font(.custom("AvenirNext-Bold", size: 18))
                                 LocalPreviewNote(text: "SAMPLE PROFILE")
-                                Text(community.friends.contains(memberID) ? "You have a local sample mutual connection." : "Try the full friendship flow without contacting a real person.").font(.custom("AvenirNext-Regular", size: 13))
+                                Text(community.friends.contains(memberID) ? "You have a local sample mutual connection." : "This profile is a local preview on your device.").font(.custom("AvenirNext-Regular", size: 13))
                                 if !community.friends.contains(memberID) { KokoAction(title: "Try a sample mutual connection", emphasis: false) { showSample = true } }
                             }
                         }
                     }
-                    Text("A little of their world").font(.custom("AvenirNext-Bold", size: 22))
+                    KokoSectionTitle(title: "From their world", detail: "Shared moments and rooms")
                     ForEach(community.moments.filter { $0.creatorMemberID == memberID }) { KokoMomentCard(moment: $0) }
                     ForEach(community.rooms.filter { $0.hostMemberID == memberID }) { KokoRoomCard(room: $0) }
                 } else { KokoEmpty(title: "Profile not found", detail: "This profile is no longer available here.") }

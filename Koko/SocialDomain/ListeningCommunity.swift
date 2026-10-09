@@ -8,11 +8,13 @@ struct CommunityMember: Identifiable, Codable, Hashable {
     var adultAge: Int
     var genderLabel: String
     var introductionLine: String
+    // Legacy artwork selection is retained for decoding existing journals only.
     var portraitTile: Int
     var interests: [String]
     var homeCountryCode: String? = nil
     var birthday: Date? = nil
     var portraitFileName: String? = nil
+    var suppliedPortraitPhotoKey: String? = nil
 }
 
 struct ListeningRoom: Identifiable, Codable, Hashable {
@@ -117,6 +119,7 @@ struct PersonalJournal: Codable {
     var revokedCoinTransactions: Set<String>? = nil
     var welcomeGiftEligible: Bool? = nil
     var welcomeGiftGrantedAt: Date? = nil
+    // Legacy popup acknowledgement is retained to migrate old gifts into read/unread inbox messages.
     var welcomeGiftAcknowledged: Bool? = nil
     var ownedKeepsakes: [String: Int] = [:]
     var wornKeepsakeID: String? = nil
@@ -133,10 +136,10 @@ struct PersonalJournal: Codable {
 enum KokoCommunity {
     static let topics = ["All", "Conversation", "Music", "Creative", "After hours"]
     static let members: [CommunityMember] = [
-        .init(id: "marlowe", publicName: "Marlowe", hometownLabel: "Bristol", spokenLanguage: "English", adultAge: 26, genderLabel: "Woman", introductionLine: "Records on, phone down. Tell me about your day.", portraitTile: 0, interests: ["Music", "After hours"]),
-        .init(id: "eli", publicName: "Eli Santos", hometownLabel: "Lisbon", spokenLanguage: "Portuguese", adultAge: 29, genderLabel: "Man", introductionLine: "A few good stories between the songs.", portraitTile: 1, interests: ["Conversation", "Music"]),
-        .init(id: "ren", publicName: "Ren", hometownLabel: "Melbourne", spokenLanguage: "English", adultAge: 24, genderLabel: "Non-binary", introductionLine: "Making things, changing my mind, starting again.", portraitTile: 2, interests: ["Creative"]),
-        .init(id: "imani", publicName: "Imani Brooks", hometownLabel: "Chicago", spokenLanguage: "English", adultAge: 28, genderLabel: "Woman", introductionLine: "A listening room for the long way home.", portraitTile: 3, interests: ["After hours", "Conversation"])
+        .init(id: "marlowe", publicName: "Marlowe", hometownLabel: "Bristol", spokenLanguage: "English", adultAge: 26, genderLabel: "Woman", introductionLine: "Records on, phone down. Tell me about your day.", portraitTile: 0, interests: ["Music", "After hours"], suppliedPortraitPhotoKey: "photo-3e29a87b4e9a5de9"),
+        .init(id: "eli", publicName: "Eli Santos", hometownLabel: "Lisbon", spokenLanguage: "Portuguese", adultAge: 29, genderLabel: "Man", introductionLine: "A few good stories between the songs.", portraitTile: 1, interests: ["Conversation", "Music"], suppliedPortraitPhotoKey: "photo-f18f8ac9ab90dab5"),
+        .init(id: "ren", publicName: "Ren", hometownLabel: "Melbourne", spokenLanguage: "English", adultAge: 24, genderLabel: "Non-binary", introductionLine: "Making things, changing my mind, starting again.", portraitTile: 2, interests: ["Creative"], suppliedPortraitPhotoKey: "photo-d1360451d8292f40"),
+        .init(id: "imani", publicName: "Imani Brooks", hometownLabel: "Chicago", spokenLanguage: "English", adultAge: 28, genderLabel: "Woman", introductionLine: "A listening room for the long way home.", portraitTile: 3, interests: ["After hours", "Conversation"], suppliedPortraitPhotoKey: "photo-393c437ceadbdcb4")
     ]
     static let rooms: [ListeningRoom] = [
         .init(id: "side-a", roomTitle: "One more record", conversationPrompt: "The song you always come back to", hostMemberID: "marlowe", conversationTopic: "Music", seatLimit: 6, isPublicRoom: true, isVideoStage: false, artworkTile: 0, targetAudience: 20, seatAssignments: [0: "marlowe", 1: "eli"]),

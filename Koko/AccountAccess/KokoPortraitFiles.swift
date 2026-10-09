@@ -38,11 +38,77 @@ enum KokoPortraitFiles {
     static func remove(_ filename: String) { if let url = url(for: filename) { try? FileManager.default.removeItem(at: url) } }
 }
 
+/// One source of truth for portraits in profiles, discovery, rooms and calls.
 struct KokoMemberPortrait: View {
     let member: CommunityMember
     var body: some View {
-        if let filename = member.portraitFileName, let url = KokoPortraitFiles.url(for: filename), let photo = UIImage(contentsOfFile: url.path) {
-            Image(uiImage: photo).resizable().scaledToFit().accessibilityLabel("Profile photo of \(member.publicName)")
-        } else { Artwork(sheet: .collection, tile: member.portraitTile) }
+        Group {
+            if let filename = member.portraitFileName, let url = KokoPortraitFiles.url(for: filename), let photo = UIImage(contentsOfFile: url.path) {
+                KokoPortraitPhoto(image: photo)
+            } else if let key = member.suppliedPortraitPhotoKey, let photo = KokoSuppliedPortraitPhotos.image(for: key) {
+                KokoPortraitPhoto(image: photo)
+            } else {
+                KokoPhotoPlaceholder()
+            }
+        }.accessibilityLabel(member.portraitFileName != nil || member.suppliedPortraitPhotoKey != nil ? "Profile photo of \(member.publicName)" : "No profile photo added")
+    }
+}
+
+struct KokoPhotoPlaceholder: View {
+    var body: some View {
+        Image("KokoPhotoPlaceholder").resizable().scaledToFit().accessibilityHidden(true)
+    }
+}
+
+/// Room covers use the same person's original photograph with a wider crop.
+struct KokoMemberCoverPhoto: View {
+    let member: CommunityMember
+    var body: some View {
+        Group {
+            if let filename = member.portraitFileName,
+               let url = KokoPortraitFiles.url(for: filename), let photo = UIImage(contentsOfFile: url.path) {
+                KokoPortraitPhoto(image: photo)
+            } else if let photograph = KokoMediaLibrary.asset(member.suppliedPortraitPhotoKey) {
+                KokoContentImage(asset: photograph, fullResolution: true)
+            } else {
+                KokoPhotoPlaceholder()
+            }
+        }.accessibilityLabel("Room cover for " + member.publicName)
+    }
+}
+
+struct KokoPortraitPhoto: View {
+    let image: UIImage
+    var body: some View {
+        GeometryReader { bounds in
+            Image(uiImage: image).resizable().scaledToFill()
+                .frame(width: bounds.size.width, height: bounds.size.height).clipped()
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        }
+    }
+}
+
+@MainActor
+private enum KokoSuppliedPortraitPhotos {
+    private static var prepared: [String: UIImage] = [:]
+    // Display crops of user-supplied photos; the original files and content collection stay intact.
+    private static let portraitWindows: [String: CGRect] = [
+        "photo-3e29a87b4e9a5de9": CGRect(x: 0.25, y: 0.23, width: 0.50, height: 0.375),
+        "photo-f18f8ac9ab90dab5": CGRect(x: 0.42, y: 0.13, width: 0.48, height: 0.36),
+        "photo-d1360451d8292f40": CGRect(x: 0.30, y: 0.29, width: 0.48, height: 0.36),
+        "photo-393c437ceadbdcb4": CGRect(x: 0.27, y: 0.23, width: 0.48, height: 0.36)
+    ]
+    static func image(for key: String) -> UIImage? {
+        if let cached = prepared[key] { return cached }
+        guard let asset = KokoMediaLibrary.asset(key), !asset.isVideo,
+              let url = asset.previewURL, let photo = UIImage(contentsOfFile: url.path),
+              let source = photo.cgImage else { return nil }
+        let window = portraitWindows[key] ?? CGRect(x: 0, y: 0, width: 1, height: 1)
+        let crop = CGRect(x: window.minX * CGFloat(source.width), y: window.minY * CGFloat(source.height),
+                          width: window.width * CGFloat(source.width), height: window.height * CGFloat(source.height))
+        guard let pixels = source.cropping(to: crop.integral) else { return nil }
+        let image = UIImage(cgImage: pixels, scale: photo.scale, orientation: .up)
+        prepared[key] = image
+        return image
     }
 }

@@ -20,11 +20,10 @@ struct KokoListeningRoomView: View {
         ZStack {
             if let room {
                 KokoPage(title: room.roomTitle, subtitle: "\(room.conversationTopic.uppercased()) · LOCAL \(room.isVideoStage ? "VIDEO" : "VOICE") ROOM", back: { panel = "Leave this room?" }) {
-                    ZStack(alignment: .bottomLeading) {
-                        Artwork(sheet: .scenes, tile: room.artworkTile).frame(height: room.isVideoStage ? 300 : 180).frame(maxWidth: .infinity)
-                        Text(room.isVideoStage ? "Video placeholder · no live broadcast" : "A little space for good company")
-                            .font(.custom("AvenirNext-DemiBold", size: 12)).padding(15).background(ArtworkSurface()).padding(8)
-                    }
+                    KokoRoomHostCover(room: room).frame(height: room.isVideoStage ? 320 : 280)
+                    LocalPreviewNote(text: room.isVideoStage
+                        ? "LOCAL LIVE ROOM PREVIEW · NO BROADCAST IS CONNECTED"
+                        : "LOCAL VOICE ROOM PREVIEW · NO AUDIO IS BROADCAST")
                     HStack(spacing: 10) {
                         if let host = community.member(room.hostMemberID) {
                             Button { navigation.open(.profile(host.id)) } label: { HStack { KokoMemberPortrait(member: host).frame(width: 44, height: 44); VStack(alignment: .leading) { Text(host.publicName).font(.custom("AvenirNext-Bold", size: 16)); Text("Your host").font(.custom("AvenirNext-Regular", size: 11)) } } }.buttonStyle(.plain)
