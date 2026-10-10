@@ -245,7 +245,10 @@ struct KokoConsentRenewalGate: View {
     var body: some View {
         ZStack {
             KokoPage(title: "Before we begin", subtitle: "Your saved space is still here.") {
-                Artwork(sheet: .arrival, tile: 2).frame(height: 230)
+                Artwork(sheet: .navigation, tile: 11)
+                    .frame(width: 30, height: 30)
+                    .padding(24)
+                    .background(KokoControlSurface())
                 Text("Make yourself comfortable.").font(.custom("AvenirNext-Bold", size: 28))
                 KokoConsentFooter(agreed: $agreed) { document = $0 }
                 KokoAction(title: "Continue") {

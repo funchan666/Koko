@@ -211,7 +211,10 @@ struct KokoListeningRoomView: View {
             case "Room audience":
                 ForEach(Array(Set(room.seatAssignments.values)).sorted(), id: \.self) { memberID in if let member = community.member(memberID) { KokoMemberRow(member: member) } }
             case "Voice connection":
-                Artwork(sheet: .arrival, tile: 1).frame(height: 140)
+                Artwork(sheet: .navigation, tile: 13)
+                    .frame(width: 30, height: 30)
+                    .padding(18)
+                    .background(KokoControlSurface())
                 Text("Request a seat, check your microphone, and try the room controls. Voice and video are always free.")
                 KokoAction(title: "Open connection panel", icon: 13) { panel = nil; music.stop(); navigation.open(.roomConnection(roomID, nil)) }
                 if room.seatAssignments.values.contains(community.myID), !isHost { KokoAction(title: "Leave my seat", emphasis: false) { community.leaveSeat(in: roomID); panel = nil } }

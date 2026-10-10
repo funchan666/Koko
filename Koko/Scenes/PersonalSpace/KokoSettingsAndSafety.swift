@@ -76,7 +76,10 @@ struct KokoPreferencesView: View {
                     Text("Apple sign-in, when configured, uses genuine Apple authorization. Koko interactions stay on this device in this build.")
                     KokoAction(title: "Password help", emphasis: false) { community.notice = "Use the same email and any password of 8–128 characters. No password matching or reset is needed for this preview." }
                 } else {
-                    Artwork(sheet: .scenes, tile: 3).frame(height: 240)
+                    Artwork(sheet: .navigation, tile: 1)
+                        .frame(width: 30, height: 30)
+                        .padding(20)
+                        .background(KokoControlSurface())
                     Text("koko").font(.custom("AvenirNext-Bold", size: 40))
                     Text("Good company, at your pace.").font(.custom("AvenirNext-DemiBold", size: 21))
                     Text("Version 1.0 · Original artwork · Native SwiftUI")
@@ -113,7 +116,10 @@ struct KokoFeedbackView: View {
     @State private var message = ""
     var body: some View {
         KokoPage(title: "Leave us a little note", back: navigation.back) {
-            Artwork(sheet: .scenes, tile: 2).frame(height: 180)
+            Artwork(sheet: .navigation, tile: 2)
+                .frame(width: 30, height: 30)
+                .padding(20)
+                .background(KokoControlSurface())
             KokoChoiceRail(choices: ["Something to improve", "A problem", "An idea"], selection: $topic)
             KokoField(label: "What's on your mind? · up to 1000 characters", value: $message, multiline: true)
             KokoAction(title: "Save feedback", icon: 12) {

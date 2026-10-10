@@ -37,8 +37,18 @@ struct KokoPrivateCallView: View {
                         if camera.active {
                             KokoCameraSurface(session: camera.pipeline.captureSession).frame(height: 290).clipped()
                             Text("Only you can see this camera preview.").font(.custom("AvenirNext-Medium", size: 12))
-                        } else { Artwork(sheet: .scenes, tile: 1).frame(height: 220) }
-                    } else { Artwork(sheet: .arrival, tile: 1).frame(height: 210) }
+                        } else {
+                            Artwork(sheet: .navigation, tile: 0)
+                                .frame(width: 30, height: 30)
+                                .padding(24)
+                                .background(KokoControlSurface())
+                        }
+                    } else {
+                        Artwork(sheet: .navigation, tile: 13)
+                            .frame(width: 30, height: 30)
+                            .padding(24)
+                            .background(KokoControlSurface())
+                    }
                     KokoCard(tint: 3) {
                         VStack(alignment: .leading, spacing: 8) {
                             Text(prepared ? "Your setup is ready." : "A moment before hello.").font(.custom("AvenirNext-Bold", size: 22))
@@ -63,14 +73,20 @@ struct KokoPrivateCallView: View {
                     }
                     KokoAction(title: "End and return", emphasis: false, action: end)
                 } else {
-                    Artwork(sheet: .arrival, tile: 1).frame(height: 220)
+                    Artwork(sheet: .navigation, tile: 3)
+                        .frame(width: 30, height: 30)
+                        .padding(24)
+                        .background(KokoControlSurface())
                     Text("Calls are available between mutual followers. No permissions are requested until you're eligible and choose to check your devices.").foregroundStyle(KokoInk.secondary)
                     KokoAction(title: "View profile", emphasis: false) { navigation.open(.profile(memberID)) }
                 }
             }.accessibilityHidden(!permitted && gateVisible)
             if !permitted && gateVisible {
                 KokoModal(title: "A hello goes both ways.", dismiss: { gateVisible = false }) {
-                    Artwork(sheet: .arrival, tile: 1).frame(height: 160)
+                    Artwork(sheet: .navigation, tile: 3)
+                        .frame(width: 30, height: 30)
+                        .padding(20)
+                        .background(KokoControlSurface())
                     Text("Voice and video calls are for mutual followers. Open this profile to manage your connection.")
                     KokoAction(title: "Open profile") { gateVisible = false; navigation.open(.profile(memberID)) }
                     KokoAction(title: "Not now", emphasis: false, action: end)

@@ -117,7 +117,12 @@ struct KokoPortraitCameraPage: View {
                     Image(uiImage: image).resizable().scaledToFit()
                 } else if camera.ready || camera.busy {
                     KokoCameraSurface(session: camera.capture.session)
-                } else { Artwork(sheet: .arrival, tile: 2) }
+                } else {
+                    Artwork(sheet: .navigation, tile: 14)
+                        .frame(width: 30, height: 30)
+                        .padding(24)
+                        .background(KokoControlSurface())
+                }
             }.frame(height: 350).clipped()
             Text(camera.explanation).font(.custom("AvenirNext-Regular", size: 14)).foregroundStyle(KokoInk.secondary)
             if let data = camera.photoJPEG {

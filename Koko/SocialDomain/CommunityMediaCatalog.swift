@@ -42,9 +42,21 @@ enum KokoMediaLibrary {
         return collection
     }()
     static let photos = assets.filter { !$0.isVideo }
+    private static let roomVideoKeys: [String: String] = [
+        "open-window": "clip-a61998658ec46dfd",
+        "last-light": "clip-727ad853dcc6c680",
+        "morning-window": "clip-438292181426a4ec",
+        "studio-open": "clip-0101e556a214b526",
+        "night-signal": "clip-6f8458f557ac70eb",
+        "tiny-dancefloor": "clip-9b7cdfe144e740de"
+    ]
     static func asset(_ key: String?) -> CommunityMediaAsset? {
         guard let key else { return nil }
         return assets.first { $0.id == key }
+    }
+    static func liveRoomPreview(for roomID: String) -> CommunityMediaAsset? {
+        guard let key = roomVideoKeys[roomID], let asset = asset(key), asset.isVideo else { return nil }
+        return asset
     }
 }
 

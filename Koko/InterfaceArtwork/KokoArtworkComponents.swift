@@ -18,9 +18,9 @@ enum KokoInk {
 }
 
 enum ArtworkSheet: String {
-    case navigation = "KokoCommunityNavigation", surfaces = "KokoSurfaces", scenes = "KokoCommunityScenes", collection = "KokoCommunityCollection", arrival = "KokoArrival", social = "KokoSocialAtlas", tabs = "KokoTabIcons"
-    var columns: Int { self == .surfaces || self == .scenes || self == .arrival || self == .social || self == .tabs ? 2 : 4 }
-    var rows: Int { self == .surfaces ? 3 : (self == .scenes || self == .arrival || self == .social || self == .tabs ? 2 : 4) }
+    case navigation = "KokoCommunityNavigation", surfaces = "KokoSurfaces", scenes = "KokoCommunityScenes", collection = "KokoCommunityCollection", arrival = "KokoArrival", social = "KokoSocialAtlas", tabs = "KokoTabIcons", liveControls = "KokoLiveRoomControls"
+    var columns: Int { self == .surfaces || self == .scenes || self == .arrival || self == .social || self == .tabs ? 2 : (self == .liveControls ? 3 : 4) }
+    var rows: Int { self == .surfaces ? 3 : (self == .scenes || self == .arrival || self == .social || self == .tabs ? 2 : (self == .liveControls ? 2 : 4)) }
 }
 
 @MainActor
@@ -98,10 +98,6 @@ struct ArtworkSurface: View {
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
             }
-            .overlay {
-                RoundedRectangle(cornerRadius: 22, style: .continuous)
-                    .stroke(tile == 3 ? KokoInk.accent.opacity(0.66) : KokoInk.line, lineWidth: 1)
-            }
             .shadow(color: Color.black.opacity(0.16), radius: 14, y: 8)
             .accessibilityHidden(true)
     }
@@ -120,10 +116,6 @@ struct KokoControlSurface: View {
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
             }
-            .overlay {
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .stroke(highlighted ? KokoInk.paper.opacity(0.82) : KokoInk.line, lineWidth: 1)
-            }
             .shadow(color: Color.black.opacity(highlighted ? 0.08 : 0.18), radius: 10, y: 5)
             .accessibilityHidden(true)
     }
@@ -131,14 +123,15 @@ struct KokoControlSurface: View {
 
 struct KokoGradientBackdrop: View {
     var body: some View {
-        ZStack {
-            Color(red: 7 / 255, green: 28 / 255, blue: 30 / 255)
-            Image("KokoSocialBackdrop")
-                .resizable()
-                .scaledToFill()
-                .opacity(0.24)
-                .overlay(Color.black.opacity(0.30))
-        }
+        LinearGradient(
+            colors: [
+                Color(red: 7 / 255, green: 28 / 255, blue: 30 / 255),
+                Color(red: 6 / 255, green: 39 / 255, blue: 38 / 255),
+                Color(red: 7 / 255, green: 25 / 255, blue: 28 / 255)
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
         .clipped()
         .accessibilityHidden(true)
     }
@@ -146,17 +139,7 @@ struct KokoGradientBackdrop: View {
 
 struct ArtworkBackdrop: View {
     var dark = false
-    var body: some View {
-        ZStack(alignment: .topTrailing) {
-            KokoGradientBackdrop()
-            Artwork(sheet: .social, tile: dark ? 1 : 3)
-                .frame(width: 220, height: 165)
-                .opacity(dark ? 0.045 : 0.075)
-                .blur(radius: 0.15)
-                .offset(x: 34, y: -18)
-                .accessibilityHidden(true)
-        }.accessibilityHidden(true)
-    }
+    var body: some View { KokoGradientBackdrop() }
 }
 
 struct KokoTabIcon: View {
@@ -237,16 +220,10 @@ struct KokoCard<Content: View>: View {
     var tint = 2
     @ViewBuilder var content: Content
     var body: some View {
-        ZStack(alignment: .topTrailing) {
-            VStack(alignment: .leading, spacing: 14) { content }
-                .padding(20)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            Artwork(sheet: .social, tile: tint == 3 ? 1 : (tint == 5 ? 2 : 0))
-                .frame(width: 74, height: 55)
-                .opacity(0.12)
-                .offset(x: -8, y: 8)
-        }
-        .background(ArtworkSurface(tile: tint))
+        VStack(alignment: .leading, spacing: 14) { content }
+            .padding(20)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(ArtworkSurface(tile: tint))
     }
 }
 
@@ -353,8 +330,7 @@ struct KokoSocialHero: View {
     let detail: String
     var artwork = 0
     var body: some View {
-        HStack(spacing: 14) {
-            VStack(alignment: .leading, spacing: 7) {
+        VStack(alignment: .leading, spacing: 7) {
                 Text(eyebrow.uppercased())
                     .font(.custom("AvenirNext-Bold", size: 10, relativeTo: .caption2))
                     .tracking(1.5)
@@ -366,11 +342,6 @@ struct KokoSocialHero: View {
                     .font(.custom("AvenirNext-Regular", size: 12, relativeTo: .body))
                     .foregroundStyle(KokoInk.secondary)
                     .fixedSize(horizontal: false, vertical: true)
-            }
-            Spacer(minLength: 0)
-            Artwork(sheet: .social, tile: artwork)
-                .frame(width: 126, height: 92)
-                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
         }
         .padding(18)
         .background(ArtworkSurface(tile: 3))
@@ -383,7 +354,9 @@ struct KokoEmpty: View {
     var art = 2
     var body: some View {
         VStack(spacing: 10) {
-            Artwork(sheet: .scenes, tile: art).frame(height: 95)
+            Artwork(sheet: .navigation, tile: 4).frame(width: 30, height: 30)
+                .padding(16)
+                .background(KokoControlSurface())
             Text(title).font(.custom("AvenirNext-DemiBold", size: 18, relativeTo: .headline))
             Text(detail).font(.custom("AvenirNext-Regular", size: 13, relativeTo: .body)).foregroundStyle(KokoInk.secondary)
         }.multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
@@ -396,12 +369,7 @@ struct KokoSectionTitle: View {
     var detail: String? = nil
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 12) {
-            HStack(spacing: 8) {
-                Artwork(sheet: .social, tile: 1)
-                    .frame(width: 21, height: 16)
-                    .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
-                Text(title).font(.custom("AvenirNext-Bold", size: 20, relativeTo: .title3))
-            }
+            Text(title).font(.custom("AvenirNext-Bold", size: 20, relativeTo: .title3))
             Spacer(minLength: 0)
             if let detail { Text(detail).font(.custom("AvenirNext-Medium", size: 11, relativeTo: .caption)).foregroundStyle(KokoInk.secondary) }
         }.fixedSize(horizontal: false, vertical: true)

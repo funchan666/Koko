@@ -18,7 +18,10 @@ struct KokoRoomConnectionView: View {
     private var isHost: Bool { room?.hostMemberID == community.myID }
     var body: some View {
         KokoPage(title: "A seat in the conversation", subtitle: room?.roomTitle ?? "Room connection", back: leave) {
-            Artwork(sheet: .arrival, tile: 1).frame(height: 180)
+            Artwork(sheet: .navigation, tile: 13)
+                .frame(width: 30, height: 30)
+                .padding(24)
+                .background(KokoControlSurface())
             if let room {
                 KokoCard(tint: 3) {
                     VStack(alignment: .leading, spacing: 10) {

@@ -17,7 +17,7 @@ struct KokoConversationsView: View {
                     KokoSearchField(prompt: "Search conversations", query: $search)
                     KokoIconAction(icon: 3, label: "My album") { navigation.open(.album) }
                 }
-                KokoConversationSectionHeading(title: "Conversations", subtitle: "Keep the thread going", members: community.conversations.compactMap { community.member($0.correspondentID) }) {
+                KokoConversationSectionHeading(title: "Conversations", subtitle: "Keep the thread going") {
                     if !community.conversations.isEmpty { confirmClear = true }
                 }
                 if filtered.isEmpty {
@@ -30,7 +30,7 @@ struct KokoConversationsView: View {
                     }
                 }
                 let friendsRooms = community.rooms.filter { community.friends.contains($0.hostMemberID) }
-                KokoConversationSectionHeading(title: "Friends’ rooms", subtitle: "People you already know are here", members: friendsRooms.compactMap { community.member($0.hostMemberID) })
+                KokoConversationSectionHeading(title: "Friends’ rooms", subtitle: "People you already know are here")
                 if friendsRooms.isEmpty {
                     KokoFriendsRoomInviteCard { navigation.open(.friends("Friends")) }
                 } else { ForEach(friendsRooms) { KokoRoomCard(room: $0) } }
@@ -65,7 +65,6 @@ private struct KokoConversationPulseRail: View {
                 HStack(spacing: 7) {
                     Artwork(sheet: .navigation, tile: icon).frame(width: 25, height: 25)
                     Spacer(minLength: 0)
-                    Artwork(sheet: .social, tile: icon % 4).frame(width: 23, height: 20).opacity(0.9)
                 }
                 Text(title).font(.custom("AvenirNext-Bold", size: 13, relativeTo: .subheadline))
                 Text(detail).font(.custom("AvenirNext-Medium", size: 9, relativeTo: .caption2)).foregroundStyle(KokoInk.secondary).lineLimit(1)
@@ -73,7 +72,6 @@ private struct KokoConversationPulseRail: View {
             .foregroundStyle(KokoInk.primary)
             .padding(12).frame(maxWidth: .infinity, minHeight: 104, alignment: .leading)
             .background(ArtworkSurface(tile: title == "Inbox" ? 3 : 2))
-            .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous).stroke(KokoInk.accent.opacity(0.3), lineWidth: 1))
             .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
         }.buttonStyle(KokoPressStyle())
     }
@@ -82,17 +80,9 @@ private struct KokoConversationPulseRail: View {
 private struct KokoConversationSectionHeading: View {
     let title: String
     let subtitle: String
-    let members: [CommunityMember]
     var clear: (() -> Void)? = nil
     var body: some View {
         HStack(spacing: 10) {
-            HStack(spacing: -8) {
-                ForEach(Array(members.prefix(3)), id: \.id) { member in
-                    KokoMemberPortrait(member: member).frame(width: 34, height: 34).clipShape(Circle())
-                        .overlay(Circle().stroke(KokoInk.canvas, lineWidth: 2))
-                }
-                if members.isEmpty { Artwork(sheet: .social, tile: title == "Conversations" ? 2 : 1).frame(width: 34, height: 34) }
-            }.frame(width: 66, height: 36, alignment: .leading)
             VStack(alignment: .leading, spacing: 2) {
                 Text(title).font(.custom("AvenirNext-Bold", size: 20, relativeTo: .title3))
                 Text(subtitle).font(.custom("AvenirNext-Medium", size: 10)).foregroundStyle(KokoInk.secondary)
@@ -112,27 +102,26 @@ private struct KokoFirstHelloCard: View {
     let action: () -> Void
     var body: some View {
         VStack(spacing: 10) {
-            Artwork(sheet: .social, tile: 2).frame(width: 76, height: 62)
+            Artwork(sheet: .navigation, tile: 2).frame(width: 28, height: 28)
+                .padding(15)
+                .background(KokoControlSurface())
             Text(searching ? "No one matches that yet" : "A hello starts here").font(.custom("AvenirNext-Bold", size: 19))
             Text(searching ? "Try another name or look around the community." : "Find someone nearby, then send a small hello.")
                 .font(.custom("AvenirNext-Regular", size: 12)).foregroundStyle(KokoInk.secondary).multilineTextAlignment(.center)
             KokoAction(title: "Find someone to talk to", icon: 4, action: action).frame(maxWidth: 270)
         }.frame(maxWidth: .infinity).padding(22).background(ArtworkSurface(tile: 3))
             .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-            .overlay(RoundedRectangle(cornerRadius: 24, style: .continuous).stroke(KokoInk.accent.opacity(0.3), lineWidth: 1))
     }
 }
 
 private struct KokoFriendsRoomInviteCard: View {
-    @EnvironmentObject private var community: CommunityJournalStore
     let action: () -> Void
     var body: some View {
         HStack(spacing: 12) {
-            HStack(spacing: -8) {
-                ForEach(Array(community.members.prefix(3)), id: \.id) { member in
-                    KokoMemberPortrait(member: member).frame(width: 38, height: 38).clipShape(Circle()).overlay(Circle().stroke(KokoInk.canvas, lineWidth: 2))
-                }
-            }.frame(width: 76, alignment: .leading)
+            Artwork(sheet: .navigation, tile: 3)
+                .frame(width: 25, height: 25)
+                .padding(14)
+                .background(KokoControlSurface())
             VStack(alignment: .leading, spacing: 5) {
                 Text("Bring your people together").font(.custom("AvenirNext-Bold", size: 15))
                 Text("Open a room and make space for a shared hello.").font(.custom("AvenirNext-Medium", size: 10)).foregroundStyle(KokoInk.secondary).lineLimit(2)
@@ -140,7 +129,6 @@ private struct KokoFriendsRoomInviteCard: View {
             }
             Spacer(minLength: 0)
         }.padding(15).background(ArtworkSurface(tile: 3)).clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
-            .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous).stroke(KokoInk.accent.opacity(0.3), lineWidth: 1))
     }
 }
 

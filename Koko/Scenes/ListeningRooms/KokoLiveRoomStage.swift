@@ -60,7 +60,11 @@ struct KokoLiveRoomStage: View {
                         stageAction(tile: 11, label: "More") { onOpenPanel("Around this room") }
                         Button { onOpenPanel("Send a little something") } label: {
                             VStack(spacing: 3) {
-                                Artwork(sheet: .collection, tile: 8).frame(width: 54, height: 54)
+                                Artwork(sheet: .liveControls, tile: 4).frame(width: 28, height: 28)
+                                    .frame(width: 58, height: 58)
+                                    .background(Color.black.opacity(0.28))
+                                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                                    .overlay(RoundedRectangle(cornerRadius: 18, style: .continuous).stroke(Color.white.opacity(0.22), lineWidth: 1))
                                 Text("Gifts").font(.custom("AvenirNext-Bold", size: 10))
                             }
                         }.buttonStyle(KokoPressStyle()).accessibilityLabel("Choose from eight gifts")
@@ -96,13 +100,20 @@ struct KokoLiveRoomStage: View {
                     }
                 }.buttonStyle(.plain)
                 if host.id != community.myID {
-                    Button(community.following.contains(host.id) ? "Following" : "+ Follow") { community.toggleFollow(host.id) }
-                        .font(.custom("AvenirNext-Bold", size: 11)).padding(.horizontal, 12).padding(.vertical, 9)
-                        .background(ArtworkSurface(tile: 3)).foregroundStyle(KokoInk.onMint).buttonStyle(.plain)
+                    Button { community.toggleFollow(host.id) } label: {
+                        HStack(spacing: 5) {
+                            Artwork(sheet: .liveControls, tile: 1).frame(width: 17, height: 17)
+                            Text(community.following.contains(host.id) ? "Following" : "Follow")
+                                .font(.custom("AvenirNext-Bold", size: 10))
+                        }
+                        .foregroundStyle(KokoInk.onMint)
+                        .padding(.horizontal, 11).frame(height: 40)
+                        .background(KokoControlSurface(highlighted: true))
+                    }.buttonStyle(KokoPressStyle())
                 }
             }
             Spacer(minLength: 0)
-            KokoIconAction(icon: 6, label: "Leave live room", action: onBack)
+            KokoLiveRoomMiniButton(assetTile: 0, label: "Leave live room", action: onBack)
         }
     }
 
@@ -125,11 +136,16 @@ struct KokoLiveRoomStage: View {
 
     private func stageAction(tile: Int, label: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            VStack(spacing: 5) {
-                Artwork(sheet: .navigation, tile: tile, ink: .white).frame(width: 26, height: 26)
+            VStack(spacing: 4) {
+                Artwork(sheet: .liveControls, tile: tile == 14 ? 2 : 3).frame(width: 25, height: 25)
                 Text(label).font(.custom("AvenirNext-DemiBold", size: 9))
-            }.frame(width: 54, height: 48).contentShape(Rectangle())
-        }.buttonStyle(.plain).accessibilityLabel(label)
+            }
+            .frame(width: 58, height: 58)
+            .background(Color.black.opacity(0.28))
+            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 18, style: .continuous).stroke(Color.white.opacity(0.22), lineWidth: 1))
+            .contentShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        }.buttonStyle(KokoPressStyle()).accessibilityLabel(label)
     }
 }
 
@@ -146,15 +162,35 @@ struct KokoLiveRoomComposer: View {
                 .focused($focused).submitLabel(.send).onSubmit(submit)
                 .accessibilityLabel("Room message")
                 .onChange(of: message) { value in if value.count > 500 { message = String(value.prefix(500)) } }
-            KokoIconAction(icon: 12, label: "Send message", action: submit)
+            KokoLiveRoomMiniButton(assetTile: 5, label: "Send message", action: submit)
                 .disabled(message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                .opacity(message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0.45 : 1)
             Button(action: gift) {
-                Artwork(sheet: .collection, tile: 10).frame(width: 44, height: 44)
+                Artwork(sheet: .liveControls, tile: 4).frame(width: 28, height: 28)
+                    .frame(width: 48, height: 48)
+                    .background(Color.black.opacity(0.28))
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(Color.white.opacity(0.22), lineWidth: 1))
             }.buttonStyle(KokoPressStyle()).accessibilityLabel("Send a gift")
         }
     }
     private func submit() {
         if send() { message = ""; focused = false }
+    }
+}
+
+private struct KokoLiveRoomMiniButton: View {
+    let assetTile: Int
+    let label: String
+    let action: () -> Void
+    var body: some View {
+        Button(action: action) {
+            Artwork(sheet: .liveControls, tile: assetTile).frame(width: 25, height: 25)
+                .frame(width: 48, height: 48)
+                .background(Color.black.opacity(0.28))
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(Color.white.opacity(0.22), lineWidth: 1))
+        }.buttonStyle(KokoPressStyle()).accessibilityLabel(label)
     }
 }
 

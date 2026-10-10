@@ -28,33 +28,16 @@ final class KokoAccessJourney: ObservableObject {
 
 struct KokoLaunchLoading: View {
     var body: some View {
-        ZStack {
-            KokoGradientBackdrop()
-            KokoBrandLoading(caption: "Tuning in")
-        }.foregroundStyle(KokoInk.primary)
+        KokoLoadingSurface(caption: "Tuning in")
     }
 }
 
 struct KokoAccountLoading: View {
     @EnvironmentObject private var journey: KokoAccessJourney
-    @Environment(\.kokoScreenInsets) private var screenInsets
     @AccessibilityFocusState private var loadingFocused: Bool
 
     var body: some View {
-        ZStack {
-            KokoGradientBackdrop()
-            GeometryReader { viewport in
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 22) {
-                        KokoBrandLoading(caption: journey.transitionCaption)
-                    }
-                    .padding(.horizontal, 32)
-                    .padding(.top, screenInsets.top + 24)
-                    .padding(.bottom, screenInsets.bottom + 24)
-                    .frame(maxWidth: .infinity, minHeight: viewport.size.height)
-                }.accessibilityHidden(true)
-            }
-        }
+        KokoLoadingSurface(caption: journey.transitionCaption)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(journey.transitionCaption)
         .accessibilityAddTraits(.isModal)
@@ -62,5 +45,34 @@ struct KokoAccountLoading: View {
         .onAppear {
             loadingFocused = true
         }
+    }
+}
+
+/// Background artwork never participates in measuring the loading content.
+/// The viewport comes from KokoScreenCanvas, so both waiting screens stay centered.
+private struct KokoLoadingSurface: View {
+    let caption: String
+    @Environment(\.kokoScreenInsets) private var screenInsets
+
+    var body: some View {
+        GeometryReader { viewport in
+            let verticalPadding = max(screenInsets.top, screenInsets.bottom) + 24
+            ScrollView(showsIndicators: false) {
+                KokoBrandLoading(caption: caption)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 32)
+                    .padding(.vertical, verticalPadding)
+                    .frame(width: viewport.size.width, alignment: .center)
+                    .frame(minHeight: viewport.size.height, alignment: .center)
+            }
+            .frame(width: viewport.size.width, height: viewport.size.height)
+            .background {
+                KokoGradientBackdrop()
+                    .frame(width: viewport.size.width, height: viewport.size.height)
+                    .clipped()
+            }
+            .clipped()
+        }
+        .foregroundStyle(KokoInk.primary)
     }
 }

@@ -7,6 +7,20 @@ struct KokoPersonalSpace: View {
     var body: some View {
         ZStack {
             KokoPage {
+                HStack(alignment: .bottom, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("Your space")
+                            .font(.custom("AvenirNext-Bold", size: 28, relativeTo: .title2))
+                        Text("Keep the people and moments that feel like you close.")
+                            .font(.custom("AvenirNext-Medium", size: 11, relativeTo: .caption))
+                            .foregroundStyle(KokoInk.secondary)
+                    }
+                    Spacer(minLength: 0)
+                    Text("KOKO")
+                        .font(.custom("AvenirNext-Bold", size: 10, relativeTo: .caption2))
+                        .tracking(1.5)
+                        .foregroundStyle(KokoInk.coral)
+                }
                 if let member = community.currentMember {
                     KokoPersonalIdentityCard(member: member, wornKeepsake: KokoCommunity.keepsakes.first(where: { $0.id == community.journal?.wornKeepsakeID })) {
                         navigation.open(.editProfile)
@@ -15,8 +29,7 @@ struct KokoPersonalSpace: View {
                 KokoPersonalConnectionsStrip(
                     followers: community.followers.count,
                     following: community.following.count,
-                    friends: community.friends.count,
-                    members: community.members
+                    friends: community.friends.count
                 ) { title in
                     navigation.open(.friends(title))
                 }
@@ -49,9 +62,13 @@ struct KokoPersonalSpace: View {
                     navigation.open(destination)
                 }
                 KokoSectionTitle(title: "Make it yours")
-                KokoMenuRow(title: "Feedback", icon: 2) { navigation.open(.feedback) }
-                KokoMenuRow(title: "Blocked people", icon: 14) { navigation.open(.blacklist) }
-                KokoMenuRow(title: "Settings", icon: 11) { navigation.open(.settings) }
+                KokoPersonalToolsGrid {
+                    navigation.open(.feedback)
+                } blocked: {
+                    navigation.open(.blacklist)
+                } settings: {
+                    navigation.open(.settings)
+                }
                 KokoAction(title: "Sign out", emphasis: false) { confirmLogout = true }
             }
             if confirmLogout { KokoModal(title: "Until next time?", dismiss: { confirmLogout = false }) { Text("Your profile and keepsakes will be here when you sign in with the same email."); KokoAction(title: "Sign out") { community.signOut() } } }
@@ -100,13 +117,16 @@ private struct KokoPersonalIdentityCard: View {
                 }.frame(maxWidth: .infinity, alignment: .leading)
             }
             HStack(spacing: 8) {
-                Artwork(sheet: .social, tile: 0).frame(width: 28, height: 24)
+                Artwork(sheet: .navigation, tile: 3).frame(width: 20, height: 20)
                 Text(member.hometownLabel.isEmpty ? "A new hello starts here" : "Sharing from \(member.hometownLabel)")
                     .font(.custom("AvenirNext-Medium", size: 12, relativeTo: .caption))
                     .foregroundStyle(KokoInk.secondary)
                 Spacer(minLength: 0)
                 if let wornKeepsake {
-                    Artwork(sheet: .collection, tile: wornKeepsake.artworkTile).frame(width: 27, height: 27)
+                    Text("Wearing \(wornKeepsake.keepsakeName)")
+                        .font(.custom("AvenirNext-DemiBold", size: 10, relativeTo: .caption2))
+                        .foregroundStyle(KokoInk.accent)
+                        .lineLimit(1)
                 }
             }
         }
@@ -119,19 +139,13 @@ private struct KokoPersonalConnectionsStrip: View {
     let followers: Int
     let following: Int
     let friends: Int
-    let members: [CommunityMember]
     let open: (String) -> Void
-    private var previews: [CommunityMember] { Array(members.prefix(3)) }
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text("PEOPLE AROUND YOU").font(.custom("AvenirNext-Bold", size: 10, relativeTo: .caption2)).tracking(1.4).foregroundStyle(KokoInk.coral)
                 Spacer()
-                HStack(spacing: -8) {
-                    ForEach(previews) { member in
-                        KokoMemberPortrait(member: member).frame(width: 28, height: 28).clipShape(Circle()).overlay(Circle().stroke(KokoInk.canvas, lineWidth: 2))
-                    }
-                }
+                Text("Tap a count to connect").font(.custom("AvenirNext-Medium", size: 10)).foregroundStyle(KokoInk.secondary)
             }
             HStack(spacing: 8) {
                 connection("Followers", followers, "Followers")
@@ -160,7 +174,10 @@ private struct KokoDailyPulseCard: View {
     var body: some View {
         Button(action: open) {
             HStack(spacing: 14) {
-                Artwork(sheet: .scenes, tile: 1).frame(width: 70, height: 60).clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                Artwork(sheet: .navigation, tile: 15)
+                    .frame(width: 25, height: 25)
+                    .padding(16)
+                    .background(KokoControlSurface())
                 VStack(alignment: .leading, spacing: 5) {
                     Text(checkedIn ? "You showed up today" : "Leave a little hello")
                         .font(.custom("AvenirNext-Bold", size: 17, relativeTo: .headline))
@@ -182,7 +199,7 @@ private struct KokoPersonalActionGrid: View {
     let saved: () -> Void
     let rooms: () -> Void
     var body: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 8) {
             action("Album", "Keep your moments", 3, album)
             action("Saved", "Little favorites", 8, saved)
             action("Rooms", "Your conversations", 13, rooms)
@@ -194,8 +211,39 @@ private struct KokoPersonalActionGrid: View {
                 Artwork(sheet: .navigation, tile: artwork).frame(width: 28, height: 28).foregroundStyle(KokoInk.accent)
                 Text(title).font(.custom("AvenirNext-DemiBold", size: 14, relativeTo: .body))
                 Text(detail).font(.custom("AvenirNext-Regular", size: 10, relativeTo: .caption2)).foregroundStyle(KokoInk.secondary).lineLimit(2)
-            }.frame(maxWidth: .infinity, minHeight: 106, alignment: .leading).padding(13).foregroundStyle(KokoInk.primary).background(ArtworkSurface())
+            }.frame(maxWidth: .infinity, minHeight: 92, alignment: .leading).padding(12).foregroundStyle(KokoInk.primary).background(ArtworkSurface(tile: 2))
         }.buttonStyle(KokoPressStyle())
+    }
+}
+
+private struct KokoPersonalToolsGrid: View {
+    let feedback: () -> Void
+    let blocked: () -> Void
+    let settings: () -> Void
+    var body: some View {
+        HStack(spacing: 8) {
+            tool("Feedback", "Tell us what to tune", 2, feedback)
+            tool("Blocked", "Manage your boundaries", 14, blocked)
+            tool("Settings", "Shape your space", 11, settings)
+        }
+    }
+    private func tool(_ title: String, _ detail: String, _ icon: Int, _ action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(alignment: .leading, spacing: 7) {
+                Artwork(sheet: .navigation, tile: icon)
+                    .frame(width: 22, height: 22)
+                    .foregroundStyle(KokoInk.accent)
+                Text(title).font(.custom("AvenirNext-DemiBold", size: 12, relativeTo: .caption))
+                Text(detail).font(.custom("AvenirNext-Medium", size: 9, relativeTo: .caption2))
+                    .foregroundStyle(KokoInk.secondary)
+                    .lineLimit(2)
+            }
+            .frame(maxWidth: .infinity, minHeight: 92, alignment: .leading)
+            .padding(12)
+            .foregroundStyle(KokoInk.primary)
+            .background(ArtworkSurface(tile: 2))
+        }
+        .buttonStyle(KokoPressStyle())
     }
 }
 
@@ -217,7 +265,11 @@ private struct KokoPersonalCollectionCard: View {
             HStack(spacing: 10) {
                 ForEach(Array(keepsakes.prefix(3))) { keepsake in
                     VStack(spacing: 6) {
-                        Artwork(sheet: .collection, tile: keepsake.artworkTile).frame(height: 54).padding(7).background(ArtworkSurface(tile: 3))
+                        Artwork(sheet: .collection, tile: keepsake.artworkTile)
+                            .frame(height: 54)
+                            .padding(8)
+                            .background(KokoInk.canvas.opacity(0.28))
+                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                         Text(keepsake.keepsakeName).font(.custom("AvenirNext-Medium", size: 10, relativeTo: .caption2)).lineLimit(1)
                     }.frame(maxWidth: .infinity)
                 }
@@ -255,7 +307,10 @@ struct KokoMemberProfile: View {
                     if !member.introductionLine.isEmpty {
                         KokoCard(tint: 3) {
                             HStack(alignment: .top, spacing: 12) {
-                                Artwork(sheet: .social, tile: 2).frame(width: 62, height: 52)
+                                Artwork(sheet: .navigation, tile: 2)
+                                    .frame(width: 24, height: 24)
+                                    .padding(14)
+                                    .background(KokoControlSurface())
                                 Text(member.introductionLine)
                                     .font(.custom("AvenirNext-Medium", size: 18, relativeTo: .body))
                                     .fixedSize(horizontal: false, vertical: true)
@@ -278,7 +333,10 @@ struct KokoMemberProfile: View {
                         KokoAction(title: "Send a hello", icon: 2, emphasis: false) { navigation.open(.conversation(memberID)) }
                         KokoCard(tint: 3) {
                             HStack(alignment: .top, spacing: 12) {
-                                Artwork(sheet: .social, tile: 0).frame(width: 68, height: 58)
+                                Artwork(sheet: .navigation, tile: 13)
+                                    .frame(width: 24, height: 24)
+                                    .padding(14)
+                                    .background(KokoControlSurface())
                                 VStack(alignment: .leading, spacing: 10) {
                                     Text("Make a moment together").font(.custom("AvenirNext-Bold", size: 18))
                                     Text("Voice and video are free when the connection is mutual.")
@@ -292,7 +350,10 @@ struct KokoMemberProfile: View {
                         }
                         KokoCard {
                             HStack(alignment: .top, spacing: 12) {
-                                Artwork(sheet: .social, tile: 1).frame(width: 58, height: 48)
+                                Artwork(sheet: .navigation, tile: 3)
+                                    .frame(width: 24, height: 24)
+                                    .padding(12)
+                                    .background(KokoControlSurface())
                                 VStack(alignment: .leading, spacing: 10) {
                                     Text("A little context").font(.custom("AvenirNext-Bold", size: 18))
                                     Text(community.friends.contains(memberID) ? "You have a sample mutual connection." : "This profile is a preview on your device.").font(.custom("AvenirNext-Regular", size: 13))
@@ -319,11 +380,6 @@ struct KokoMemberProfile: View {
                 startPoint: .top,
                 endPoint: .bottom
             )
-            Artwork(sheet: .social, tile: 2)
-                .frame(width: 106, height: 80)
-                .opacity(0.22)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                .padding(14)
             HStack(alignment: .bottom, spacing: 12) {
                 KokoMemberPortrait(member: member)
                     .frame(width: 86, height: 94)

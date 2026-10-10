@@ -65,7 +65,10 @@ struct KokoCheckInView: View {
     @EnvironmentObject private var navigation: KokoSceneNavigation
     var body: some View {
         KokoPage(title: "A small daily ritual", back: navigation.back) {
-            Artwork(sheet: .scenes, tile: 3).frame(height: 230)
+            Artwork(sheet: .navigation, tile: 15)
+                .frame(width: 30, height: 30)
+                .padding(20)
+                .background(KokoControlSurface())
             Text("Glad you stopped by.").font(.custom("AvenirNext-Bold", size: 29))
             Text("Every day you check in adds 10 activity points. Once a day, at your own pace.")
             KokoCard(tint: 3) { HStack { VStack(alignment: .leading) { Text("\(community.journal?.checkInDayKeys.count ?? 0)").font(.custom("AvenirNext-Bold", size: 42)); Text("days you made a little time") }; Spacer(); Artwork(sheet: .collection, tile: 13).frame(width: 90, height: 90) } }

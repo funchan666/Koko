@@ -131,7 +131,10 @@ struct KokoPolicyView: View {
     var body: some View {
         if kind == "Community guidelines" {
             KokoPage(title: kind, back: onBack) {
-                Artwork(sheet: .arrival, tile: 1).frame(height: 210)
+                Artwork(sheet: .navigation, tile: 11)
+                    .frame(width: 30, height: 30)
+                    .padding(24)
+                    .background(KokoControlSurface())
                 Text("Make room for one another.").font(.custom("AvenirNext-Bold", size: 26))
                 Text("Respect people's boundaries. Do not share harassment, hate, exploitation, threats, scams or private information. Report or block content that makes you uncomfortable.")
                 Text("Koko is for adults. Reports remain on this device until a moderation service is connected.").foregroundStyle(KokoInk.secondary)
