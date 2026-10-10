@@ -123,17 +123,11 @@ struct KokoControlSurface: View {
 
 struct KokoGradientBackdrop: View {
     var body: some View {
-        LinearGradient(
-            colors: [
-                Color(red: 7 / 255, green: 28 / 255, blue: 30 / 255),
-                Color(red: 6 / 255, green: 39 / 255, blue: 38 / 255),
-                Color(red: 7 / 255, green: 25 / 255, blue: 28 / 255)
-            ],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-        .clipped()
-        .accessibilityHidden(true)
+        Image("KokoSocialCanvasBackground")
+            .resizable()
+            .scaledToFill()
+            .clipped()
+            .accessibilityHidden(true)
     }
 }
 
