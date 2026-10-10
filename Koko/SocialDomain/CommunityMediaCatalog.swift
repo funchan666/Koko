@@ -50,6 +50,7 @@ enum KokoMediaLibrary {
         "night-signal": "clip-6f8458f557ac70eb",
         "tiny-dancefloor": "clip-9b7cdfe144e740de"
     ]
+    static var liveRoomPreviewAssetIDs: Set<String> { Set(roomVideoKeys.values) }
     static func asset(_ key: String?) -> CommunityMediaAsset? {
         guard let key else { return nil }
         return assets.first { $0.id == key }

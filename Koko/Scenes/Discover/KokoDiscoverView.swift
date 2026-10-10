@@ -22,8 +22,13 @@ struct KokoDiscoverView: View {
     }
 
     private var featuredMoments: [SharedMoment] {
-        let videos = community.moments.filter { $0.mediaAsset?.isVideo == true }
-        let photos = community.moments.filter { $0.mediaAsset?.isVideo != true }
+        let liveAssetIDs = KokoMediaLibrary.liveRoomPreviewAssetIDs
+        let availableMoments = community.moments.filter { moment in
+            guard let asset = moment.mediaAsset else { return true }
+            return !liveAssetIDs.contains(asset.id)
+        }
+        let videos = availableMoments.filter { $0.mediaAsset?.isVideo == true }
+        let photos = availableMoments.filter { $0.mediaAsset?.isVideo != true }
         return Array((videos.prefix(3) + photos.prefix(3)))
     }
 
@@ -76,9 +81,7 @@ struct KokoDiscoverView: View {
                 KokoUpdatesBrowseCard(moments: featuredMoments) {
                     navigation.open(.momentsCollection)
                 }
-                KokoHostsStrip {
-                    navigation.open(.ranking)
-                }
+                KokoHostsStrip()
                 KokoDiscoverActionCards()
             }
             .allowsHitTesting(!choosingTopic)
@@ -108,24 +111,39 @@ private struct KokoUpdatesBrowseCard: View {
     let action: () -> Void
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 14) {
-                HStack(spacing: -12) {
-                    ForEach(Array(moments.prefix(3)), id: \.id) { moment in
-                        if let asset = moment.mediaAsset {
-                            KokoContentImage(asset: asset).frame(width: 58, height: 66).clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
-                                .overlay(RoundedRectangle(cornerRadius: 15, style: .continuous).stroke(KokoInk.canvas, lineWidth: 2))
+            ZStack(alignment: .leading) {
+                Image("KokoSocialWidePanelShell")
+                    .resizable()
+                    .scaledToFill()
+                    .accessibilityHidden(true)
+                HStack(spacing: 14) {
+                    HStack(spacing: -10) {
+                        ForEach(Array(moments.prefix(3)), id: \.id) { moment in
+                            if let asset = moment.mediaAsset {
+                                KokoContentImage(asset: asset)
+                                    .frame(width: 52, height: 58)
+                                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            }
                         }
                     }
-                }.frame(width: 115, height: 70, alignment: .leading)
-                VStack(alignment: .leading, spacing: 5) {
-                    Text("See all updates").font(.custom("AvenirNext-Bold", size: 16))
-                    Text("Videos, photos and little moments from the community").font(.custom("AvenirNext-Medium", size: 11)).foregroundStyle(KokoInk.secondary).lineLimit(2)
-                    Text("Open the feed →").font(.custom("AvenirNext-Bold", size: 10)).foregroundStyle(KokoInk.coral)
+                    .frame(width: 108, height: 62, alignment: .leading)
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text("See all updates")
+                            .font(.custom("AvenirNext-Bold", size: 16))
+                        Text("Videos, photos and little moments from the community")
+                            .font(.custom("AvenirNext-Medium", size: 11))
+                            .foregroundStyle(KokoInk.secondary)
+                            .lineLimit(2)
+                        Text("Open the feed →")
+                            .font(.custom("AvenirNext-Bold", size: 10))
+                            .foregroundStyle(KokoInk.coral)
+                    }
+                    Spacer(minLength: 0)
                 }
-                Spacer(minLength: 0)
-            }.padding(14).frame(maxWidth: .infinity, alignment: .leading).background(ArtworkSurface(tile: 3))
-                .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
-                .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous).stroke(KokoInk.accent.opacity(0.3), lineWidth: 1))
+                .padding(.horizontal, 15)
+            }
+            .frame(maxWidth: .infinity, minHeight: 112)
+            .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
         }.buttonStyle(KokoPressStyle()).accessibilityLabel("See all community updates")
     }
 }
@@ -133,7 +151,6 @@ private struct KokoUpdatesBrowseCard: View {
 private struct KokoHostsStrip: View {
     @EnvironmentObject private var community: CommunityJournalStore
     @EnvironmentObject private var navigation: KokoSceneNavigation
-    let ranking: () -> Void
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -141,23 +158,17 @@ private struct KokoHostsStrip: View {
                     Text("Meet the hosts").font(.custom("AvenirNext-Bold", size: 20))
                     Text("Find a room that feels like you").font(.custom("AvenirNext-Medium", size: 10)).foregroundStyle(KokoInk.secondary)
                 }
-                Spacer(minLength: 0)
-                Button("Ranking") { ranking() }.font(.custom("AvenirNext-Bold", size: 10)).foregroundStyle(KokoInk.coral).buttonStyle(.plain)
             }
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 10) {
                     ForEach(community.members) { member in
                         Button { navigation.open(.profile(member.id)) } label: {
                             VStack(alignment: .leading, spacing: 7) {
-                                ZStack(alignment: .bottomLeading) {
-                                    KokoMemberPortrait(member: member).frame(width: 112, height: 100).clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-                                    HStack(spacing: 4) {
-                                        Circle().fill(KokoInk.accent).frame(width: 6, height: 6)
-                                        Text("OPEN TO CHAT").font(.custom("AvenirNext-Bold", size: 7)).tracking(0.7)
-                                    }.foregroundStyle(KokoInk.onMint).padding(.horizontal, 7).padding(.vertical, 5).background(KokoInk.canvas.opacity(0.85)).clipShape(Capsule()).padding(7)
-                                }
+                                KokoMemberPortrait(member: member)
+                                    .frame(width: 112, height: 100)
+                                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                                 Text(member.publicName.components(separatedBy: " ").first ?? member.publicName).font(.custom("AvenirNext-Bold", size: 13)).lineLimit(1)
-                                Text("Say hello →").font(.custom("AvenirNext-Medium", size: 10)).foregroundStyle(KokoInk.coral)
+                                Text("Open to chat →").font(.custom("AvenirNext-Medium", size: 10)).foregroundStyle(KokoInk.coral)
                             }.frame(width: 112, alignment: .leading)
                         }.buttonStyle(KokoPressStyle()).accessibilityLabel("Meet \(member.publicName)")
                     }
@@ -171,22 +182,33 @@ private struct KokoDiscoverActionCards: View {
     @EnvironmentObject private var navigation: KokoSceneNavigation
     var body: some View {
         HStack(spacing: 12) {
-            actionCard(title: "Photos & videos", detail: "Keep the good bits", artwork: 0) { navigation.open(.momentsCollection) }
-            actionCard(title: "Find your people", detail: "Search the community", artwork: 1) { navigation.open(.search) }
+            actionCard(title: "Photos & videos", detail: "Keep the good bits") { navigation.open(.momentsCollection) }
+            actionCard(title: "Find your people", detail: "Search the community") { navigation.open(.search) }
         }
     }
-    private func actionCard(title: String, detail: String, artwork: Int, action: @escaping () -> Void) -> some View {
+    private func actionCard(title: String, detail: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            VStack(alignment: .leading, spacing: 10) {
-                Artwork(sheet: .navigation, tile: artwork == 0 ? 7 : 4)
-                    .frame(width: 25, height: 25)
-                    .padding(13)
-                    .background(KokoControlSurface())
-                Text(title).font(.custom("AvenirNext-Bold", size: 14)).lineLimit(2)
-                Text(detail).font(.custom("AvenirNext-Medium", size: 10)).foregroundStyle(KokoInk.secondary).lineLimit(2)
-                Text("Explore →").font(.custom("AvenirNext-Bold", size: 10)).foregroundStyle(KokoInk.coral)
-            }.padding(14).frame(maxWidth: .infinity, minHeight: 148, alignment: .leading).background(ArtworkSurface(tile: 3))
-                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+            ZStack(alignment: .leading) {
+                Image("KokoSocialWidePanelShell")
+                    .resizable()
+                    .scaledToFill()
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 9) {
+                    Text(title)
+                        .font(.custom("AvenirNext-Bold", size: 14))
+                        .lineLimit(2)
+                    Text(detail)
+                        .font(.custom("AvenirNext-Medium", size: 10))
+                        .foregroundStyle(KokoInk.secondary)
+                        .lineLimit(2)
+                    Text("Explore →")
+                        .font(.custom("AvenirNext-Bold", size: 10))
+                        .foregroundStyle(KokoInk.coral)
+                }
+                .padding(16)
+            }
+            .frame(maxWidth: .infinity, minHeight: 132)
+            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
         }.buttonStyle(KokoPressStyle())
     }
 }
@@ -349,10 +371,17 @@ struct KokoLiveRoomCard: View {
                                 .frame(height: 116)
                         }
                         HStack(spacing: 8) {
-                            Text("LIVE NOW")
-                                .font(.custom("AvenirNext-Bold", size: 9))
-                                .tracking(1.1)
-                                .foregroundStyle(KokoInk.coral)
+                            ZStack {
+                                Image("KokoLiveNowBadge")
+                                    .resizable()
+                                    .scaledToFit()
+                                Text("LIVE NOW")
+                                    .font(.custom("AvenirNext-Bold", size: 7))
+                                    .tracking(0.8)
+                                    .foregroundStyle(KokoInk.primary)
+                                    .padding(.leading, 19)
+                            }
+                            .frame(width: 92, height: 26)
                             Spacer(minLength: 0)
                             Text("\(room.seatAssignments.count) here")
                                 .font(.custom("AvenirNext-Bold", size: 9))
@@ -379,10 +408,12 @@ struct KokoLiveRoomCard: View {
                                 .lineLimit(1)
                         }
                         HStack(spacing: 7) {
-                            Text(room.conversationTopic.uppercased())
+                            Text(room.conversationTopic)
                                 .font(.custom("AvenirNext-Bold", size: 8))
                                 .tracking(0.8)
                                 .foregroundStyle(KokoInk.coral)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.7)
                             Spacer(minLength: 0)
                             Text("Join chat →")
                                 .font(.custom("AvenirNext-Bold", size: 9))
@@ -416,6 +447,7 @@ struct KokoMomentsCollection: View {
             (mediaFormat == "All" || (mediaFormat == "Videos" ? moment.mediaAsset?.isVideo == true : moment.mediaAsset?.isVideo == false))
                 && (collectionTopic == "All" || moment.topicLabel == collectionTopic)
                 && (!followedCreatorsOnly || community.following.contains(moment.creatorMemberID))
+                && !KokoMediaLibrary.liveRoomPreviewAssetIDs.contains(moment.mediaAsset?.id ?? "")
         }
     }
     var body: some View {
@@ -450,15 +482,18 @@ struct KokoMomentsCollection: View {
 
 private struct KokoUpdatesSectionHeading: View {
     @EnvironmentObject private var community: CommunityJournalStore
-    private var videoCount: Int { community.moments.filter { $0.mediaAsset?.isVideo == true }.count }
+    private var videoCount: Int {
+        community.moments.filter {
+            $0.mediaAsset?.isVideo == true
+                && !KokoMediaLibrary.liveRoomPreviewAssetIDs.contains($0.mediaAsset?.id ?? "")
+        }.count
+    }
     var body: some View {
         HStack(spacing: 11) {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Community updates").font(.custom("AvenirNext-Bold", size: 20, relativeTo: .title3))
                 Text("\(videoCount) videos · photos from your people").font(.custom("AvenirNext-Medium", size: 10)).foregroundStyle(KokoInk.secondary)
             }
-            Spacer(minLength: 0)
-            Text("Feed").font(.custom("AvenirNext-Bold", size: 11)).foregroundStyle(KokoInk.coral)
         }.frame(maxWidth: .infinity, alignment: .leading)
     }
 }
@@ -469,46 +504,64 @@ struct KokoMomentCard: View {
     let moment: SharedMoment
     var body: some View {
         Button { navigation.open(.moment(moment.id)) } label: {
-            VStack(alignment: .leading, spacing: 0) {
-                if let asset = moment.mediaAsset {
-                    ZStack(alignment: .bottomLeading) {
-                        KokoContentImage(asset: asset).frame(maxWidth: .infinity).frame(height: 164).clipped()
-                        LinearGradient(colors: [.clear, Color.black.opacity(0.78)], startPoint: .center, endPoint: .bottom)
-                        HStack(spacing: 7) {
-                            if asset.isVideo {
-                                HStack(spacing: 5) {
-                                    Artwork(sheet: .navigation, tile: 0, ink: .white).frame(width: 16, height: 16)
-                                    Text("VIDEO · \(asset.durationLabel)")
-                                }
-                            } else {
-                                Text("PHOTO")
-                            }
-                            Spacer(minLength: 0)
-                            if let member = community.member(moment.creatorMemberID) {
-                                KokoMemberPortrait(member: member).frame(width: 27, height: 27).clipShape(Circle())
-                            }
-                        }.font(.custom("AvenirNext-Bold", size: 9)).tracking(0.7).foregroundStyle(.white).padding(11)
-                        if asset.isVideo {
-                            Circle().fill(KokoInk.accent.opacity(0.95)).frame(width: 42, height: 42)
-                                .overlay(Artwork(sheet: .navigation, tile: 0, ink: KokoInk.onMint).frame(width: 18, height: 18))
-                                .padding(11).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+            ZStack(alignment: .topLeading) {
+                Image("KokoHomeMomentCardShell")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 0) {
+                    Group {
+                        if let asset = moment.mediaAsset {
+                            KokoContentImage(asset: asset)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 122)
+                                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        } else {
+                            Artwork(sheet: .collection, tile: moment.coverTile)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 122)
+                                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                         }
                     }
-                } else {
-                    Artwork(sheet: .collection, tile: moment.coverTile).frame(maxWidth: .infinity).frame(height: 164)
-                }
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(moment.topicLabel.uppercased()).font(.custom("AvenirNext-Bold", size: 9)).tracking(1).foregroundStyle(KokoInk.accent)
-                    Text(moment.captionLine).font(.custom("AvenirNext-Bold", size: 15, relativeTo: .body)).lineLimit(2).fixedSize(horizontal: false, vertical: true)
-                    HStack(spacing: 5) {
-                        Text(community.member(moment.creatorMemberID)?.publicName ?? "Koko").font(.custom("AvenirNext-DemiBold", size: 11)).lineLimit(1)
-                        Spacer(minLength: 0)
-                        Text("Open moment →").font(.custom("AvenirNext-Bold", size: 9)).foregroundStyle(KokoInk.coral)
+                    .padding(.horizontal, 10)
+                    .padding(.top, 10)
+                    if let asset = moment.mediaAsset {
+                        Text(asset.isVideo ? "VIDEO · \(asset.durationLabel)" : "PHOTO")
+                            .font(.custom("AvenirNext-Bold", size: 8))
+                            .tracking(1)
+                            .foregroundStyle(KokoInk.coral)
+                            .padding(.horizontal, 13)
+                            .padding(.top, 10)
                     }
-                }.padding(12)
-            }.foregroundStyle(KokoInk.primary).frame(minWidth: 0, maxWidth: .infinity, alignment: .leading).background(ArtworkSurface())
-                .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
-                .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous).stroke(KokoInk.accent.opacity(0.28), lineWidth: 1))
+                    VStack(alignment: .leading, spacing: 7) {
+                        Text(moment.topicLabel.uppercased())
+                            .font(.custom("AvenirNext-Bold", size: 8))
+                            .tracking(1)
+                            .foregroundStyle(KokoInk.coral)
+                        Text(moment.captionLine)
+                            .font(.custom("AvenirNext-Bold", size: 14, relativeTo: .body))
+                            .foregroundStyle(KokoInk.primary)
+                            .lineLimit(2)
+                        HStack(spacing: 5) {
+                            Text(community.member(moment.creatorMemberID)?.publicName ?? "Koko")
+                                .font(.custom("AvenirNext-DemiBold", size: 10))
+                                .lineLimit(1)
+                            Spacer(minLength: 0)
+                            Text("Open moment →")
+                                .font(.custom("AvenirNext-Bold", size: 9))
+                                .foregroundStyle(KokoInk.coral)
+                        }
+                    }
+                    .padding(.horizontal, 13)
+                    .padding(.top, 8)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            }
+            .foregroundStyle(KokoInk.primary)
+            .frame(maxWidth: .infinity)
+            .aspectRatio(0.67, contentMode: .fit)
+            .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
         }.buttonStyle(KokoPressStyle()).accessibilityLabel(moment.mediaAsset?.isVideo == true ? "Open video update" : "Open photo update")
     }
 }
