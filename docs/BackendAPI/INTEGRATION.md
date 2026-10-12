@@ -6,7 +6,7 @@
 - Parent domain supplied by the developer: `dfbbdr.top`.
 - API origin: `https://koko.dfbbdr.top`.
 - Source of truth: `contract.json`; native constants generated from it. The authentication route suffix was selected once and is now frozen.
-- Bundle ID and return scheme: `com.koko.app`. The API domain does not become a WebView permission allowlist.
+- Bundle ID and return scheme: `com.auroracove.kokoconversation`. The API domain does not become a WebView permission allowlist.
 - Import exactly `generated/接口模板-80895233.json` in interface management and `generated/配置模板-80895233.json` in configuration management; select App 80895233, validate and save.
 - Authentication response deliberately retains `#{tokenResult}`. The platform must substitute an actual signed Ably TokenRequest. No API key or fabricated token ships in the app.
 - Settlement response is deliberately non-success (`503`). A static JSON response cannot verify a purchase. The settlement handler must validate Apple's receipt, bind the product and transaction to the exact supplied order, perform idempotent settlement, and return HTTP 2xx with integer `code: 0` only after confirmation. Do not change the static response to a success stub.

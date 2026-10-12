@@ -40,7 +40,7 @@ App Review 使用 Apple Sandbox，但读取 App Store Connect 中真实商品并
 仍未确认的发布条件：
 
 1. App Store Connect 中 9 档商品实际创建、名称描述、地区与价格配置、付费协议、税务收款状态以及送审状态。本轮没有访问该账号。
-2. 当前暂用 com.koko.app，尚未配置正式开发者 Team，正式 Bundle ID 需用户选择并在开发者后台注册。
+2. 当前 Bundle ID 已按用户选择设置为 `com.auroracove.kokoconversation`，尚未配置正式开发者 Team，开发者后台注册状态未核实。
 3. docs/BackendAPI/responses/purchase-response.json 的静态验单模板仍刻意返回 code 503。生产处理器必须验证 Apple 凭据、订单归属和幂等到账，不能把模板改成成功响应冒充验单。
 4. 实际 Sandbox/TestFlight 购买、取消、延迟批准、未完成订单重试与重复发币回归均未执行。不能保证现在直接提交即可买到商品。
 5. 原生金币账本仍是设备本地存储；网关订单具有后台确认流程，不等于原生钱包已经具备跨设备可信账本。

@@ -65,7 +65,7 @@
 			<string>com.koko.return</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.koko.app</string>
+				<string>com.auroracove.kokoconversation</string>
 			</array>
 		</dict>
 	</array>

@@ -60,6 +60,6 @@ for p in (repo/'Koko/CommunityGateway').glob('*.swift'):assert p.name+' in Sourc
 assert 'Ably in Frameworks' in pbx and 'Alamofire in Frameworks' in pbx
 info=plistlib.loads((repo/'Koko/Configuration/Info.plist').read_bytes())
 assert all(info.get(key) for key in ['NSCameraUsageDescription','NSMicrophoneUsageDescription','NSPhotoLibraryUsageDescription'])
-assert any('com.koko.app' in row.get('CFBundleURLSchemes',[]) for row in info['CFBundleURLTypes'])
+assert any('com.auroracove.kokoconversation' in row.get('CFBundleURLSchemes',[]) for row in info['CFBundleURLTypes'])
 assert not (repo/'Koko/Resources/CommunityMedia/community-media.json').exists()
 print(f'Offline comparison complete: 10 routes, 14 configuration entries, 54 media references ({distribution_copies} previously optimized committed copies), 14 rooms, DTO keys, target membership and permission/scheme declarations.')

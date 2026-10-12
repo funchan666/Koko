@@ -712,7 +712,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.koko.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.auroracove.kokoconversation;
 				PRODUCT_NAME = Koko;
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
@@ -867,7 +867,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.koko.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.auroracove.kokoconversation;
 				PRODUCT_NAME = Koko;
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;

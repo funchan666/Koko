@@ -1,14 +1,12 @@
 # Koko 上架资料草稿
 
-依据当前原生实现整理，2026-10-12。应用名称和 Bundle ID 尚未改入工程；名称可用性与标识注册状态未检查。托管网页的远端功能未经过本轮验收，因此未加入文案承诺。
+依据当前原生实现整理，2026-10-12。商店名称尚未改入工程；Bundle ID 已按用户选择同步为 `com.auroracove.kokoconversation`，名称可用性与标识注册状态未检查。托管网页的远端功能未经过本轮验收，因此未加入文案承诺。
 
-## Bundle ID 候选
+## Bundle ID
 
-- 推荐：`top.dfbbdr.koko`
-- 备选：`top.dfbbdr.koko.community`
-- 备选：`top.dfbbdr.koko.conversations`
+`com.auroracove.kokoconversation`
 
-工程当前为 `com.koko.app`。确定后需同步 Bundle ID、登录回调 scheme、签名、推送与 App Store Connect 应用及商品归属，不能只改一个字符串。候选使用用户提供的主域名，不含本机用户名或 Git 名称。
+已同步工程和登录回调 Scheme。开发者后台标识注册、签名及 App Store Connect 应用和商品归属仍需配置。
 
 ## 应用名称
 

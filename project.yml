@@ -80,7 +80,7 @@ targets:
       base:
         IPHONEOS_DEPLOYMENT_TARGET: "$(RECOMMENDED_IPHONEOS_DEPLOYMENT_TARGET)"
         PRODUCT_NAME: Koko
-        PRODUCT_BUNDLE_IDENTIFIER: com.koko.app
+        PRODUCT_BUNDLE_IDENTIFIER: com.auroracove.kokoconversation
         INFOPLIST_FILE: Koko/Configuration/Info.plist
         GENERATE_INFOPLIST_FILE: NO
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon

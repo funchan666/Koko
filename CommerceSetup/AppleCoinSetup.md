@@ -1,6 +1,6 @@
 # Koko 金币充值配置
 
-客户端已接入真实 StoreKit 2。当前按用户要求保留临时 Bundle ID `com.koko.app`，未指定开发者团队；未在 App Store Connect 创建/修改任何商品，未发起购买，也未编译或测试。本说明不能视为真实支付已验收。
+客户端已接入真实 StoreKit 2。当前按用户选择设置 Bundle ID `com.auroracove.kokoconversation`，未指定开发者团队；未在 App Store Connect 创建/修改任何商品，未发起购买，也未编译或测试。本说明不能视为真实支付已验收。
 
 ## 商品清单
 
@@ -22,7 +22,7 @@
 
 ## 连接正式应用
 
-1. 在 `project.yml` 替换 `PRODUCT_BUNDLE_IDENTIFIER` 为 App Store Connect 中这款应用的正式 Bundle ID，并设置 `DEVELOPMENT_TEAM`。
+1. 在开发者后台注册 `com.auroracove.kokoconversation`，使 App Store Connect 应用与该标识一致，并在 `project.yml` 配置 `DEVELOPMENT_TEAM`。
 2. 在对应应用中创建上表九个消耗型商品，逐项填写本地化名称、描述、审核资料和销售地区。七个指定 ID 与 USD 价格不得改动；美元金额必须与表格相同。
 3. 完成 Paid Apps Agreement、税务和收款信息等 Apple 商业配置，使商品对目标商店可用。
 4. 用 XcodeGen 更新工程。工程已声明 StoreKit.framework 和 In-App Purchase capability，没有 `.storekit` 本地配置文件，也没有自动模拟加币逻辑。
