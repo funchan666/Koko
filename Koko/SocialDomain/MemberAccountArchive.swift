@@ -6,13 +6,12 @@ struct MemberAccountArchive: Codable {
     var appleSubjectIdentifier: String? = nil
     var policyConsent: KokoPolicyConsent? = nil
     var followedMembers: Set<String> = []
-    var sampleFollowers: Set<String> = [] // Legacy only; never authorizes chat.
+    var sampleFollowers: Set<String> = []
     var confirmedFollowerIDs: Set<String>? = nil
     var removedSimulatedRelationships: Bool? = nil
     var pendingMoments: [PendingCommunityMoment]? = nil
     var conversationPlans: [ConversationRunSheet]? = nil
     var conversationEditionIDs: Set<String>? = nil
-    // Optional so existing account journals decode without a migration/reset.
     var sampleFollowerArrivals: [SampleFollowerArrival]? = nil
     var blockedMembers: Set<String> = []
     var hiddenContentKeys: Set<String> = []
@@ -25,7 +24,6 @@ struct MemberAccountArchive: Codable {
     var privateConversations: [PrivateConversation] = []
     var albumTiles: [Int] = []
     var albumPhotoKeys: [String]? = nil
-    // Legacy demo field is decode-only in practice. It never becomes spendable purchased currency.
     var demoTokenBalance = 0
     var walletHistory: [CoinLedgerEntry] = []
     var coinBalance: Int? = nil
@@ -35,7 +33,6 @@ struct MemberAccountArchive: Codable {
     var revokedCoinTransactions: Set<String>? = nil
     var welcomeGiftEligible: Bool? = nil
     var welcomeGiftGrantedAt: Date? = nil
-    // Legacy popup acknowledgement is retained to migrate old gifts into read/unread inbox messages.
     var welcomeGiftAcknowledged: Bool? = nil
     var ownedKeepsakes: [String: Int] = [:]
     var wornKeepsakeID: String? = nil
@@ -45,6 +42,5 @@ struct MemberAccountArchive: Codable {
     var feedbackNotes: [String] = []
     var preferences: [String: Bool] = ["Show my activity": true, "Allow room invitations": true, "Message reminders": true, "Check-in reminders": false, "Room updates": true]
     var completedProfile = false
-    // Email sign-in may enter home without claiming that personal details were supplied.
     var enteredHomeViaEmail: Bool? = nil
 }

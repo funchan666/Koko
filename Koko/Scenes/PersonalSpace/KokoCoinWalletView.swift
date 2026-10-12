@@ -11,7 +11,6 @@ struct KokoWalletView: View {
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
-                // The balance remains visible while the collection scrolls.
                 HStack(spacing: 12) {
                     KokoIconAction(icon: 5, label: "Back", action: navigation.back)
                     Text("Your coins")

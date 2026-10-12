@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// A restrained decorative breath for existing original signal artwork.
-/// This never represents microphone levels, viewer activity, or broadcast connectivity.
 struct KokoRoomSignalBreathing: ViewModifier {
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -21,8 +19,6 @@ struct KokoRoomSignalBreathing: ViewModifier {
     }
 }
 
-/// Identifies the room category while explicitly describing the supplied recording.
-/// A live status must come from a connected broadcasting service, never the room type.
 struct KokoBroadcastRoomBadge: View {
     let hasRecordedPreview: Bool
     var showsStatusDetail = true

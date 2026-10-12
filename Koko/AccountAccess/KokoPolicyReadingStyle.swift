@@ -1,10 +1,7 @@
 import Foundation
 
-/// Presentation only: no policy text, links or document nodes are replaced.
-/// Limited to the two supplied Koko policy sites; other destinations stay intact.
 enum KokoPolicyReadingStyle {
     // Supply licensed local font bytes to the existing, allowlisted reader only.
-    // No external font service and no changes to policy text, links or consent.
     private static let bundledFontCSS: String = {
         let faces: [(String, String, Int)] = [
             ("NunitoSans-Regular", "Koko Reading", 400),

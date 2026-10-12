@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// App feedback only. Apple authorization, permission and purchase sheets stay native.
 struct KokoNoticePanel: View {
     let heading: String
     let message: String

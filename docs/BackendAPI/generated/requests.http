@@ -1,7 +1,15 @@
 # Synthetic request values only; do not send as a real purchase.
 ### loginMethods
-GET https://koko.dfbbdr.top/koko/arrival/entryways
+POST https://koko.dfbbdr.top/koko/arrival/entryways
 Accept: application/json
+Content-Type: application/json
+
+{
+  "koko_edition": "1.0",
+  "arrival_chime": "",
+  "listener_installation": "fixture-installation-id",
+  "room_delivery_kind": 2
+}
 
 ### authenticate
 POST https://koko.dfbbdr.top/koko/arrival/open-invitation
@@ -27,4 +35,53 @@ Content-Type: application/json
   "keepsake_receipt": "SYNTHETIC_RECEIPT_NOT_VALID_FOR_PAYMENT",
   "room_order_reference": "fixture-backend-order"
 }
+
+### members
+POST https://koko.dfbbdr.top/koko/community/members
+Accept: application/json
+Content-Type: application/json
+
+{}
+
+### rooms
+POST https://koko.dfbbdr.top/koko/community/rooms
+Accept: application/json
+Content-Type: application/json
+
+{}
+
+### keepsakes
+POST https://koko.dfbbdr.top/koko/community/keepsakes
+Accept: application/json
+Content-Type: application/json
+
+{}
+
+### media
+POST https://koko.dfbbdr.top/koko/community/media
+Accept: application/json
+Content-Type: application/json
+
+{}
+
+### starters
+POST https://koko.dfbbdr.top/koko/community/starters
+Accept: application/json
+Content-Type: application/json
+
+{}
+
+### engagement
+POST https://koko.dfbbdr.top/koko/community/engagement
+Accept: application/json
+Content-Type: application/json
+
+{}
+
+### arrangement
+POST https://koko.dfbbdr.top/koko/community/arrangement
+Accept: application/json
+Content-Type: application/json
+
+{}
 

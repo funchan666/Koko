@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// Original bitmaps include transparent export margins. Scale the complete image
-/// behind the hit area; no cropping, masking, or pixel modification is applied.
 private struct KokoStudioArtwork: View {
     let name: String
     let heightScale: CGFloat
@@ -145,7 +143,6 @@ struct KokoConversationStudio: View {
                     .contentShape(Rectangle())
             }.buttonStyle(KokoPressStyle())
                 .accessibilityValue(Text(LocalizedStringKey(showsEditionQuestions ? "Expanded" : "Collapsed")))
-            // Exact contents remain available before any spend confirmation.
             if showsEditionQuestions {
                 ForEach(Array(ConversationEditions.music.enumerated()), id: \.offset) { index, question in
                     HStack(alignment: .top, spacing: 12) {

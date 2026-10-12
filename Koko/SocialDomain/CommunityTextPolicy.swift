@@ -1,8 +1,5 @@
 import Foundation
 
-/// A narrow, offline guard for explicit solicitation and threats. This does not
-/// classify images, replace human moderation, or certify that a post is safe.
-/// Keep reporting forms exempt so a person can describe the abuse they saw.
 enum CommunityTextPolicy {
     static let revisionMessage = "Please revise this text. Explicit sexual requests, paid sexual services and threats are not allowed."
     private static let disallowedPhrases = [
@@ -16,7 +13,6 @@ enum CommunityTextPolicy {
     static func allows(_ text: String) -> Bool {
         let value = " " + normalized(text) + " "
         return !disallowedPhrases.contains { phrase in
-            // Word boundaries for spaced languages avoid matching inside names.
             phrase.contains(" ") ? value.contains(" " + phrase + " ") : value.contains(phrase)
         }
     }

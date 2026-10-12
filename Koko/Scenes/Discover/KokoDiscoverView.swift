@@ -1,6 +1,5 @@
 import SwiftUI
 
-// Home is a video-room directory; recorded media has its own collection.
 struct KokoDiscoverView: View {
     @EnvironmentObject private var community: CommunityJournalStore
     @EnvironmentObject private var navigation: KokoSceneNavigation
@@ -258,7 +257,6 @@ private struct KokoDiscoverActionCards: View {
     }
 }
 
-/// Shared room-cover source prioritizes the room's independently selected photograph.
 struct KokoRoomHostCover: View {
     @EnvironmentObject private var community: CommunityJournalStore
     let room: HostedConversationRoom
@@ -289,7 +287,6 @@ private struct KokoLiveDirectoryHero: View {
     let create: () -> Void
     var body: some View {
         GeometryReader { bounds in
-            // Native copy occupies only the blank left side of the original artwork.
             let copyWidth = max(0, bounds.size.width * 0.56 - 32)
             VStack(alignment: .leading, spacing: 6) {
                 Text("GOOD COMPANY")
@@ -429,8 +426,6 @@ struct KokoLiveRoomCard: View {
     }
 }
 
-/// Artwork is a full original bitmap. Explicit geometry keeps media and text from
-/// proposing a wider size to the two-column directory.
 struct KokoRoomEditorialLayout<Cover: View>: View {
     let title: String
     let topic: String

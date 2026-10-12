@@ -10,11 +10,15 @@ final class KokoArrivalCoordinator: ObservableObject {
         let gatewayOrigin: String?
     }
     private static let savedArrivalKey = "koko.gateway.memberArrival.v1"
+    @Published private(set) var entryMode: ConfiguredLoginEntryMode = .standard
     struct Entrances {
-        var apple = true, email = true, visitor = false, registration = true
-        var none: Bool { !apple && !email && !visitor && !registration }
+        let mode: ConfiguredLoginEntryMode
+        var apple: Bool { mode == .standard }
+        var email: Bool { mode == .standard }
+        var visitor: Bool { mode == .guestOnly }
+        var registration: Bool { mode == .standard }
     }
-    @Published private(set) var entrances = Entrances()
+    var entrances: Entrances { Entrances(mode: entryMode) }
     @Published private(set) var checkingEntrances = true
     @Published private(set) var busy = false
     @Published private(set) var caption: String?
@@ -72,8 +76,6 @@ final class KokoArrivalCoordinator: ObservableObject {
             }
         }
         loadEntrances()
-        // The old flag could be set merely by finding a local profile. It cannot
-        // establish that the member explicitly completed gateway sign-in.
         UserDefaults.standard.removeObject(forKey: "koko.gateway.arrived")
         restoreSavedSession()
     }
@@ -91,7 +93,6 @@ final class KokoArrivalCoordinator: ObservableObject {
             return
         }
         guard community.journal?.member.id == saved.memberID else {
-            // Never create a visitor identity or switch accounts during restore.
             UserDefaults.standard.removeObject(forKey: Self.savedArrivalKey)
             destination = .undecided; caption = nil; restoreRequired = false
             return
@@ -108,32 +109,42 @@ final class KokoArrivalCoordinator: ObservableObject {
         else { optionsGeneration = UUID(); optionsTask?.cancel(); optionsTask = nil }
     }
     func loadEntrances() {
-        guard optionsTask == nil, active else { return }
+        guard optionsTask == nil, active, !busy, destination == .undecided else { return }
         let optionsAttempt = UUID(); optionsGeneration = optionsAttempt
         optionsTask = Task { [weak self] in
             guard let self else { return }
             defer { if self.optionsGeneration == optionsAttempt { self.optionsTask = nil } }
-            for delay in [0, 2, 4, 8, 16, 30] {
-                do {
-                    if delay > 0 { try await Task.sleep(for: .seconds(delay)) }
-                    try Task.checkCancellation()
-                    try await KokoGatewayClient.shared.probe()
-                    let result = try await KokoGatewayClient.shared.request(IntegrationContract.optionsPath)
-                    guard KokoGatewayClient.integer(result["code"]) == 0, let flags = result["data"] as? [String: Any] else { throw KokoGatewayClient.Failure.response }
-                    self.entrances = Entrances(apple: KokoGatewayClient.integer(flags["apple_arrival"]) == 1,
-                                              email: KokoGatewayClient.integer(flags["mailbox_arrival"]) == 1,
-                                              visitor: KokoGatewayClient.integer(flags["visitor_arrival"]) == 1,
-                                              registration: KokoGatewayClient.integer(flags["new_member_arrival"]) == 1)
-                    self.checkingEntrances = false; return
-                } catch {
-                    guard !Task.isCancelled else { return }
-                    self.entrances = Entrances(); self.checkingEntrances = false
+            do {
+                let network = Task { try await KokoGatewayClient.shared.probe() }
+                defer { network.cancel() }
+                var body = try await KokoGatewayClient.shared.publicArrivalFields()
+                try await withTaskCancellationHandler {
+                    try await network.value
+                } onCancel: { network.cancel() }
+                try Task.checkCancellation()
+                body[ConfiguredWireFields.arrival_chime] = KokoArrivalNotifications.shared.token
+                let result = try await KokoGatewayClient.shared.request(IntegrationContract.optionsPath, body: body)
+                guard self.optionsGeneration == optionsAttempt, !Task.isCancelled, !self.busy else { return }
+                guard KokoGatewayClient.integer(result[ConfiguredWireFields.code]) == 0,
+                      let mode = ConfiguredLoginEntryMode.parse(data: result[ConfiguredWireFields.data]) else {
+                    self.finishEntryDetection(.standard, fallback: true); return
                 }
+                self.finishEntryDetection(mode)
+            } catch {
+                guard self.optionsGeneration == optionsAttempt, !Task.isCancelled, !self.busy else { return }
+                self.finishEntryDetection(.standard, fallback: true)
             }
         }
     }
+    private func finishEntryDetection(_ mode: ConfiguredLoginEntryMode, fallback: Bool = false) {
+        entryMode = mode; checkingEntrances = false
+        #if DEBUG
+        if fallback { print("[Koko arrival] Entry configuration unavailable; using standard entry.") }
+        #endif
+    }
     func reserve() -> Bool {
         guard !busy else { return false }
+        optionsGeneration = UUID(); optionsTask?.cancel(); optionsTask = nil; checkingEntrances = false
         restoringSession = false; restoreRequired = false
         generation = UUID(); busy = true; caption = "Connecting…"; failure = nil
         destination = .undecided; firstConnection = false; finalizing = false; receivedEvents = []
@@ -152,8 +163,7 @@ final class KokoArrivalCoordinator: ObservableObject {
             guard let self else { return }
             defer { if self.generation == id { self.requestTask = nil } }
             do {
-                var body = try await KokoGatewayClient.shared.publicArrivalFields()
-                for (key, value) in extra { body[key] = value }
+                let body = try await KokoGatewayClient.shared.publicArrivalFields(extra: extra)
                 let response = try await KokoGatewayClient.shared.request(IntegrationContract.entryPath, body: body, allowUnauthorized: true)
                 guard self.generation == id, !Task.isCancelled else { return }
                 if let configuration = try self.tokenConfiguration(response) { self.connect(configuration, attempt: id) }
@@ -256,8 +266,6 @@ final class KokoArrivalCoordinator: ObservableObject {
                   let saved = try? JSONEncoder().encode(SavedArrival(memberID: memberID, gatewayOrigin: IntegrationContract.baseURLString)) else {
                 fail("Your account could not be saved. Please try again."); return
             }
-            // Commit the noncredential marker only after the account is saved
-            // and the final native destination or valid web document is ready.
             UserDefaults.standard.set(saved, forKey: Self.savedArrivalKey)
             restoringSession = false
             destination = target; busy = false; caption = nil; restoreRequired = false; commitLocal = nil

@@ -10,6 +10,7 @@ enum IntegrationContract {
     static let allowsMissingSender: Bool = true
     static let acceptsSerializedExpiry: Bool = true
     static let continuationMode: Int = 2
+    static let apiMethod: String = "POST"
     static let optionsPath: String = "/koko/arrival/entryways"
     static let entryPath: String = "/koko/arrival/open-invitation"
     static let settlementPath: String = "/koko/keepsakes/settlement"
@@ -38,12 +39,12 @@ enum ConfiguredContentPaths {
 }
 
 enum ConfiguredWireFields {
-    static let `apple_arrival`: String = "apple_arrival"
     static let `apple_authorization_exchange`: String = "apple_authorization_exchange"
     static let `apple_identity_assertion`: String = "apple_identity_assertion"
     static let `apple_keepsake_transaction`: String = "apple_keepsake_transaction"
     static let `apple_member_subject`: String = "apple_member_subject"
     static let `arrival_chime`: String = "arrival_chime"
+    static let `arrival_destination`: String = "arrival_destination"
     static let `arrival_method`: String = "arrival_method"
     static let `arrival_purpose`: String = "arrival_purpose"
     static let `code`: String = "code"
@@ -51,13 +52,24 @@ enum ConfiguredWireFields {
     static let `keepsake_receipt`: String = "keepsake_receipt"
     static let `koko_edition`: String = "koko_edition"
     static let `listener_installation`: String = "listener_installation"
-    static let `mailbox_arrival`: String = "mailbox_arrival"
     static let `member_mailbox`: String = "member_mailbox"
     static let `member_passphrase`: String = "member_passphrase"
     static let `message`: String = "message"
-    static let `new_member_arrival`: String = "new_member_arrival"
     static let `room_delivery_kind`: String = "room_delivery_kind"
     static let `room_order_reference`: String = "room_order_reference"
     static let `token`: String = "token"
-    static let `visitor_arrival`: String = "visitor_arrival"
+}
+
+enum ConfiguredLoginEntryMode: Equatable {
+    case standard, guestOnly
+
+    // Call only for a successful login-methods response, never authentication data.
+    // nil means invalid configuration; UI falls back to standard and logs the failure.
+    static func parse(data: Any?) -> Self? {
+        guard let fields = data as? [String: Any],
+              let raw = fields[ConfiguredWireFields.`arrival_destination`] as? String else { return nil }
+        let value = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !value.contains("#{") else { return nil }
+        return value.isEmpty ? .standard : .guestOnly
+    }
 }

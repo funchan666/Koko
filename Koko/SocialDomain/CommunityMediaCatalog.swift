@@ -1,6 +1,5 @@
 import Foundation
 
-/// Filenames belong to the supplied collection; sample curators are not identities of people depicted.
 struct CommunityMediaAsset: Identifiable, Decodable, Sendable {
     let id: String
     let momentKey: String

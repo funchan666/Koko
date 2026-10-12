@@ -48,7 +48,6 @@ struct KokoListeningRoomView: View {
             }
     }
     private var liveVideoAsset: CommunityMediaAsset? {
-        // The stage must play the same recording whose first frame is on the room card.
         KokoMediaLibrary.liveRoomPreview(for: roomID)
     }
     private func roomTool(_ icon: Int, _ label: String, _ destination: String) -> some View {
@@ -144,8 +143,6 @@ struct KokoListeningRoomView: View {
         }
     }
 
-    /// Chat stays visible beneath the scrolling microphone seats, including eight-seat rooms.
-    /// Gift arrivals temporarily float over this interaction area, never the seat controls.
     private func voiceConversationDeck(_ room: HostedConversationRoom) -> some View {
         VStack(spacing: 6) {
             HStack {
@@ -371,7 +368,6 @@ final class KokoRoomMusicPlayer: ObservableObject {
     deinit { playback.stop() }
 }
 
-// The player and audio-session ownership are confined to this serial queue.
 private final class KokoRoomMusicPlayback: @unchecked Sendable {
     private let queue = DispatchQueue(label: "koko.room-music-playback")
     private var player: AVAudioPlayer?

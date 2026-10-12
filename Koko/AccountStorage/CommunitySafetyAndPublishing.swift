@@ -23,7 +23,6 @@ struct PendingCommunityMoment: Identifiable, Codable {
     var topic: String
     var mediaAssetID: String?
     var submittedAt = Date()
-    // No local approval timer or client-controlled approved flag.
     var reviewState = "awaiting-service"
 }
 
@@ -58,8 +57,6 @@ extension CommunityJournalStore {
         }
         return true
     }
-    // Removes only the old, known sample relationship mechanism. Outgoing follows
-    // remain user-controlled. No local action is allowed to confirm another user.
     func removeSimulatedRelationships(_ value: inout MemberAccountArchive) -> Bool {
         guard value.removedSimulatedRelationships != true else { return false }
         value.sampleFollowers = []

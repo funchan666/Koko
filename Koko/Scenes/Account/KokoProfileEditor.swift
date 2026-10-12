@@ -70,7 +70,6 @@ struct KokoProfileEditor: View {
                             .padding(.bottom, editing == nil ? screenInsets.bottom + 12 : 10)
                     }
                 }
-                // Art is a background only and cannot propose an oversized width.
                 .frame(width: viewport.size.width, height: viewport.size.height)
                 .background {
                     Image("KokoProfileEditorBackdrop").resizable().scaledToFill()

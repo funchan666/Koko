@@ -148,7 +148,6 @@ struct KokoEmailEntryForm: View {
     }
 
     private func continueEntry() {
-        // Consent remains explicit, and the account store repeats validation before saving.
         guard agreed else { editing = nil; submit(); return }
         attemptedContinue = true
         let required: [KokoEmailEntryField] = registration ? [.email, .password, .confirmation] : [.email, .password]

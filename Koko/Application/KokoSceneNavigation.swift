@@ -29,63 +29,67 @@ struct KokoApplicationRoot: View {
     private var accountIsTransitioning: Bool { accessJourney.transitioning || community.accountDeparture != nil }
     var body: some View {
         ZStack {
-            KokoHostedRoomContainer(session: arrival.room)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .allowsHitTesting(arrival.destination == .hostedRoom && purchases.gatewayPaymentCaption == nil && !showsFeedback)
-                .accessibilityHidden(arrival.destination != .hostedRoom)
-            Group {
-                if openingApp || arrival.restoreRequired { KokoLaunchLoading() }
-                else if arrival.destination == .roomFailure || arrival.destination == .sessionFailure { KokoRoomRecoveryPanel() }
-                else if arrival.destination == .hostedRoom { Color.clear }
-                else if arrival.destination == .community, let journal = community.journal {
-                    if !community.hasCurrentPolicyConsent { KokoConsentRenewalGate() }
-                    else if community.hasCompletedAccountEntry { KokoMainShell().id(journal.member.id) }
-                    else { KokoProfileEditor(isOnboarding: true) }
-                } else if community.feedback != nil { ArtworkBackdrop() }
-                else { KokoAccountEntry(initialDestination: community.signedOutDestination) }
+            ZStack {
+                KokoHostedRoomContainer(session: arrival.room)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .allowsHitTesting(arrival.destination == .hostedRoom && purchases.gatewayPaymentCaption == nil && !showsFeedback)
+                    .accessibilityHidden(arrival.destination != .hostedRoom)
+                Group {
+                    if openingApp || arrival.restoreRequired { KokoLaunchLoading() }
+                    else if arrival.destination == .roomFailure || arrival.destination == .sessionFailure { KokoRoomRecoveryPanel() }
+                    else if arrival.destination == .hostedRoom { Color.clear }
+                    else if arrival.destination == .community, let journal = community.journal {
+                        if !community.hasCurrentPolicyConsent { KokoConsentRenewalGate() }
+                        else if community.hasCompletedAccountEntry { KokoMainShell().id(journal.member.id) }
+                        else { KokoProfileEditor(isOnboarding: true) }
+                    } else if community.feedback != nil { ArtworkBackdrop() }
+                    else { KokoAccountEntry(initialDestination: community.signedOutDestination) }
+                }
+                .allowsHitTesting(arrival.destination != .hostedRoom && !showsFeedback && !accountIsTransitioning)
+                .accessibilityHidden(arrival.destination == .hostedRoom || showsFeedback || accountIsTransitioning)
+                if let bulletin = arrival.bulletin, community.notice == nil, community.feedback == nil, purchases.purchaseMessage == nil {
+                    KokoNoticePanel(heading: bulletin.headline, message: bulletin.explanation, dismiss: arrival.dismissBulletin)
+                        .onAppear { arrival.bulletinDisplayed() }.zIndex(97)
+                }
+                if let departure = community.accountDeparture {
+                    KokoAccountLoading(captionOverride: departure.caption)
+                        .zIndex(101)
+                } else if accessJourney.transitioning {
+                    KokoAccountLoading().accessibilityHidden(showsFeedback).zIndex(90)
+                }
+                if community.accountDeparture == nil, let message = purchases.purchaseMessage {
+                    KokoNoticePanel(heading: "Purchase update", message: message,
+                                    dismiss: { purchases.purchaseMessage = nil })
+                        .id(message)
+                        .allowsHitTesting(community.notice == nil && community.feedback == nil)
+                        .accessibilityHidden(community.notice != nil || community.feedback != nil)
+                        .zIndex(99)
+                }
+                if community.accountDeparture == nil, let target = community.safetyRequest {
+                    KokoSafetyPanel(reportedContentID: target.contentID, memberID: target.memberID) { community.safetyRequest = nil }
+                        .allowsHitTesting(community.notice == nil && community.feedback == nil && purchases.purchaseMessage == nil)
+                        .accessibilityHidden(community.notice != nil || community.feedback != nil || purchases.purchaseMessage != nil)
+                        .zIndex(98)
+                }
+                if community.accountDeparture == nil, let feedback = community.feedback {
+                    KokoActionFeedbackPanel(feedback: feedback) { community.feedback = nil }
+                        .allowsHitTesting(community.notice == nil)
+                        .accessibilityHidden(community.notice != nil)
+                        .zIndex(100)
+                }
+                if community.accountDeparture == nil, let notice = community.notice {
+                    KokoNoticePanel(heading: "Please note", message: notice,
+                                    dismiss: { community.notice = nil })
+                        .id(notice).zIndex(100)
+                }
             }
-            .allowsHitTesting(arrival.destination != .hostedRoom && !showsFeedback && !accountIsTransitioning)
-            .accessibilityHidden(arrival.destination == .hostedRoom || showsFeedback || accountIsTransitioning)
+            .allowsHitTesting(purchases.gatewayPaymentCaption == nil)
+            .accessibilityHidden(purchases.gatewayPaymentCaption != nil)
             if let caption = purchases.gatewayPaymentCaption {
                 Text(caption).font(KokoTypography.emphasis(size: 18)).multilineTextAlignment(.center)
                     .padding(32).frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(KokoWelcomePalette.backdrop.opacity(0.94))
                     .contentShape(Rectangle()).onTapGesture {}.zIndex(200)
-            }
-            if let bulletin = arrival.bulletin, community.notice == nil, community.feedback == nil, purchases.purchaseMessage == nil {
-                KokoNoticePanel(heading: bulletin.headline, message: bulletin.explanation, dismiss: arrival.dismissBulletin)
-                    .onAppear { arrival.bulletinDisplayed() }.zIndex(97)
-            }
-            if let departure = community.accountDeparture {
-                KokoAccountLoading(captionOverride: departure.caption)
-                    .zIndex(101)
-            } else if accessJourney.transitioning {
-                KokoAccountLoading().accessibilityHidden(showsFeedback).zIndex(90)
-            }
-            if community.accountDeparture == nil, let message = purchases.purchaseMessage {
-                KokoNoticePanel(heading: "Purchase update", message: message,
-                                dismiss: { purchases.purchaseMessage = nil })
-                    .id(message)
-                    .allowsHitTesting(community.notice == nil && community.feedback == nil)
-                    .accessibilityHidden(community.notice != nil || community.feedback != nil)
-                    .zIndex(99)
-            }
-            if community.accountDeparture == nil, let target = community.safetyRequest {
-                KokoSafetyPanel(reportedContentID: target.contentID, memberID: target.memberID) { community.safetyRequest = nil }
-                    .allowsHitTesting(community.notice == nil && community.feedback == nil && purchases.purchaseMessage == nil)
-                    .accessibilityHidden(community.notice != nil || community.feedback != nil || purchases.purchaseMessage != nil)
-                    .zIndex(98)
-            }
-            if community.accountDeparture == nil, let feedback = community.feedback {
-                KokoActionFeedbackPanel(feedback: feedback) { community.feedback = nil }
-                    .allowsHitTesting(community.notice == nil)
-                    .accessibilityHidden(community.notice != nil)
-                    .zIndex(100)
-            }
-            if community.accountDeparture == nil, let notice = community.notice {
-                KokoNoticePanel(heading: "Please note", message: notice,
-                                dismiss: { community.notice = nil })
-                    .id(notice).zIndex(100)
             }
         }.environmentObject(accessJourney)
             .preferredColorScheme(.dark)

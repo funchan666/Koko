@@ -2,7 +2,6 @@ import SwiftUI
 import ImageIO
 import UniformTypeIdentifiers
 
-// Preparing a user photograph, not generating UI artwork. Metadata is not copied to the JPEG.
 enum KokoPortraitFiles {
     enum PortraitFailure: LocalizedError {
         case unreadable
@@ -38,7 +37,6 @@ enum KokoPortraitFiles {
     static func remove(_ filename: String) { if let url = url(for: filename) { try? FileManager.default.removeItem(at: url) } }
 }
 
-/// One source of truth for portraits in profiles, discovery, rooms and calls.
 struct KokoMemberPortrait: View {
     let member: CommunityMember
     var body: some View {
@@ -60,7 +58,6 @@ struct KokoPhotoPlaceholder: View {
     }
 }
 
-/// Room covers use the same person's original photograph with a wider crop.
 struct KokoMemberCoverPhoto: View {
     let member: CommunityMember
     var body: some View {
@@ -91,7 +88,6 @@ struct KokoPortraitPhoto: View {
 @MainActor
 private enum KokoSuppliedPortraitPhotos {
     private static var prepared: [String: UIImage] = [:]
-    // Display crops of user-supplied photos; the original files and content collection stay intact.
     private static let portraitWindows: [String: CGRect] = [
         "photo-3e29a87b4e9a5de9": CGRect(x: 0.25, y: 0.23, width: 0.50, height: 0.375),
         "photo-f18f8ac9ab90dab5": CGRect(x: 0.42, y: 0.13, width: 0.48, height: 0.36),

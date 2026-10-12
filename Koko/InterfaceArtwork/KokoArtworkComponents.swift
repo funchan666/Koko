@@ -3,7 +3,6 @@ import UIKit
 
 enum KokoInk {
     static let primary = KokoWelcomePalette.paper
-    // Keep the palette vocabulary explicit for artwork overlays and controls.
     static let paper = KokoWelcomePalette.paper
     static let secondary = KokoWelcomePalette.quiet
     static let accent = KokoWelcomePalette.mint
@@ -26,7 +25,6 @@ enum ArtworkSheet: String {
 @MainActor
 enum OriginalArtwork {
     private static var tiles: [String: UIImage] = [:]
-    // Only crops original raster assets. Artwork is never synthesized in code.
     static func image(_ sheet: ArtworkSheet, _ tile: Int) -> UIImage {
         let key = "\(sheet.rawValue).\(tile)"
         if let image = tiles[key] { return image }
@@ -72,7 +70,6 @@ struct Artwork: View {
     var body: some View {
         Group {
             if sheet == .navigation {
-                // The original monochrome bitmap supplies the glyph; this only masks its black matte.
                 ink.mask {
                     Image(uiImage: OriginalArtwork.image(sheet, tile)).resizable().scaledToFit()
                         .luminanceToAlpha()
@@ -135,8 +132,6 @@ struct KokoControlSurface: View {
 
 struct KokoGradientBackdrop: View {
     var body: some View {
-        // Aspect-fill pixels must not determine a parent ZStack's width. This
-        // backdrop is also a direct sibling of global feedback after sign-out.
         GeometryReader { viewport in
             Image("KokoSocialCanvasBackground")
                 .resizable()
@@ -461,7 +456,6 @@ struct KokoToggleRow: View {
     }
 }
 
-// Scoped to app-owned dialogs; page controls retain their existing artwork.
 private struct KokoDialogContentKey: EnvironmentKey {
     static let defaultValue = false
 }
@@ -525,15 +519,12 @@ struct KokoModal<Content: View>: View {
                 ViewThatFits(in: .vertical) {
                     VStack(alignment: .leading, spacing: 16) {
                         dialogHeading
-                        // Normal long pickers scroll below a persistent close action.
                         ViewThatFits(in: .vertical) {
                             dialogContent.fixedSize(horizontal: false, vertical: true)
                             ScrollView { dialogContent }
                                 .scrollDismissesKeyboard(.interactively)
                         }
                     }
-                    // When the keyboard or accessibility text leaves too little
-                    // room for the heading itself, keep every control reachable.
                     ScrollView {
                         VStack(alignment: .leading, spacing: 16) {
                             dialogHeading

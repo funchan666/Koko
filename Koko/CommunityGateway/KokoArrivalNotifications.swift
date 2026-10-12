@@ -4,7 +4,7 @@ import UserNotifications
 @MainActor
 final class KokoArrivalNotifications {
     static let shared = KokoArrivalNotifications()
-    private var token = ""
+    private(set) var token = ""
     private var finished = false
     private var requesting = false
     private var waiters: [UUID: CheckedContinuation<String, Never>] = [:]

@@ -1,7 +1,6 @@
 import SwiftUI
 import AVFoundation
 
-// All capture session and output operations share one serial queue.
 final class KokoPortraitCapture: NSObject, AVCapturePhotoCaptureDelegate, @unchecked Sendable {
     let session = AVCaptureSession()
     private let queue = DispatchQueue(label: "koko.profile-photo-capture")
@@ -68,7 +67,6 @@ final class KokoPortraitCameraModel: ObservableObject {
         guard !busy, photoJPEG == nil else { return }
         busy = true; ready = false
         let current = UUID(); revision = current
-        // The editor requested access before presenting this screen. Never re-prompt here.
         guard AVCaptureDevice.authorizationStatus(for: .video) == .authorized else {
             busy = false; explanation = "Camera is off."
             return
@@ -85,7 +83,6 @@ final class KokoPortraitCameraModel: ObservableObject {
         guard ready, !busy else { return }; busy = true
         let current = revision
         capture.capture { [weak self] data in
-            // Photo processing and JPEG resizing happen away from the main actor.
             let jpeg = data.flatMap { try? KokoPortraitFiles.preparedJPEG(from: $0) }
             Task { @MainActor in
                 guard let self, self.revision == current else { return }

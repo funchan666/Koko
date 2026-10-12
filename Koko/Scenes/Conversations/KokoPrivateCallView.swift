@@ -1,7 +1,6 @@
 import SwiftUI
 import AVFoundation
 
-// Call preparation is real device capture; a remote call requires an RTC/signaling service.
 enum KokoConversationChannel: String, Hashable {
     case voice, video
     var title: String { self == .voice ? "Voice call" : "Video call" }

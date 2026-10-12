@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// Explicitly requested local room choreography. Never writes messages, relationships,
-/// coin transactions or remote-presence claims into the account journal.
 @MainActor
 final class KokoRoomDemoSession: ObservableObject {
     @Published private(set) var entries: [ConversationEntry] = []
@@ -24,8 +22,6 @@ final class KokoRoomDemoSession: ObservableObject {
     func pause() { speakingMemberID = nil }
 
     func run(room: HostedConversationRoom, community: CommunityJournalStore) async {
-        // Only the bundled catalogue has a script. A user-created room never gets
-        // invented guests; a future transport can replace this session boundary.
         let isCatalogueRoom = KokoCommunity.rooms.contains { $0.id == room.id }
         if activeRoomID != room.id {
             activeRoomID = room.id
@@ -54,7 +50,6 @@ final class KokoRoomDemoSession: ObservableObject {
             let sender = senders[sequence % senders.count]
             let phrases = Self.phrases(for: currentRoom.conversationTopic)
             guard !phrases.isEmpty else { sequence += 1; continue }
-            // Stable IDs let a reported line stay hidden across room re-entry.
             var entry = ConversationEntry(authorMemberID: sender, messageText: KokoCopy.text(phrases[sequence % phrases.count]))
             entry.id = "room-demo-\(room.id)-\(sender)-\(sequence)"
             if sequence % 4 == 2, !KokoCommunity.keepsakes.isEmpty {

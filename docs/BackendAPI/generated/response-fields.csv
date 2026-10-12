@@ -3,7 +3,4 @@ responseFields,code,code
 responseFields,message,message
 responseFields,data,data
 responseFields,token,token
-loginFlags,apple,apple_arrival
-loginFlags,email,mailbox_arrival
-loginFlags,visitor,visitor_arrival
-loginFlags,register,new_member_arrival
+loginEntry,field,arrival_destination

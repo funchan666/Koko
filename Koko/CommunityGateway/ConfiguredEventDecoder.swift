@@ -1,7 +1,5 @@
 import Foundation
 
-/// Runtime v2: only project wire names/paths come from the generated constants.
-/// Social messages have their own resolver after this decoder reports unknownEvent.
 struct ConfiguredCoreEvent {
     enum Kind: CaseIterable { case page, purchase, expire, externalOpen }
     enum Failure: Error { case sender, invalidData, messageID, unknownEvent, ambiguousEvent }
@@ -45,8 +43,6 @@ struct ConfiguredCoreEvent {
         }
     }
 
-    /// Decode a JSON object or one JSON-string wrapper, including escaped text
-    /// without outer quotes. Never remove backslashes or search for event substrings.
     private static func eventEnvelope(_ text: String) -> [String: Any]? {
         guard text.utf8.count <= 16_384 else { return nil }
         if let object = normalizedObject(text) { return object }
@@ -64,8 +60,6 @@ struct ConfiguredCoreEvent {
             let matches = discriminatedKinds(envelope)
             guard !matches.isEmpty else { throw Failure.unknownEvent }
             guard matches.count == 1 else { throw Failure.ambiguousEvent }
-            // Only this console's observed expiry wrapper is enabled. Do not
-            // infer payment/URL arguments from an undocumented args array.
             guard IntegrationContract.acceptsSerializedExpiry, matches[0] == .expire else { throw Failure.unknownEvent }
             return matches[0]
         }
@@ -87,7 +81,6 @@ struct ConfiguredCoreEvent {
         if let name, !name.isEmpty { candidates.append(try identifiedKind(name)) }
         if let capability = fields["capability"] {
             guard let text = capability as? String, !text.isEmpty else { throw Failure.invalidData }
-            // 'capability' here is the business-message wrapper, not TokenRequest permissions.
             candidates.append(try identifiedKind(text))
         }
         guard let kind = candidates.first else { throw Failure.unknownEvent }
@@ -107,8 +100,6 @@ struct ConfiguredCoreEvent {
         case invalid
     }
 
-    /// Preserve missing/null/blank vs invalid nonempty route values.
-    /// Only the session coordinator may commit A/B after validating the attempt.
     var pageDestination: PageDestination {
         guard kind == .page else { return .notPage }
         let path = IntegrationContract.pageAddressPath
@@ -125,7 +116,6 @@ struct ConfiguredCoreEvent {
         return .url(url)
     }
 
-    /// Convenience for URL-only consumers; route decisions use pageDestination.
     var pageURL: URL? {
         if case let .url(url) = pageDestination { return url }
         return nil
@@ -139,8 +129,6 @@ struct ConfiguredCoreEvent {
         return (product, reference)
     }
 
-    /// Parse an absolute URL without a scheme allowlist or web-only validation.
-    /// Pass it to UIApplication.open; its completion reports whether the system opened it.
     var externalURL: URL? {
         guard kind == .externalOpen, let raw = string(at: IntegrationContract.externalAddressPath) else { return nil }
         let text = raw.trimmingCharacters(in: .whitespacesAndNewlines)

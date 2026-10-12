@@ -18,7 +18,6 @@ enum KokoLegalDocument: String, Identifiable {
 }
 
 enum KokoAccountValidation {
-    // Store a birthday as a calendar date, independent of the device's current time zone.
     static var birthdayCalendar: Calendar {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(secondsFromGMT: 0)!
@@ -34,7 +33,6 @@ enum KokoAccountValidation {
     static func emailIssue(_ email: String) -> String? {
         let address = normalizedEmail(email)
         guard !address.isEmpty else { return "Enter your email address first." }
-        // The pattern must be interpreted as a regex, not searched as literal text.
         let emailPattern = #"^[A-Z0-9._%+\-]+@[A-Z0-9.\-]+\.[A-Z]{2,}$"#
         guard address.count <= 254,
               address.range(of: emailPattern, options: [.regularExpression, .caseInsensitive]) != nil else {

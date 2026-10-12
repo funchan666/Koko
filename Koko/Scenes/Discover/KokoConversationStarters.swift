@@ -38,8 +38,6 @@ struct KokoConversationDiscoveryInvitation: View {
     }
 }
 
-// All decorative surfaces and semantic objects are original raster artwork.
-// Text and hit targets remain native for localization and accessibility.
 struct KokoConnectionEntry: View {
     @Environment(\.dynamicTypeSize) private var textSize
     let title: String

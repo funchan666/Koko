@@ -22,7 +22,6 @@ extension CommunityJournalStore {
         return update {
             $0.coinBalance = 0
             $0.verifiedCoinCredits = [:]
-            // Do not convert earlier freely refillable demo balances into the Apple wallet.
             $0.archivedDemoCoinBalance = $0.demoTokenBalance
             $0.archivedDemoWalletHistory = $0.walletHistory
             $0.walletHistory = []
@@ -34,7 +33,6 @@ extension CommunityJournalStore {
         guard hasCompletedAccountEntry, prepareCoinWallet(), let currentJournal = journal else { return }
         let messageID = "welcome-coins." + myID
 
-        // Migrate an existing welcome gift to the inbox without crediting the wallet again.
         if let grantedAt = currentJournal.welcomeGiftGrantedAt {
             guard !currentJournal.notices.contains(where: { $0.id == messageID }) else { return }
             let originalAmount = currentJournal.walletHistory.first {
@@ -55,7 +53,6 @@ extension CommunityJournalStore {
         guard gift > 0, (currentJournal.coinBalance ?? 0) <= Int.max - gift else { return }
         let grantedAt = Date()
         let message = welcomeCoinMessage(id: messageID, coins: gift, recordedAt: grantedAt)
-        // Gift, ledger record and unread system message commit in the same atomic journal write.
         if update({
             $0.coinBalance = ($0.coinBalance ?? 0) + gift
             $0.welcomeGiftGrantedAt = grantedAt
@@ -72,7 +69,6 @@ extension CommunityJournalStore {
         return CommunityNotice(id: id, headline: "Welcome to Koko", explanation: creditLine + " Use them for optional gifts and keepsakes. Chats and calls are always free.", hasBeenRead: alreadyRead, createdAt: recordedAt)
     }
 
-    /// Apple signature and ownership checks happen before this method. Credit and deduplication share one atomic write.
     func recordVerifiedPurchase(_ credit: VerifiedCoinCredit, ownerToken: UUID) -> Bool {
         guard purchaseAccountToken == ownerToken, prepareCoinWallet() else { return false }
         guard journal?.verifiedCoinCredits?[credit.appleTransactionID] == nil,

@@ -46,8 +46,6 @@ final class KokoLanguagePreference: ObservableObject {
     }
 }
 
-/// For native controls and generated messages that require a String rather than Text.
-/// User-authored text is never passed through this lookup.
 enum KokoCopy {
     static func text(_ key: String, language: KokoLanguage? = nil) -> String {
         let selected = language ?? UserDefaults.standard.string(forKey: "koko.interface-language")

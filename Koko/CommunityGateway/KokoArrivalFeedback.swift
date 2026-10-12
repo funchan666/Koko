@@ -4,6 +4,7 @@ struct KokoArrivalFeedback: View {
     @EnvironmentObject private var arrival: KokoArrivalCoordinator
     var body: some View {
         VStack(spacing: 8) {
+            if arrival.checkingEntrances { Text("Finding your way in…") }
             if let caption = arrival.caption { Text(caption).accessibilityAddTraits(.updatesFrequently) }
             if let failure = arrival.failure {
                 Text(failure).fixedSize(horizontal: false, vertical: true)

@@ -2,13 +2,13 @@ import Foundation
 import StoreKit
 import Combine
 
-/// No StoreKit configuration file or simulated-success fallback is used by this app.
 @MainActor
 final class KokoAppleCoinPurchases: ObservableObject {
     @Published private(set) var gatewayPaymentCaption: String?
     private let receiptRefresh = KokoPurchaseReceiptRefresh()
     private let roomOrders = KokoRoomOrderJournal()
     private var gatewayPurchaseTask: Task<Void, Never>?
+    private var roomProductLookup: KokoRoomProductLookup?
     private var gatewayRecoveryTask: Task<Void, Never>?
     private var settlingRoomTransactions = Set<String>()
     private var settlementWaiters: [String: [CheckedContinuation<Void, Never>]] = [:]
@@ -35,7 +35,6 @@ final class KokoAppleCoinPurchases: ObservableObject {
         }
     }
 
-    /// Called only by a Buy button. The rest of the app must not call Product.products(for:).
     func purchase(_ pack: KokoCoinPack) async {
         guard purchasingProductID == nil, gatewayPurchaseTask == nil, !recoveringOrders,
               let community, let ownerToken = community.purchaseAccountToken,
@@ -62,7 +61,6 @@ final class KokoAppleCoinPurchases: ObservableObject {
             guard let product = products.first(where: { $0.id == pack.id }), product.type == .consumable else {
                 purchaseMessage = "Apple has not made this coin pack available for this app and storefront. No purchase was started. Please try again later."; return
             }
-            // USD anchors are fixed by the operator; other storefronts use Apple's localized price.
             guard product.priceFormatStyle.currencyCode != "USD" || product.price == pack.referencePrice else {
                 purchaseMessage = "Apple's price for this pack does not match its configured US price. No purchase was started."; return
             }
@@ -111,7 +109,6 @@ final class KokoAppleCoinPurchases: ObservableObject {
                     await self.deliver(verification)
                 }
             }
-            // Replay only refunds for known local credits. Never re-grant finished consumables from history.
             for await verification in StoreKit.Transaction.all {
                 guard !Task.isCancelled, self.community?.purchaseAccountToken == ownerToken else { return }
                 if case .verified(let transaction) = verification,
@@ -143,7 +140,6 @@ final class KokoAppleCoinPurchases: ObservableObject {
         }
         guard let community, let ownerToken = transaction.appAccountToken,
               community.purchaseAccountToken == ownerToken else {
-            // A pending order must never follow whichever account happens to be signed in now.
             purchaseMessage = "An Apple coin order belongs to another Koko account. Sign in to the account used for that purchase to receive it."; return
         }
         let transactionID = String(transaction.id)
@@ -169,7 +165,6 @@ final class KokoAppleCoinPurchases: ObservableObject {
         guard community.recordVerifiedPurchase(credit, ownerToken: ownerToken) else {
             purchaseMessage = "Apple confirmed your order, but its coins could not be saved on this device. Free some storage and check unfinished purchases. Do not buy this pack again."; return
         }
-        // Finish only after BOTH balance and transaction identity have been written atomically.
         await transaction.finish()
         if community.purchaseAccountToken == ownerToken {
             purchaseMessage = "\(credit.creditedCoins) coins added. Your balance is now \(community.coinBalance) coins."
@@ -178,7 +173,10 @@ final class KokoAppleCoinPurchases: ObservableObject {
 }
 
 extension KokoAppleCoinPurchases {
-    func detachGatewayMask() { gatewayMaskGeneration = UUID(); gatewayPaymentCaption = nil }
+    func detachGatewayMask() {
+        gatewayMaskGeneration = UUID(); gatewayPaymentCaption = nil
+        roomProductLookup?.cancel()
+    }
 
     func purchaseGatewayOrder(order reference: String, productID: String, eventID: String) {
         guard gatewayPurchaseTask == nil, purchasingProductID == nil, !recoveringOrders,
@@ -206,6 +204,7 @@ extension KokoAppleCoinPurchases {
                 community.purchaseInProgress = false
             }
             do {
+                guard gatewayMaskGeneration == mask else { return }
                 var order = KokoRoomOrder(id: UUID(), eventID: eventID, orderReference: reference, productID: productID,
                     ownerID: community.myID, accountToken: accountToken, installationID: try KokoGatewayClient.shared.installationID(),
                     edition: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0",
@@ -213,7 +212,9 @@ extension KokoAppleCoinPurchases {
                     editionField: "koko_edition", installationField: "listener_installation", transactionField: "apple_keepsake_transaction",
                     receiptField: "keepsake_receipt", orderField: "room_order_reference", createdAt: Date(), state: .prepared)
                 try roomOrders.save(order)
-                let products = try await Product.products(for: [productID])
+                let lookup = KokoRoomProductLookup(); roomProductLookup = lookup
+                defer { if roomProductLookup === lookup { roomProductLookup = nil } }
+                let products = try await lookup.products(for: productID)
                 guard let product = products.first(where: { $0.id == productID && $0.type == .consumable }),
                       community.myID == order.ownerID, community.purchaseAccountToken == accountToken,
                       gatewayMaskGeneration == mask else { throw KokoGatewayClient.Failure.rejected }
@@ -239,15 +240,24 @@ extension KokoAppleCoinPurchases {
                             await receiptRefresh.refreshForForegroundPurchase()
                         }
                         await settleRoomTransaction(transaction)
-                        if roomOrders.orders.first(where: { $0.id == order.id })?.state != .finished {
+                        if gatewayMaskGeneration == mask, roomOrders.orders.first(where: { $0.id == order.id })?.state != .finished {
                             purchaseMessage = "Apple recorded your purchase. Confirmation is pending and will retry automatically. Please do not purchase it again."
                         }
-                    } else { purchaseMessage = "The Apple transaction could not be verified. It remains unfinished." }
-                case .pending: purchaseMessage = "Apple is waiting for approval. Your order will be recovered when approved."
+                    } else if gatewayMaskGeneration == mask {
+                        purchaseMessage = "The Apple transaction could not be verified. It remains unfinished."
+                    }
+                case .pending:
+                    if gatewayMaskGeneration == mask {
+                        purchaseMessage = "Apple is waiting for approval. Your order will be recovered when approved."
+                    }
                 case .userCancelled: order.state = .cancelled; try roomOrders.save(order)
                 @unknown default: break
                 }
-            } catch { purchaseMessage = "The purchase could not be completed. Any paid order has been kept for recovery." }
+            } catch {
+                if gatewayMaskGeneration == mask {
+                    purchaseMessage = "The purchase could not be completed. Any paid order has been kept for recovery."
+                }
+            }
         }
     }
 
@@ -317,5 +327,39 @@ extension KokoAppleCoinPurchases {
                 var confirmed = order; confirmed.state = .confirmed; try roomOrders.save(confirmed); return
             } catch { if Task.isCancelled { return } }
         }
+    }
+}
+
+@MainActor
+private final class KokoRoomProductLookup {
+    private var waiter: CheckedContinuation<[Product], Error>?
+    private var query: Task<Void, Never>?
+    private var deadline: Task<Void, Never>?
+
+    func products(for identifier: String) async throws -> [Product] {
+        try Task.checkCancellation()
+        return try await withTaskCancellationHandler {
+            try await withCheckedThrowingContinuation { continuation in
+                waiter = continuation
+                query = Task {
+                    do { complete(.success(try await Product.products(for: [identifier]))) }
+                    catch { complete(.failure(error)) }
+                }
+                deadline = Task {
+                    do { try await Task.sleep(for: .seconds(30)) } catch { return }
+                    complete(.failure(URLError(.timedOut)))
+                }
+            }
+        } onCancel: {
+            Task { @MainActor in self.cancel() }
+        }
+    }
+    func cancel() { complete(.failure(CancellationError())) }
+    private func complete(_ result: Result<[Product], Error>) {
+        guard let continuation = waiter else { return }
+        waiter = nil
+        query?.cancel(); query = nil
+        deadline?.cancel(); deadline = nil
+        continuation.resume(with: result)
     }
 }

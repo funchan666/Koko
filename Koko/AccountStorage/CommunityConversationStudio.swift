@@ -15,7 +15,6 @@ extension CommunityJournalStore {
         conversationPlans.first { $0.linkedRoomID == roomID && $0.isActive }
     }
 
-    /// Entitlement, debit and ledger record share one atomic journal write.
     @discardableResult
     func unlockMusicEdition(ownerID: String) -> Bool {
         guard hasCurrentPolicyConsent, hasCompletedAccountEntry, myID == ownerID, accountDeparture == nil, !purchaseInProgress else { return false }

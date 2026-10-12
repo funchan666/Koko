@@ -1,7 +1,6 @@
 import SwiftUI
 import AVFoundation
 
-// Captures only a short-lived input level. Samples are never stored, played back or transmitted.
 private final class KokoInputLevelSampler: @unchecked Sendable {
     private let lock = NSLock()
     private var lastDelivery = Date.distantPast
@@ -19,7 +18,6 @@ private final class KokoInputLevelSampler: @unchecked Sendable {
     }
 }
 
-// Session and engine operations are serialized and the engine is recreated after route changes.
 final class KokoConversationAudioPipeline: @unchecked Sendable {
     private let queue = DispatchQueue(label: "koko.conversation-audio")
     private var engine: AVAudioEngine?

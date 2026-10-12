@@ -40,7 +40,6 @@ struct ConfiguredRealtimeConfiguration {
 import UIKit
 @preconcurrency import Ably
 
-/// Ably connection ownership is separate from the business-message handlers.
 @MainActor
 final class ConfiguredRealtimeTransport {
     enum State { case connecting, connected, subscribed, reconnecting, failed, stopped }
@@ -113,8 +112,6 @@ final class ConfiguredRealtimeTransport {
             guard let self, self.generation == id else { return }
             switch change.current {
             case .connected:
-                // The host starts its per-attempt 3-second page-event wait here, once.
-                // Subscribing and SDK retry intervals do not start or reset that deadline.
                 self.onState?(.connected)
                 if self.channel?.state == .attached { self.onState?(.subscribed) }
             case .failed: self.onState?(.failed)
@@ -183,7 +180,6 @@ final class ConfiguredRealtimeTransport {
             self.pendingAuthentication = nil
             switch result {
             case .success(let renewed):
-                // Renewal must not silently move a live subscription to a different room.
                 guard renewed.channelName == current.channelName, renewed.clientID == current.clientID,
                       renewed.tokenRequest["nonce"] as? String != current.tokenRequest["nonce"] as? String else {
                     callback(nil, NSError(domain: "ConfiguredRealtime", code: 409)); return
@@ -220,8 +216,6 @@ final class ConfiguredRealtimeTransport {
             "timestamp": message.timestamp.map { ISO8601DateFormatter().string(from: $0) } as Any? ?? NSNull(),
             "extras": message.extras as Any? ?? NSNull()
         ])
-        // The backend can send JSON text without Ably's json encoding metadata.
-        // Format that text as JSON too, while preserving the original in the envelope above.
         let raw = message.data ?? NSNull()
         let jsonBytes: Data?
         if let text = raw as? String { jsonBytes = text.data(using: .utf8) }

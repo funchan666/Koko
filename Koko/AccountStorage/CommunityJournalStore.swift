@@ -132,13 +132,11 @@ final class CommunityJournalStore: ObservableObject {
         if let issue = KokoAccountValidation.emailIssue(email) ?? KokoAccountValidation.passwordIssue(password) { notice = issue; return false }
         let key = KokoLocalCredentials.identityKey("email:" + KokoAccountValidation.normalizedEmail(email))
         do {
-            // Remote authentication has completed before this local journal is activated.
             var restored = try readSavedJournal(key) ?? newJournal(identity: key)
             restored.accountCredentialKind = "email"
             restored.policyConsent = KokoPolicyConsent()
             restored.enteredHomeViaEmail = true
             if restored.member.publicName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                // Use the supplied email handle; do not invent age, country, or interests.
                 restored.member.publicName = String(KokoAccountValidation.normalizedEmail(email).split(separator: "@")[0].prefix(40))
             }
             try activate(restored, identity: key)
@@ -165,14 +163,12 @@ final class CommunityJournalStore: ObservableObject {
         }
     }
 
-    /// Called only after genuine ASAuthorizationAppleIDCredential authorization completes.
     func enterAppleIdentity(_ identifier: String, fullName: String?, consent: Bool) -> Bool {
         guard consent, !identifier.isEmpty else { notice = "Agree to both policies and finish Apple authorization first."; return false }
         let key = KokoLocalCredentials.identityKey("apple:" + identifier)
         do {
             var restored = try readSavedJournal(key) ?? newJournal(identity: key)
             if restored.member.publicName.isEmpty, let fullName, !fullName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                // Apple supplies names on first authorization. Save it immediately, even if profile editing is interrupted.
                 restored.member.publicName = String(fullName.prefix(40))
             }
             restored.accountCredentialKind = "apple"; restored.appleSubjectIdentifier = identifier
@@ -196,7 +192,6 @@ final class CommunityJournalStore: ObservableObject {
     }
     func invalidateAppleSession() {
         guard journal?.accountCredentialKind == "apple" else { return }
-        // Revocation is authoritative even when a purchase is pending; its account token still protects delivery.
         journal = nil; activeIdentity = nil; requiresAppleProfileReview = false
         coinSpendRequest = nil; coinShortfall = nil
         UserDefaults.standard.removeObject(forKey: sessionPreference)
@@ -223,8 +218,6 @@ final class CommunityJournalStore: ObservableObject {
         UserDefaults.standard.set(identity, forKey: sessionPreference)
     }
 
-    /// Gives a new device account one supplied photograph while keeping every
-    /// sample host and previously saved account on a different portrait.
     @discardableResult
     private func ensureSuppliedPortrait(_ value: inout MemberAccountArchive, identity: String) -> Bool {
         guard value.member.portraitFileName == nil, value.member.suppliedPortraitPhotoKey == nil else { return false }
@@ -288,8 +281,6 @@ final class CommunityJournalStore: ObservableObject {
         notice = nil
         Task {
             defer { accountDeparture = nil }
-            // Allow the root loading surface to render before disk/keychain work.
-            // This is a visual transition, not a simulated server request.
             do { try await Task.sleep(nanoseconds: 150_000_000) } catch { return }
             guard activeIdentity == identity else { return }
             guard !purchaseInProgress else { notice = "Please finish or cancel the Apple purchase first."; return }
@@ -302,7 +293,6 @@ final class CommunityJournalStore: ObservableObject {
                 signedOutDestination = "Welcome"
                 removeCurrentAccount(identity: identity)
             }
-            // Keep loading visible while the root swaps to a fresh welcome screen.
             try? await Task.sleep(nanoseconds: 650_000_000)
             if journal == nil {
                 feedback = .init(title: departure == .deleteAccount ? "Account deleted" : "Signed out",
@@ -327,7 +317,6 @@ final class CommunityJournalStore: ObservableObject {
             let verifier = try KokoLocalCredentials.verifier(for: identity)
             let accountFile = try journalURL(identity)
             let portraitURL = (journal?.member.portraitFileName).flatMap { KokoPortraitFiles.url(for: $0) }
-            // Keep a rollback copy in memory until both account files are removed.
             let portraitBackup: Data?
             if let portraitURL, fileManager.fileExists(atPath: portraitURL.path) {
                 portraitBackup = try Data(contentsOf: portraitURL)

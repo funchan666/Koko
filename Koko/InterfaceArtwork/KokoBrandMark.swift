@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// The user's supplied icon is shared by the app icon and every in-app brand placement.
 struct KokoBrandMark: View {
     var size: CGFloat = 148
     var body: some View {
@@ -28,7 +27,6 @@ struct KokoBrandLoading: View {
 
     var body: some View {
         ZStack {
-            // Keep the icon itself at the exact window center, matching the launch storyboard.
             KokoBrandMark(size: 160)
             Group {
                 if reduceMotion || scenePhase != .active {

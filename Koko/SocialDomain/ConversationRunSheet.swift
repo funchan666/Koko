@@ -1,6 +1,5 @@
 import Foundation
 
-/// A private hosting plan, never evidence that a remote audience exists.
 struct ConversationRunSheet: Identifiable, Codable, Hashable {
     var id = UUID().uuidString
     var sessionTitle: String

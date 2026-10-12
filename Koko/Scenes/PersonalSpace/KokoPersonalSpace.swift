@@ -337,7 +337,6 @@ struct KokoMemberProfile: View {
     }
 
     private func profileHero(_ member: CommunityMember) -> some View {
-        // One photo only: no inset portrait, image border or text covering the face.
         KokoMemberCoverPhoto(member: member)
             .frame(height: 280)
             .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
@@ -568,7 +567,6 @@ struct KokoAlbumView: View {
                             KokoContentImage(asset: photo).frame(height: 190).padding(8).background(ArtworkSurface())
                         }.buttonStyle(KokoPressStyle()).accessibilityLabel("Open " + photo.captionLine)
                     }
-                    // Keep earlier local artwork selections readable after the media-library upgrade.
                     ForEach(Array(tiles.enumerated()), id: \.offset) { index, tile in
                         Button { viewingLegacyIndex = index; deletionConfirmation = false } label: {
                             Artwork(sheet: .collection, tile: tile).frame(height: 170).padding(8).background(ArtworkSurface())

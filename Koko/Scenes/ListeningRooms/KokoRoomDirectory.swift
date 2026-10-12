@@ -93,7 +93,6 @@ struct KokoVoiceRoomCard: View {
     var body: some View {
         Group {
             GeometryReader { bounds in
-                // These proportions match the new original bitmap seams.
                 let portraitWidth = bounds.size.width * 0.378
                 let informationWidth = bounds.size.width - portraitWidth
                 HStack(spacing: 0) {

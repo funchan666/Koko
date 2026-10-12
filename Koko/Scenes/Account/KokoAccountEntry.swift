@@ -24,20 +24,25 @@ struct KokoAccountEntry: View {
             Group {
                 if welcome {
                     KokoSocialWelcome(agreed: $agreed, visitorAgreed: $visitorAgreed, authorizing: appleEntry.authorizing,
-                        logIn: { guard requireConsent() else { return }; destination = "Log in" },
+                        logIn: { guard arrival.entrances.email, requireConsent() else { return }; destination = "Log in" },
                         appleSignIn: beginAppleSignIn,
-                        signUp: { guard requireConsent() else { return }; destination = "Sign up" },
+                        signUp: { guard arrival.entrances.registration, requireConsent() else { return }; destination = "Sign up" },
                         openPolicy: { document = $0 }, visitorEntry: beginVisitorEntry)
                 } else { credentialPage }
-            }.disabled(appleEntry.authorizing || arrival.busy || journey.transitioning)
+            }.disabled(appleEntry.authorizing || arrival.busy || arrival.checkingEntrances || journey.transitioning)
                 .accessibilityHidden(showConsentPrompt || document != nil)
             if showConsentPrompt { KokoConsentRequiredPanel(dismiss: { showConsentPrompt = false }) { document = $0 } }
             if let document { KokoLegalWebPage(document: document) { self.document = nil }.id(document) }
-        }.onAppear(perform: updateWelcomeAppearance)
+        }.onAppear { enforceEntryMode(); updateWelcomeAppearance() }
+            .onChange(of: arrival.entryMode) { _ in enforceEntryMode() }
             .onChange(of: destination) { _ in updateWelcomeAppearance() }
             .onChange(of: document) { _ in updateWelcomeAppearance() }
             .onChange(of: showConsentPrompt) { _ in updateWelcomeAppearance() }
             .onDisappear { journey.usesDarkWelcomeAppearance = false }
+    }
+    private func enforceEntryMode() {
+        guard arrival.entryMode == .guestOnly, !arrival.busy else { return }
+        passwordDraft = ""; repeatedPassword = ""; destination = "Welcome"
     }
     private func updateWelcomeAppearance() {
         journey.usesDarkWelcomeAppearance = document == nil
@@ -49,6 +54,7 @@ struct KokoAccountEntry: View {
                            back: {
                                passwordDraft = ""; repeatedPassword = ""; destination = "Welcome"
                            }, switchMode: {
+                               guard arrival.entryMode == .standard else { destination = "Welcome"; return }
                                destination = registration ? "Log in" : "Sign up"
                                passwordDraft = ""; repeatedPassword = ""
                            }, submit: submit, openPolicy: { document = $0 })

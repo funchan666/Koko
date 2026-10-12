@@ -8,7 +8,6 @@ enum KokoWelcomePalette {
     static let quiet = Color(red: 180 / 255, green: 202 / 255, blue: 193 / 255)
 }
 
-// Crops the original generated atlas. No icons, button skins or decorative artwork are drawn in code.
 @MainActor
 private enum KokoWelcomeArtwork {
     private static var prepared: [Int: UIImage] = [:]
@@ -26,7 +25,6 @@ private enum KokoWelcomeArtwork {
         let scale = CGFloat(source.width) / 1254
         guard let cropped = source.cropping(to: CGRect(x: region.minX * scale, y: region.minY * scale,
                                                       width: region.width * scale, height: region.height * scale)) else { return UIImage() }
-        // Keep the illustrated end caps at their intended size while the quiet center stretches.
         let image = UIImage(cgImage: cropped, scale: 4 * scale, orientation: .up)
         entrySkins[style] = image
         return image
@@ -64,7 +62,6 @@ struct KokoSocialWelcome: View {
 
     var body: some View {
         GeometryReader { geometry in
-            // Reserve room for native text and actions instead of stretching a spacer between them.
             let portraitExtent = min(geometry.size.width, 440, max(250, geometry.size.height - 445))
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
@@ -82,11 +79,9 @@ struct KokoSocialWelcome: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityAddTraits(.isHeader)
                         .padding(.horizontal, 30)
-                        // The artwork deliberately reserves its bottom fifth for this headline.
                         .padding(.top, -portraitExtent * 0.16)
                     VStack(spacing: 10) {
-                        if arrival.checkingEntrances { Text("Finding your way in…").font(KokoTypography.body(size: 14)) }
-                        else {
+                        if !arrival.checkingEntrances {
                             if arrival.entrances.email { KokoWelcomeEntryButton(title: "Log in", style: .email, action: logIn) }
                             if arrival.entrances.apple {
                                 KokoWelcomeEntryButton(title: authorizing ? "Waiting for Apple…" : "Continue with Apple", style: .apple, action: appleSignIn)
@@ -95,10 +90,6 @@ struct KokoSocialWelcome: View {
                             if arrival.entrances.visitor {
                                 KokoWelcomeEntryButton(title: "Continue as a visitor", style: .email, action: visitorEntry)
                                 KokoEntryAgreement(agreed: $visitorAgreed, openPolicy: openPolicy)
-                            }
-                            if arrival.entrances.none {
-                                Text("Sign-in is currently unavailable.")
-                                KokoWelcomeAction(title: "Try again", primary: false, action: arrival.loadEntrances)
                             }
                         }
                         KokoArrivalFeedback()

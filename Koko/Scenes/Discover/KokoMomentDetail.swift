@@ -73,7 +73,6 @@ struct KokoMomentDetail: View {
         if let asset = moment.mediaAsset {
             if asset.isVideo {
                 ZStack(alignment: .bottomTrailing) {
-                    // Exactly one layer owns the same player when switching presentation.
                     ZStack {
                         if !showsFullscreen, let player = playback.player { KokoMovieSurface(player: player) }
                         if !playback.hasStarted || showsFullscreen { KokoContentImage(asset: asset, fitInside: true) }

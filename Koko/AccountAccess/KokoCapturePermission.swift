@@ -1,7 +1,5 @@
 import AVFoundation
 
-/// A declined system prompt is distinct from a later, explicit retry.
-/// Call only in response to a person's capture action; never on app activation.
 enum KokoCapturePermission {
     enum Decision: Equatable, Sendable {
         case allowed

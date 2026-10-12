@@ -11,8 +11,6 @@ extension EnvironmentValues {
     }
 }
 
-/// Every app-owned screen gets the whole container. Insets protect individual
-/// controls and scroll endpoints, rather than reserving unpainted screen bands.
 struct KokoScreenCanvas<Content: View>: View {
     @ViewBuilder var content: Content
     var body: some View {

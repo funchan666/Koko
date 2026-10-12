@@ -1,7 +1,6 @@
 import SwiftUI
 import AVFoundation
 
-// Session mutations are confined to the serial queue. The preview layer only consumes the session.
 final class KokoCapturePipeline: @unchecked Sendable {
     let captureSession = AVCaptureSession()
     private let captureQueue = DispatchQueue(label: "koko.private-camera-preview")

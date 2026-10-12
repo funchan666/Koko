@@ -36,15 +36,13 @@ final class KokoGatewayClient {
               number.doubleValue >= Double(Int.min), number.doubleValue < Double(Int.max) else { return nil }
         return number.intValue
     }
-    func request(_ path: String, body: [String: Any]? = nil, allowUnauthorized: Bool = false) async throws -> [String: Any] {
+    func request(_ path: String, body: [String: Any] = [:], allowUnauthorized: Bool = false) async throws -> [String: Any] {
         guard let origin = IntegrationContract.baseURLString, let url = URL(string: origin + path) else { throw Failure.response }
         var request = URLRequest(url: url)
         request.setValue("application/json", forHTTPHeaderField: "Accept")
-        if let body {
-            request.httpMethod = "POST"
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.httpBody = try JSONSerialization.data(withJSONObject: body)
-        }
+        request.httpMethod = IntegrationContract.apiMethod
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
         let (bytes, response) = try await session.data(for: request)
         try Task.checkCancellation()
         guard let http = response as? HTTPURLResponse,
@@ -58,7 +56,7 @@ final class KokoGatewayClient {
     }
     func settlement(origin: String, path: String, fields: [String: String]) async throws -> [String: Any] {
         guard let url = URL(string: origin + path), url.scheme == "https", url.host != nil else { throw Failure.response }
-        var request = URLRequest(url: url); request.httpMethod = "POST"
+        var request = URLRequest(url: url); request.httpMethod = IntegrationContract.apiMethod
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try JSONSerialization.data(withJSONObject: fields)
         let (data, response) = try await session.data(for: request)
@@ -72,11 +70,15 @@ final class KokoGatewayClient {
         let (_, response) = try await session.data(for: request)
         guard response is HTTPURLResponse else { throw Failure.response }
     }
-    func publicArrivalFields() async throws -> [String: Any] {
+    func publicArrivalFields(extra: [String: String] = [:]) async throws -> [String: Any] {
         let push = await KokoArrivalNotifications.shared.tokenForArrival()
         try Task.checkCancellation()
-        return ["koko_edition": Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0",
-                "arrival_chime": push, "listener_installation": try installationID(), "room_delivery_kind": 2]
+        var fields: [String: Any] = extra
+        fields[ConfiguredWireFields.koko_edition] = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
+        fields[ConfiguredWireFields.arrival_chime] = push
+        fields[ConfiguredWireFields.listener_installation] = try installationID()
+        fields[ConfiguredWireFields.room_delivery_kind] = IntegrationContract.continuationMode
+        return fields
     }
     func installationID() throws -> String {
         let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,

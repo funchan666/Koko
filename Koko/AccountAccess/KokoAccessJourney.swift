@@ -13,7 +13,6 @@ final class KokoAccessJourney: ObservableObject {
         guard !transitioning else { return }
         transitioning = true; transitionCaption = caption; progress = 0
         Task {
-            // An intentional 3.6 s entry sequence requested for Koko, not a simulated network request.
             do {
                 for step in 1...3 {
                     try await Task.sleep(nanoseconds: 1_200_000_000)
@@ -50,7 +49,6 @@ struct KokoAccountLoading: View {
     }
 }
 
-/// Shares the launch storyboard's backdrop, icon size and centered composition.
 private struct KokoLoadingSurface: View {
     let caption: String
 

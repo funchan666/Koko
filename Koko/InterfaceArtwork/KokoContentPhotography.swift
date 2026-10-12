@@ -1,7 +1,6 @@
 import SwiftUI
 import ImageIO
 
-/// Immutable decoded pixels cross the worker boundary; all cache and view state stays on the main actor.
 private struct PreparedContentImage: @unchecked Sendable {
     let image: UIImage?
 }
@@ -84,7 +83,6 @@ struct KokoCollectionPhotoPicker: View {
     }
 }
 
-/// User-selected covers belong to the room, independently of the host's portrait.
 struct KokoRoomCoverPhoto: View {
     @EnvironmentObject private var community: CommunityJournalStore
     let room: HostedConversationRoom

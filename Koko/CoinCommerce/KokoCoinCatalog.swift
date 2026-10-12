@@ -12,7 +12,6 @@ struct KokoCoinPack: Identifiable, Codable, Sendable {
 @MainActor
 enum KokoCoinCatalog {
     static let firstVisitGift = 600
-    // StoreKit fetches one selected ID at the moment Buy is tapped. These are not downloaded prices.
     static var packs: [KokoCoinPack] { KokoCommunityCollection.shared.snapshot.arrangement.coinPacks }
     static func pack(_ productID: String) -> KokoCoinPack? { packs.first { $0.id == productID } }
 }

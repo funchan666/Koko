@@ -48,7 +48,6 @@ extension CommunityJournalStore {
         update { $0.member.conversationAnswers?.removeValue(forKey: starterID) }
     }
 
-    /// Appends to the existing draft; the user still reviews and explicitly sends it.
     func prepareConversationStarter(_ starterID: String, for memberID: String) -> Bool {
         guard requireMutualConnection(memberID) else { return false }
         guard let starter = ConversationStarter.find(starterID), friends.contains(memberID),

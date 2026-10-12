@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// Visual delivery of a persisted room entry, independent of its original timestamp.
-/// Each lane keeps its position when another message or gift arrives.
 struct KokoRoomStageFlight: Identifiable {
     let entry: ConversationEntry
     let lane: Int
@@ -22,7 +20,6 @@ final class KokoRoomStageActivity: ObservableObject {
     private var retirement: Task<Void, Never>?
 
     func begin(_ entries: [ConversationEntry]) {
-        // History remains in the chat log; entering a room never invents new activity.
         retirement?.cancel(); retirement = nil
         seenEntryIDs = Set(entries.map(\.id))
         flights = []
@@ -43,7 +40,6 @@ final class KokoRoomStageActivity: ObservableObject {
             let lane = available.indices.min { available[$0] < available[$1] } ?? 0
             scheduled.append(.init(entry: entry, lane: lane, beginsAt: max(now, available[lane]), duration: duration))
         }
-        // Reported/blocked entries disappear immediately, including queued effects.
         flights = scheduled
         retireFinishedFlights()
     }
@@ -134,7 +130,6 @@ struct KokoRoomGiftShower: View {
                         .offset(x: reduceMotion ? 0 : -(1 - entrance) * (width + 18), y: CGFloat(flight.lane) * 82 + 20)
                         .opacity(fade)
                         if !reduceMotion {
-                            // One enlarged artwork per delivered gift event.
                             Artwork(sheet: .collection, tile: tile)
                                 .frame(width: 76, height: 76)
                                 .scaleEffect(0.75 + 0.35 * sin(progress * .pi))
@@ -151,7 +146,6 @@ struct KokoRoomGiftShower: View {
     }
 }
 
-/// Original full PNG: transparent export margins are accounted for by native layout.
 private struct KokoRoomGiftRibbon: View {
     var body: some View {
         GeometryReader { bounds in

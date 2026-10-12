@@ -65,7 +65,6 @@ struct KokoPendingMomentsView: View {
     }
 }
 
-/// Shared identity action: visible names and portraits always open the same profile route.
 struct KokoProfileLink<Content: View>: View {
     @EnvironmentObject private var navigation: KokoSceneNavigation
     let memberID: String

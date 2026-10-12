@@ -1,7 +1,6 @@
 import SwiftUI
 import AVFoundation
 
-/// A supplied recording fills the stage; room interactions remain device-local.
 struct KokoLiveRoomStage: View {
     @EnvironmentObject private var community: CommunityJournalStore
     @EnvironmentObject private var navigation: KokoSceneNavigation
