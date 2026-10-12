@@ -79,7 +79,11 @@ final class KokoArrivalCoordinator: ObservableObject {
     }
     private func restoreSavedSession() {
         guard let saved = savedArrival, saved.gatewayOrigin == IntegrationContract.baseURLString,
-              let community else { restoreRequired = false; return }
+              let community else {
+            UserDefaults.standard.removeObject(forKey: Self.savedArrivalKey)
+            destination = .undecided; caption = nil; restoreRequired = false
+            return
+        }
         if community.storageUnavailable { community.restoreSavedAccount() }
         guard !community.storageUnavailable else {
             destination = .sessionFailure; restoreRequired = false
@@ -263,7 +267,11 @@ final class KokoArrivalCoordinator: ObservableObject {
     func retryRoom() {
         guard !busy else { return }
         if destination == .sessionFailure { restoreSavedSession(); return }
-        guard room.initialURL != nil else { fail(nil); return }
+        guard room.initialURL != nil else {
+            if restoringSession { restoreSavedSession() }
+            else { fail(nil) }
+            return
+        }
         destination = .preparingRoom; busy = true; failure = nil; caption = "Opening your room…"; room.retry()
     }
     private func fail(_ message: String?) {

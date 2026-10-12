@@ -32,6 +32,14 @@ xcodegen generate
 
 ## Source-to-entry audit
 
+### Explicit sign-in and cold-start restoration
+
+- A local profile alone no longer starts gateway authentication. The old `koko.gateway.arrived` Boolean is retired because earlier code could create it without an explicit sign-in action. Existing installations require one explicit successful sign-in to establish the new record; account files and wallet data are retained.
+- The noncredential `koko.gateway.memberArrival.v1` record binds the local member ID to the configured gateway origin. It is written only after account persistence and final native entry or successful validated hosted-document readiness. Passwords, Apple/Ably tokens and page URLs are not saved in this record.
+- A subsequent process launch restores only the matching existing account, using fresh public gateway fields. Restoration never creates a visitor account. The existing launch artwork remains visible during restoration instead of briefly displaying sign-in controls.
+- Network and page errors retain the record and expose retry. Account-file read failures also permit retry without replacing the profile. Explicit sign-out, deletion observed by the account owner, or expiry clears the record; a missing or mismatched local account cannot restore another identity.
+- Validation for this correction is source/call-path and Git diff inspection only. Force-quit/relaunch, network recovery and logout/expiry behavior still require an authorized runtime check; no compilation, tests, analyzer or simulator run was performed.
+
 | Check | Actual path and call chain | Static conclusion / runtime condition |
 |---|---|---|
 | F01 inputs | contract → generator → IntegrationContract.generated.swift → GatewayClient | API origin, App ID, paths, concrete aliases and event object paths align. |
