@@ -245,14 +245,18 @@ struct KokoField: View {
 struct KokoSearchField: View {
     let prompt: String
     @Binding var query: String
+    var usesCompactLayout = false
     var body: some View {
         HStack(spacing: 10) {
-            Artwork(sheet: .navigation, tile: 4).frame(width: 23, height: 23).foregroundStyle(KokoInk.accent)
+            Artwork(sheet: .navigation, tile: 4)
+                .frame(width: usesCompactLayout ? 21 : 23, height: usesCompactLayout ? 21 : 23)
+                .foregroundStyle(KokoInk.accent)
             TextField(prompt, text: $query, prompt: Text(LocalizedStringKey(prompt)).foregroundColor(KokoInk.secondary))
-                .textFieldStyle(.plain).font(KokoTypography.medium(size: 14, relativeTo: .body))
+                .textFieldStyle(.plain).font(KokoTypography.medium(size: usesCompactLayout ? 13 : 14, relativeTo: .body))
                 .textInputAutocapitalization(.never).autocorrectionDisabled().submitLabel(.search)
                 .accessibilityLabel(Text(LocalizedStringKey(prompt)))
-        }.padding(.horizontal, 16).padding(.vertical, 14).frame(minHeight: 52)
+        }.padding(.horizontal, 16).padding(.vertical, usesCompactLayout ? 10 : 14)
+            .frame(minHeight: usesCompactLayout ? 46 : 52)
             .background(KokoControlSurface())
     }
 }

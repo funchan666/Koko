@@ -50,7 +50,7 @@ struct KokoRoomDirectory: View {
                     .font(KokoTypography.medium(size: 12, relativeTo: .caption))
                     .foregroundStyle(KokoInk.secondary)
             }
-            LazyVStack(spacing: 16) {
+            LazyVStack(spacing: 14) {
                 ForEach(filtered) { room in KokoVoiceRoomCard(room: room) }
             }
             if filtered.isEmpty {
@@ -86,7 +86,7 @@ struct KokoRoomDirectory: View {
 struct KokoVoiceRoomCard: View {
     @EnvironmentObject private var community: CommunityJournalStore
     @EnvironmentObject private var navigation: KokoSceneNavigation
-    @ScaledMetric(relativeTo: .body) private var cardHeight: CGFloat = 188
+    @ScaledMetric(relativeTo: .body) private var cardHeight: CGFloat = 172
     let room: HostedConversationRoom
     private var host: CommunityMember? { community.member(room.hostMemberID) }
     var body: some View {
@@ -106,7 +106,9 @@ struct KokoVoiceRoomCard: View {
                         VStack(alignment: .leading, spacing: 6) {
                             HStack(spacing: 6) {
                                 Image("KokoVoiceSessionWave").resizable().scaledToFit()
-                                    .frame(width: 22, height: 18).accessibilityHidden(true)
+                                    .frame(width: 22, height: 18)
+                                    .modifier(KokoRoomSignalBreathing())
+                                    .accessibilityHidden(true)
                                 (Text("VOICE · ") + Text(LocalizedStringKey(room.conversationTopic)))
                                     .font(KokoTypography.emphasis(size: 10, relativeTo: .caption))
                                     .foregroundStyle(KokoInk.accent)

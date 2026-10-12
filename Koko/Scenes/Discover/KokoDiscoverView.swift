@@ -55,13 +55,15 @@ struct KokoDiscoverView: View {
         GeometryReader { viewport in
             ZStack {
             KokoPage {
-                KokoLiveDirectoryHero {
-                    navigation.open(.createRoom(true))
-                }
-                KokoSearchField(prompt: "Search the live floor", query: $roomSearch)
-                    .frame(minWidth: 0, maxWidth: .infinity)
-                KokoDiscoverCategoryRail(selection: $roomCategory) { category in
-                    selectCategory(category)
+                VStack(spacing: 12) {
+                    KokoLiveDirectoryHero {
+                        navigation.open(.createRoom(true))
+                    }
+                    KokoSearchField(prompt: "Search the live floor", query: $roomSearch, usesCompactLayout: true)
+                        .frame(minWidth: 0, maxWidth: .infinity)
+                    KokoDiscoverCategoryRail(selection: $roomCategory) { category in
+                        selectCategory(category)
+                    }
                 }
                 KokoLiveSectionHeading(category: roomCategory)
                 LazyVGrid(columns: roomColumns, spacing: 14) {
@@ -285,32 +287,32 @@ struct KokoRoomHostCover: View {
 }
 
 private struct KokoLiveDirectoryHero: View {
-    @ScaledMetric(relativeTo: .body) private var bannerHeight: CGFloat = 190
+    @ScaledMetric(relativeTo: .body) private var bannerHeight: CGFloat = 170
     let create: () -> Void
     var body: some View {
         GeometryReader { bounds in
             // Native copy occupies only the blank left side of the original artwork.
-            let copyWidth = max(0, bounds.size.width * 0.56 - 36)
-            VStack(alignment: .leading, spacing: 8) {
+            let copyWidth = max(0, bounds.size.width * 0.56 - 32)
+            VStack(alignment: .leading, spacing: 6) {
                 Text("GOOD COMPANY")
-                    .font(KokoTypography.emphasis(size: 9.5, relativeTo: .caption2))
+                    .font(KokoTypography.emphasis(size: 9, relativeTo: .caption2))
                     .tracking(1.1)
                     .lineLimit(1)
                     .minimumScaleFactor(0.85)
                 Text("Come say\nhello.")
-                    .font(KokoTypography.heading(size: 26, relativeTo: .title2))
+                    .font(KokoTypography.heading(size: 24, relativeTo: .title2))
                     .lineLimit(2)
                     .minimumScaleFactor(0.85)
                     .fixedSize(horizontal: false, vertical: true)
                     .accessibilityAddTraits(.isHeader)
                 Button(action: create) {
                     Text("Start a room →")
-                        .font(KokoTypography.heading(size: 12, relativeTo: .caption))
+                        .font(KokoTypography.heading(size: 11.5, relativeTo: .caption))
                         .foregroundStyle(KokoInk.paper)
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
                         .padding(.horizontal, 10)
-                        .frame(width: min(132, copyWidth), height: 44)
+                        .frame(width: min(124, copyWidth), height: 44)
                         .background {
                             Image("KokoLiveHelloAction").resizable().accessibilityHidden(true)
                         }
@@ -320,8 +322,8 @@ private struct KokoLiveDirectoryHero: View {
                 .accessibilityLabel("Create a video room")
             }
             .foregroundStyle(KokoInk.onMint)
-            .frame(width: copyWidth, height: bounds.size.height - 36, alignment: .leading)
-            .padding(18)
+            .frame(width: copyWidth, height: bounds.size.height - 32, alignment: .leading)
+            .padding(16)
         }
         .frame(height: bannerHeight)
         .background {
@@ -344,29 +346,29 @@ private struct KokoDiscoverCategoryRail: View {
         ("After hours", "After hours", "KokoDiscoverAfterHours")
     ]
     private var columns: [GridItem] {
-        Array(repeating: GridItem(.flexible(minimum: 0), spacing: 8),
+        Array(repeating: GridItem(.flexible(minimum: 0), spacing: 6),
               count: dynamicTypeSize.isAccessibilitySize ? 2 : 3)
     }
     var body: some View {
-        LazyVGrid(columns: columns, spacing: 8) {
+        LazyVGrid(columns: columns, spacing: 6) {
             ForEach(categories, id: \.value) { category in
                 Button { select(category.value) } label: {
-                    HStack(spacing: 6) {
+                    HStack(spacing: 5) {
                         Image(category.artwork)
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 24, height: 24)
+                            .frame(width: 21, height: 21)
                             .accessibilityHidden(true)
                         Text(LocalizedStringKey(category.label))
-                            .font(KokoTypography.emphasis(size: 12, relativeTo: .caption))
+                            .font(KokoTypography.emphasis(size: 11.5, relativeTo: .caption))
                             .lineLimit(dynamicTypeSize.isAccessibilitySize ? 2 : 1)
                             .minimumScaleFactor(0.9)
                             .foregroundStyle(selection == category.value ? KokoInk.onMint : KokoInk.primary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .padding(.horizontal, 8)
-                    .padding(.vertical, 10)
-                    .frame(maxWidth: .infinity, minHeight: 46)
+                    .padding(.vertical, 7)
+                    .frame(maxWidth: .infinity, minHeight: 44)
                     .background {
                         if selection == category.value {
                             Image("KokoVoiceTopicSelection")
@@ -401,6 +403,8 @@ private struct KokoLiveSectionHeading: View {
 struct KokoLiveRoomCard: View {
     @EnvironmentObject private var community: CommunityJournalStore
     @EnvironmentObject private var navigation: KokoSceneNavigation
+    @ScaledMetric(relativeTo: .body) private var directoryCoverHeight: CGFloat = 185.5
+    @ScaledMetric(relativeTo: .body) private var directoryDetailsHeight: CGFloat = 124
     let room: HostedConversationRoom
     private var host: CommunityMember? { community.member(room.hostMemberID) }
     private var recordedPreview: CommunityMediaAsset? { KokoMediaLibrary.liveRoomPreview(for: room.id) }
@@ -409,6 +413,9 @@ struct KokoLiveRoomCard: View {
         Group {
             KokoRoomEditorialLayout(title: room.roomTitle, topic: room.conversationTopic,
                                     hostName: host?.publicName ?? "Koko", invitation: "Enter room →",
+                                    cardHeight: directoryCoverHeight + directoryDetailsHeight,
+                                    coverShare: directoryCoverHeight / (directoryCoverHeight + directoryDetailsHeight),
+                                    compactRoomDetails: true,
                                     openContent: { navigation.open(.room(room.id)) },
                                     openProfile: { navigation.open(.profile(room.hostMemberID)) }) {
                 ZStack(alignment: .topLeading) {
@@ -419,7 +426,8 @@ struct KokoLiveRoomCard: View {
                     } else {
                         KokoPhotoPlaceholder()
                     }
-                    KokoBroadcastRoomBadge(hasRecordedPreview: recordedPreview != nil)
+                    KokoBroadcastRoomBadge(hasRecordedPreview: recordedPreview != nil, showsStatusDetail: false)
+                        .modifier(KokoRoomSignalBreathing())
                         .padding(.leading, 9).padding(.top, 9)
                 }
             }
@@ -436,6 +444,9 @@ struct KokoRoomEditorialLayout<Cover: View>: View {
     let topic: String
     let hostName: String
     let invitation: String
+    var cardHeight: CGFloat = 380
+    var coverShare: CGFloat = 0.554
+    var compactRoomDetails = false
     let openContent: () -> Void
     let openProfile: () -> Void
     @ViewBuilder var cover: Cover
@@ -444,36 +455,81 @@ struct KokoRoomEditorialLayout<Cover: View>: View {
         GeometryReader { geometry in
             VStack(alignment: .leading, spacing: 0) {
                 Button(action: openContent) { cover }.buttonStyle(KokoPressStyle())
-                    .frame(width: geometry.size.width, height: geometry.size.height * 0.554)
+                    .frame(width: geometry.size.width, height: geometry.size.height * coverShare)
                     .clipped()
-                VStack(alignment: .leading, spacing: 5) {
-                    Text(LocalizedStringKey(topic))
-                        .font(KokoTypography.emphasis(size: 10))
-                        .foregroundStyle(KokoInk.canvas.opacity(0.7))
-                        .lineLimit(1)
-                    Button(action: openContent) { Text(verbatim: title) }.buttonStyle(KokoPressStyle())
-                        .font(KokoTypography.heading(size: 16))
-                        .lineLimit(2)
-                        .frame(height: 43, alignment: .topLeading)
-                    Button(action: openProfile) { Text(verbatim: hostName).frame(minHeight: 44, alignment: .leading) }.buttonStyle(KokoPressStyle())
-                        .font(KokoTypography.medium(size: 11))
-                        .lineLimit(1)
-                    Spacer(minLength: 3)
-                    Button(action: openContent) { Text(LocalizedStringKey(invitation)) }.buttonStyle(KokoPressStyle())
-                        .font(KokoTypography.heading(size: 11))
-                        .lineLimit(1)
+                if compactRoomDetails {
+                    compactDetails
+                        .frame(width: geometry.size.width, height: geometry.size.height * (1 - coverShare))
+                } else {
+                    standardDetails
+                        .frame(width: geometry.size.width, height: geometry.size.height * (1 - coverShare), alignment: .topLeading)
                 }
-                .foregroundStyle(KokoInk.canvas)
-                .padding(.horizontal, 12)
-                .padding(.top, 10)
-                .padding(.bottom, 15)
-                .frame(width: geometry.size.width, height: geometry.size.height * 0.446, alignment: .topLeading)
             }
             .background { Image("KokoRoomEditorialCard").resizable().accessibilityHidden(true) }
             .clipShape(RoundedRectangle(cornerRadius: 21, style: .continuous))
         }
-        .frame(height: 380)
+        .frame(height: cardHeight)
         .frame(minWidth: 0, maxWidth: .infinity)
+    }
+
+    private var compactDetails: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Button(action: openContent) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(LocalizedStringKey(topic))
+                        .font(KokoTypography.emphasis(size: 10, relativeTo: .caption))
+                        .foregroundStyle(KokoInk.canvas.opacity(0.7)).lineLimit(1)
+                    Text(verbatim: title)
+                        .font(KokoTypography.heading(size: 16, relativeTo: .headline))
+                        .lineLimit(2).multilineTextAlignment(.leading)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                .contentShape(Rectangle())
+            }.buttonStyle(KokoPressStyle())
+            HStack(spacing: 6) {
+                Button(action: openProfile) {
+                    Text(verbatim: hostName)
+                        .font(KokoTypography.medium(size: 11, relativeTo: .caption))
+                        .lineLimit(1)
+                        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                        .contentShape(Rectangle())
+                }.buttonStyle(KokoPressStyle())
+                    .accessibilityLabel(Text(verbatim: hostName))
+                Button(action: openContent) {
+                    Text(LocalizedStringKey(invitation))
+                        .font(KokoTypography.heading(size: 10, relativeTo: .caption))
+                        .lineLimit(1).minimumScaleFactor(0.85)
+                        .frame(minHeight: 44)
+                        .contentShape(Rectangle())
+                }.buttonStyle(KokoPressStyle())
+            }
+        }
+        .foregroundStyle(KokoInk.canvas)
+        .padding(.horizontal, 12).padding(.vertical, 10)
+    }
+
+    private var standardDetails: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            Text(LocalizedStringKey(topic))
+                .font(KokoTypography.emphasis(size: 10))
+                .foregroundStyle(KokoInk.canvas.opacity(0.7))
+                .lineLimit(1)
+            Button(action: openContent) { Text(verbatim: title) }.buttonStyle(KokoPressStyle())
+                .font(KokoTypography.heading(size: 16))
+                .lineLimit(2)
+                .frame(height: 43, alignment: .topLeading)
+            Button(action: openProfile) { Text(verbatim: hostName).frame(minHeight: 44, alignment: .leading) }.buttonStyle(KokoPressStyle())
+                .font(KokoTypography.medium(size: 11))
+                .lineLimit(1)
+            Spacer(minLength: 3)
+            Button(action: openContent) { Text(LocalizedStringKey(invitation)) }.buttonStyle(KokoPressStyle())
+                .font(KokoTypography.heading(size: 11))
+                .lineLimit(1)
+        }
+        .foregroundStyle(KokoInk.canvas)
+        .padding(.horizontal, 12)
+        .padding(.top, 10)
+        .padding(.bottom, 15)
     }
 }
 
