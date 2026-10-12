@@ -78,7 +78,8 @@ targets:
         buildPhase: none
     settings:
       base:
-        IPHONEOS_DEPLOYMENT_TARGET: "$(RECOMMENDED_IPHONEOS_DEPLOYMENT_TARGET)"
+        # Keep the app's iOS 16 API floor consistent across local and CI Xcode versions.
+        IPHONEOS_DEPLOYMENT_TARGET: "16.0"
         PRODUCT_NAME: Koko
         PRODUCT_BUNDLE_IDENTIFIER: com.auroracove.kokoconversation
         INFOPLIST_FILE: Koko/Configuration/Info.plist
