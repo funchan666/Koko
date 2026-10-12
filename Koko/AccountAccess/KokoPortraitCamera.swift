@@ -103,10 +103,13 @@ final class KokoPortraitCameraModel: ObservableObject {
 struct KokoPortraitCameraPage: View {
     @StateObject private var camera = KokoPortraitCameraModel()
     @Environment(\.scenePhase) private var scenePhase
+    var title = "Your good side"
+    var subtitle = "A portrait for your Koko space"
+    var returnTitle = "Back to profile"
     let close: () -> Void
     let selected: (Data) -> Void
     var body: some View {
-        KokoPage(title: "Your good side", subtitle: "A portrait for your Koko space", back: close) {
+        KokoPage(title: title, subtitle: subtitle, back: close) {
             Group {
                 if let data = camera.photoJPEG, let image = UIImage(data: data) {
                     Image(uiImage: image).resizable().scaledToFit()
@@ -130,7 +133,7 @@ struct KokoPortraitCameraPage: View {
                 KokoAction(title: camera.busy ? "One moment…" : "Take photo", icon: 14) { camera.takePhoto() }.disabled(!camera.ready || camera.busy)
                 KokoAction(title: "Turn camera", emphasis: false) { camera.flip() }.disabled(!camera.ready || camera.busy)
             }
-            KokoAction(title: "Back to profile", emphasis: false, action: close)
+            KokoAction(title: returnTitle, emphasis: false, action: close)
         }.onAppear { camera.start() }.onDisappear { camera.stop() }
             .onChange(of: scenePhase) { phase in if phase != .active { camera.stop() } }
     }

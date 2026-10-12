@@ -83,3 +83,24 @@ struct KokoCollectionPhotoPicker: View {
         }.frame(height: 350)
     }
 }
+
+/// User-selected covers belong to the room, independently of the host's portrait.
+struct KokoRoomCoverPhoto: View {
+    @EnvironmentObject private var community: CommunityJournalStore
+    let room: HostedConversationRoom
+    var body: some View {
+        Group {
+            if let data = room.roomCoverJPEG, let image = UIImage(data: data) {
+                KokoPortraitPhoto(image: image)
+            } else if let recording = KokoMediaLibrary.liveRoomPreview(for: room.id), room.isVideoStage {
+                KokoContentImage(asset: recording)
+            } else if KokoCommunity.rooms.contains(where: { $0.id == room.id }),
+                      let host = community.member(room.hostMemberID) {
+                KokoMemberCoverPhoto(member: host)
+            } else {
+                Image(room.isVideoStage ? "KokoLiveCoverInvitation" : "KokoVoiceCoverInvitation")
+                    .resizable().scaledToFit()
+            }
+        }.accessibilityLabel("Room cover")
+    }
+}

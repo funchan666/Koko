@@ -60,6 +60,9 @@ struct KokoListeningRoomView: View {
         VStack(spacing: 0) {
             HStack(spacing: 12) {
                 KokoIconAction(icon: 5, label: "Leave room") { panel = "Leave this room?" }
+                if room.roomCoverJPEG != nil {
+                    KokoRoomCoverPhoto(room: room).frame(width: 44, height: 44)
+                }
                 VStack(alignment: .leading, spacing: 3) {
                     Text("VOICE ROOM · " + room.conversationTopic.uppercased())
                         .font(KokoTypography.heading(size: 10)).tracking(1.3).foregroundStyle(KokoInk.accent)

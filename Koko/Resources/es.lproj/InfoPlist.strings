@@ -1,2 +1,2 @@
-"NSCameraUsageDescription" = "Usa la cámara para tu foto de perfil o para comprobar el vídeo antes de una llamada. Las fotos quedan en este dispositivo. Las comprobaciones de vídeo no se graban ni se envían.";
+"NSCameraUsageDescription" = "Usa la cámara para tu foto de perfil, la portada de tu sala o para comprobar el vídeo antes de una llamada. Las fotos quedan en este dispositivo. Las comprobaciones de vídeo no se graban ni se envían.";
 "NSMicrophoneUsageDescription" = "Comprueba el micrófono antes de entrar en una sala o preparar una llamada. Esta versión no graba ni envía audio.";

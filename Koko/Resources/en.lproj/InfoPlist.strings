@@ -1,2 +1,2 @@
-"NSCameraUsageDescription" = "Use the camera to take your profile photo or check your video before a call. Photos stay on this device. Video checks are not recorded or sent.";
+"NSCameraUsageDescription" = "Use the camera to take a profile photo or room cover, or check your video before a call. Photos stay on this device. Video checks are not recorded or sent.";
 "NSMicrophoneUsageDescription" = "Check your microphone input before joining a room or preparing a call. This version does not record or send audio.";

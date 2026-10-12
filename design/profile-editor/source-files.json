@@ -1,0 +1,27 @@
+[
+  {
+    "name": "KokoProfileEditorBackdrop",
+    "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-602436d3-e684-428d-8015-84f706d74a39.png",
+    "sha256": "b6bafa80814d5da934ce08beb01c850fbc972be04c90e73f74f6bbac2eb3fb63"
+  },
+  {
+    "name": "KokoProfileFieldSurface",
+    "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-2c7bc2a1-b1d9-41f2-8ed8-220a385e9687.png",
+    "sha256": "c5076b4da2fc02bfe7d5177c947b25cb780bccde3190cc7b69a066899eca51dc"
+  },
+  {
+    "name": "KokoProfileChoiceActive",
+    "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-366999d9-d0a8-4dc6-ac0a-fc7570455ba4.png",
+    "sha256": "d3662e9cf33db95e22e085e34cdd0b0f843fb9a63e843d9e5343a891a29591aa"
+  },
+  {
+    "name": "KokoProfilePhotoLibrary",
+    "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-e8b8fc88-4a74-4ba8-9606-8ce51ccb77b6.png",
+    "sha256": "3b829eee7622521f9d4178f6242f298b5125863dabee2c188fb57d0ae9139aa2"
+  },
+  {
+    "name": "KokoProfilePortraitCamera",
+    "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-3655bb2a-b608-4acf-83c0-d3a1da65b117.png",
+    "sha256": "18929dee61b89b39410df39fb64f7d61effddc2de5d6299312b418d0f9876536"
+  }
+]

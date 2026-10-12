@@ -16,6 +16,8 @@ struct HostedConversationRoom: Identifiable, Codable, Hashable {
     var roomConversation: [ConversationEntry] = []
     var hostNote: String = "Make space for every voice."
     var moderatorMemberIDs: Set<String> = []
+    // Optional keeps existing room archives readable; stored atomically with the room.
+    var roomCoverJPEG: Data? = nil
     private enum CodingKeys: String, CodingKey {
         case id
         case roomTitle
@@ -32,5 +34,6 @@ struct HostedConversationRoom: Identifiable, Codable, Hashable {
         case roomConversation
         case hostNote
         case moderatorMemberIDs
+        case roomCoverJPEG
     }
 }

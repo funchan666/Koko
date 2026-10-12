@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -127,7 +127,7 @@
 		6807C087964747AE3366FA01 /* HostedConversationRoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostedConversationRoom.swift; sourceTree = "<group>"; };
 		68F2257407BDE96504412809 /* KokoDiscoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoDiscoverView.swift; sourceTree = "<group>"; };
 		6A9A3E8678AB3E604AB3E41C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		6B283A656E27FFD3BF492684 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		6B283A656E27FFD3BF492684 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		7009F39B1514A0F3CA64B225 /* KokoPrivateCallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoPrivateCallView.swift; sourceTree = "<group>"; };
 		7115D43622F668F567E79EE4 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		77595D4D3CDA6D7E26253744 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -145,7 +145,7 @@
 		9C1A509F4842A0B294BCF7B1 /* CommunityMediaCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityMediaCatalog.swift; sourceTree = "<group>"; };
 		9D454D625C74ABE63049C69C /* PhotosUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PhotosUI.framework; path = System/Library/Frameworks/PhotosUI.framework; sourceTree = SDKROOT; };
 		A39787CDA7EFF7411C02669F /* KokoProfileEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoProfileEditor.swift; sourceTree = "<group>"; };
-		A3A9502A6331585137B40BE6 /* Koko.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Koko.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A3A9502A6331585137B40BE6 /* Koko.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Koko.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4B8AC6B080F79FE5B98F937 /* KokoContentPhotography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoContentPhotography.swift; sourceTree = "<group>"; };
 		A8BB5F68294F93CC85B0FD8A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		A8F063F3C0EC53F21127A266 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
@@ -473,7 +473,6 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					16F727406A673A088413F278 = {
-						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.InAppPurchase = {
 								enabled = 1;
@@ -499,7 +498,6 @@
 			);
 			mainGroup = 0DF5ACB0520A867A9AA553AC;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -636,6 +634,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Koko/Configuration/Koko.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Koko/Configuration/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -644,6 +644,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.koko.app;
 				PRODUCT_NAME = Koko;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -783,6 +784,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Koko/Configuration/Koko.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Koko/Configuration/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -791,6 +794,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.koko.app;
 				PRODUCT_NAME = Koko;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;

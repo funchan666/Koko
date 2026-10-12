@@ -264,9 +264,7 @@ struct KokoRoomHostCover: View {
     let room: HostedConversationRoom
     var body: some View {
         Group {
-            if let host = community.member(room.hostMemberID) {
-                KokoMemberCoverPhoto(member: host)
-            } else { KokoPhotoPlaceholder() }
+            KokoRoomCoverPhoto(room: room)
         }
         .frame(maxWidth: .infinity)
         .clipped()
@@ -419,13 +417,7 @@ struct KokoLiveRoomCard: View {
                                     openContent: { navigation.open(.room(room.id)) },
                                     openProfile: { navigation.open(.profile(room.hostMemberID)) }) {
                 ZStack(alignment: .topLeading) {
-                    if let preview = recordedPreview {
-                        KokoContentImage(asset: preview)
-                    } else if let host {
-                        KokoMemberCoverPhoto(member: host)
-                    } else {
-                        KokoPhotoPlaceholder()
-                    }
+                    KokoRoomCoverPhoto(room: room)
                     KokoBroadcastRoomBadge(hasRecordedPreview: recordedPreview != nil, showsStatusDetail: false)
                         .modifier(KokoRoomSignalBreathing())
                         .padding(.leading, 9).padding(.top, 9)

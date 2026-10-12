@@ -22,6 +22,7 @@ struct KokoLiveRoomStage: View {
             GeometryReader { bounds in
                 ZStack {
                     if let videoAsset { KokoContentImage(asset: videoAsset) }
+                    else { KokoRoomCoverPhoto(room: room) }
                     if let player = playback.player {
                         KokoMovieSurface(player: player, videoGravity: .resizeAspectFill)
                     }
