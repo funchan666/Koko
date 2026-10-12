@@ -1,0 +1,1360 @@
+{
+  "before_bytes": {
+    "Koko/Resources": 195811998,
+    "photos": 8157103,
+    "videos": 59790311
+  },
+  "removed_artwork": [
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoConsentSurface.imageset/Contents.json",
+      "bytes": 173
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoConsentSurface.imageset/KokoConsentSurface.png",
+      "bytes": 1179467
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoConversationArrival.imageset/Contents.json",
+      "bytes": 188
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoConversationArrival.imageset/KokoConversationArrival.png",
+      "bytes": 934257
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoConversationSquareShell.imageset/Contents.json",
+      "bytes": 199
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoConversationSquareShell.imageset/KokoConversationSquareShell.png",
+      "bytes": 2542966
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoConversationStudioAction.imageset/Contents.json",
+      "bytes": 172
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoConversationStudioAction.imageset/KokoConversationStudioAction.png",
+      "bytes": 1375406
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoConversationStudioSurface.imageset/Contents.json",
+      "bytes": 173
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoConversationStudioSurface.imageset/KokoConversationStudioSurface.png",
+      "bytes": 2511747
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoFirstHelloGift.imageset/Contents.json",
+      "bytes": 183
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoFirstHelloGift.imageset/KokoFirstHelloGift.png",
+      "bytes": 1477130
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoHomeCategoryRail.imageset/Contents.json",
+      "bytes": 160
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoHomeCategoryRail.imageset/KokoHomeCategoryRail.png",
+      "bytes": 896038
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoHomeHeroArtwork.imageset/Contents.json",
+      "bytes": 159
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoHomeHeroArtwork.imageset/KokoHomeHeroArtwork.png",
+      "bytes": 2371035
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoHomeHeroButton.imageset/Contents.json",
+      "bytes": 190
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoHomeHeroButton.imageset/KokoHomeHeroButton.png",
+      "bytes": 1006810
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoHomeLiveCardShell.imageset/Contents.json",
+      "bytes": 161
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoHomeLiveCardShell.imageset/KokoHomeLiveCardShell.png",
+      "bytes": 1633038
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoHomeMomentCardShell.imageset/Contents.json",
+      "bytes": 195
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoHomeMomentCardShell.imageset/KokoHomeMomentCardShell.png",
+      "bytes": 2342724
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoLiveNowBadge.imageset/Contents.json",
+      "bytes": 188
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoLiveNowBadge.imageset/KokoLiveNowBadge.png",
+      "bytes": 938775
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoLiveRoomTile1.imageset/Contents.json",
+      "bytes": 119
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoLiveRoomTile1.imageset/KokoLiveRoomTile1.png",
+      "bytes": 673374
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoLiveRoomTile2.imageset/Contents.json",
+      "bytes": 119
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoLiveRoomTile2.imageset/KokoLiveRoomTile2.png",
+      "bytes": 678165
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoLiveRoomTile3.imageset/Contents.json",
+      "bytes": 119
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoLiveRoomTile3.imageset/KokoLiveRoomTile3.png",
+      "bytes": 636884
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoLiveRoomTile4.imageset/Contents.json",
+      "bytes": 119
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoLiveRoomTile4.imageset/KokoLiveRoomTile4.png",
+      "bytes": 655507
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoLiveRoomTiles.imageset/Contents.json",
+      "bytes": 120
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoLiveRoomTiles.imageset/KokoLiveRoomTiles.png",
+      "bytes": 2761182
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoNavigation.imageset/Contents.json",
+      "bytes": 113
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoNavigation.imageset/KokoNavigation.png",
+      "bytes": 1615716
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoReviewReceiptSurface.imageset/Contents.json",
+      "bytes": 168
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoReviewReceiptSurface.imageset/KokoReviewReceiptSurface.png",
+      "bytes": 2086583
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoSafetyReceiptSurface.imageset/Contents.json",
+      "bytes": 168
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoSafetyReceiptSurface.imageset/KokoSafetyReceiptSurface.png",
+      "bytes": 2541960
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoScenes.imageset/Contents.json",
+      "bytes": 109
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoScenes.imageset/KokoScenes.png",
+      "bytes": 1977407
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoSocialBackdrop.imageset/Contents.json",
+      "bytes": 190
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoSocialBackdrop.imageset/KokoSocialBackdrop.png",
+      "bytes": 2371100
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoSocialWidePanelShell.imageset/Contents.json",
+      "bytes": 196
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoSocialWidePanelShell.imageset/KokoSocialWidePanelShell.png",
+      "bytes": 2921781
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoVideoRoomStatus.imageset/Contents.json",
+      "bytes": 163
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoVideoRoomStatus.imageset/KokoVideoRoomStatus.png",
+      "bytes": 1382174
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoVoiceInvitationCard.imageset/Contents.json",
+      "bytes": 167
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoVoiceInvitationCard.imageset/KokoVoiceInvitationCard.png",
+      "bytes": 2455788
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoVoiceRoomCardShell.imageset/Contents.json",
+      "bytes": 194
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoVoiceRoomCardShell.imageset/KokoVoiceRoomCardShell.png",
+      "bytes": 2071289
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoVoiceRoomHero.imageset/Contents.json",
+      "bytes": 188
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoVoiceRoomHero.imageset/KokoVoiceRoomHero.png",
+      "bytes": 2651024
+    }
+  ],
+  "optimized_images": [
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoDialogReview.imageset/KokoDialogReview.png",
+      "before": 1914531,
+      "after": 1670704,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoDialogClose.imageset/KokoDialogClose.png",
+      "before": 1788170,
+      "after": 1520895,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoPersonalAnswerObject.imageset/KokoPersonalAnswerObject.png",
+      "before": 1488742,
+      "after": 1240310,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoLiveRoomControls.imageset/KokoLiveRoomControls.png",
+      "before": 1842181,
+      "after": 1595673,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoDiscoverCreative.imageset/KokoDiscoverCreative.png",
+      "before": 600833,
+      "after": 492067,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoRoomGiftRibbon.imageset/KokoRoomGiftRibbon.png",
+      "before": 1007196,
+      "after": 749079,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoDialogSurface.imageset/KokoDialogSurface.png",
+      "before": 2110474,
+      "after": 1616032,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoProfileStoryPaper.imageset/KokoProfileStoryPaper.png",
+      "before": 2195036,
+      "after": 1982639,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoWelcomeEntryButtons.imageset/KokoWelcomeEntryButtons.png",
+      "before": 999035,
+      "after": 692043,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoFirstRecord.imageset/KokoFirstRecord.png",
+      "before": 1519741,
+      "after": 1328893,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoBrandMark.imageset/KokoBrandMark.png",
+      "before": 1404530,
+      "after": 1147252,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoVoiceSessionCard.imageset/KokoVoiceSessionCard.png",
+      "before": 1408922,
+      "after": 817373,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoCommunityNavigation.imageset/KokoCommunityNavigation.png",
+      "before": 743266,
+      "after": 540484,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoDiscoverAfterHours.imageset/KokoDiscoverAfterHours.png",
+      "before": 1153722,
+      "after": 847720,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoProfileChoiceActive.imageset/KokoProfileChoiceActive.png",
+      "before": 2656406,
+      "after": 2042058,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoTabIcons.imageset/KokoTabIcons.png",
+      "before": 1317188,
+      "after": 1163461,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoProfileFieldSurface.imageset/KokoProfileFieldSurface.png",
+      "before": 2037076,
+      "after": 1413387,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoDiscoverFollowing.imageset/KokoDiscoverFollowing.png",
+      "before": 907687,
+      "after": 691079,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoDialogPrimary.imageset/KokoDialogPrimary.png",
+      "before": 1898929,
+      "after": 1411800,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoMomentFullscreen.imageset/KokoMomentFullscreen.png",
+      "before": 816124,
+      "after": 681573,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoProfileVoiceCall.imageset/KokoProfileVoiceCall.png",
+      "before": 1326613,
+      "after": 930671,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoAccountField.imageset/KokoAccountField.png",
+      "before": 1181409,
+      "after": 704170,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoStudioNoteSurface.imageset/KokoStudioNoteSurface.png",
+      "before": 1780530,
+      "after": 1516187,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoDiscoverForYou.imageset/KokoDiscoverForYou.png",
+      "before": 970381,
+      "after": 758190,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoDiscoverInvitationPaper.imageset/KokoDiscoverInvitationPaper.png",
+      "before": 2227518,
+      "after": 1602331,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoWelcomeControls.imageset/KokoWelcomeControls.png",
+      "before": 322037,
+      "after": 204335,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoLiveCoverInvitation.imageset/KokoLiveCoverInvitation.png",
+      "before": 2114670,
+      "after": 1784181,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoCollection.imageset/KokoCollection.png",
+      "before": 1879724,
+      "after": 1582358,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoSocialWelcome.imageset/KokoSocialWelcome.png",
+      "before": 2074908,
+      "after": 1802436,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoVoiceSessionWave.imageset/KokoVoiceSessionWave.png",
+      "before": 736292,
+      "after": 568770,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoVoiceTopicSelection.imageset/KokoVoiceTopicSelection.png",
+      "before": 2083795,
+      "after": 1495752,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoDialogSuccess.imageset/KokoDialogSuccess.png",
+      "before": 1655698,
+      "after": 1381376,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoCollectionLevelButton.imageset/KokoCollectionLevelButton.png",
+      "before": 1060227,
+      "after": 907723,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoDiscoverMusic.imageset/KokoDiscoverMusic.png",
+      "before": 1089239,
+      "after": 895703,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoVoiceSeatOrbit.imageset/KokoVoiceSeatOrbit.png",
+      "before": 1157330,
+      "after": 1076346,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoLiveDirectoryHero.imageset/KokoLiveDirectoryHero.png",
+      "before": 2197194,
+      "after": 2059405,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoBroadcastRoomBadge.imageset/KokoBroadcastRoomBadge.png",
+      "before": 1331855,
+      "after": 893033,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoCollectionMintSurface.imageset/KokoCollectionMintSurface.png",
+      "before": 2117284,
+      "after": 1462408,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoPersonalWalletCard.imageset/KokoPersonalWalletCard.png",
+      "before": 1920625,
+      "after": 1678066,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoStartVoiceRoom.imageset/KokoStartVoiceRoom.png",
+      "before": 2009370,
+      "after": 1594022,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoDiscoverConversation.imageset/KokoDiscoverConversation.png",
+      "before": 903310,
+      "after": 644775,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoStudioCoralAction.imageset/KokoStudioCoralAction.png",
+      "before": 857453,
+      "after": 514890,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/AppIcon.appiconset/KokoAppIcon.png",
+      "before": 1404530,
+      "after": 1147252,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoVoiceCoverInvitation.imageset/KokoVoiceCoverInvitation.png",
+      "before": 2109722,
+      "after": 1760895,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoProfileQuietSurface.imageset/KokoProfileQuietSurface.png",
+      "before": 1880105,
+      "after": 1378876,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoPhotoPlaceholder.imageset/KokoPhotoPlaceholder.png",
+      "before": 1220964,
+      "after": 822189,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoFriendsRoomInvitation.imageset/KokoFriendsRoomInvitation.png",
+      "before": 2336268,
+      "after": 1737686,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoSharedInterestObject.imageset/KokoSharedInterestObject.png",
+      "before": 791551,
+      "after": 602346,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoFriendsShortcut.imageset/KokoFriendsShortcut.png",
+      "before": 1788916,
+      "after": 1338228,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoSurfaces.imageset/KokoSurfaces.png",
+      "before": 1615300,
+      "after": 1162961,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoSocialAtlas.imageset/KokoSocialAtlas.png",
+      "before": 2546479,
+      "after": 2335838,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoCollectionBackpackButton.imageset/KokoCollectionBackpackButton.png",
+      "before": 1666576,
+      "after": 1334058,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoProfileSelection.imageset/KokoProfileSelection.png",
+      "before": 1010234,
+      "after": 715516,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoProfilePortraitCamera.imageset/KokoProfilePortraitCamera.png",
+      "before": 1568987,
+      "after": 1281548,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoDiscoverPeopleObject.imageset/KokoDiscoverPeopleObject.png",
+      "before": 955208,
+      "after": 744971,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoSocialCanvasBackground.imageset/KokoSocialCanvasBackground.png",
+      "before": 2252298,
+      "after": 1944716,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoDialogSafety.imageset/KokoDialogSafety.png",
+      "before": 1576481,
+      "after": 1325954,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoLiveHelloAction.imageset/KokoLiveHelloAction.png",
+      "before": 2194744,
+      "after": 1647000,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoProfileHelloSurface.imageset/KokoProfileHelloSurface.png",
+      "before": 1191442,
+      "after": 727570,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoDialogConnection.imageset/KokoDialogConnection.png",
+      "before": 1721310,
+      "after": 1426376,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoCommunityScenes.imageset/KokoCommunityScenes.png",
+      "before": 1764652,
+      "after": 1458829,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoArrival.imageset/KokoArrival.png",
+      "before": 1805125,
+      "after": 1470835,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoDialogSecondary.imageset/KokoDialogSecondary.png",
+      "before": 2004481,
+      "after": 1550597,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoPersonalSavedButton.imageset/KokoPersonalSavedButton.png",
+      "before": 1087176,
+      "after": 875428,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoPersonalCheckInCard.imageset/KokoPersonalCheckInCard.png",
+      "before": 2146538,
+      "after": 1893539,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoDiscoverFeedObject.imageset/KokoDiscoverFeedObject.png",
+      "before": 1204966,
+      "after": 932585,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoHelloInvitation.imageset/KokoHelloInvitation.png",
+      "before": 1796498,
+      "after": 1533638,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoProfileVideoCall.imageset/KokoProfileVideoCall.png",
+      "before": 1342578,
+      "after": 1036715,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoCommunityCollection.imageset/KokoCommunityCollection.png",
+      "before": 1940119,
+      "after": 1681695,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoRankingShortcut.imageset/KokoRankingShortcut.png",
+      "before": 1993877,
+      "after": 1422117,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoAccountBack.imageset/KokoAccountBack.png",
+      "before": 1558095,
+      "after": 1107708,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoVoiceOrbitStage.imageset/KokoVoiceOrbitStage.png",
+      "before": 1590273,
+      "after": 1121067,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoCollectionKeepsakeButton.imageset/KokoCollectionKeepsakeButton.png",
+      "before": 1507290,
+      "after": 1325187,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoWelcomeCompany.imageset/KokoWelcomeCompany.png",
+      "before": 2045272,
+      "after": 1738042,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoLiveHelloBanner.imageset/KokoLiveHelloBanner.png",
+      "before": 2168368,
+      "after": 1660373,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoWelcomeCompanyCutout.imageset/KokoWelcomeCompanyCutout.png",
+      "before": 1703675,
+      "after": 1516230,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoProfileEditorBackdrop.imageset/KokoProfileEditorBackdrop.png",
+      "before": 1664571,
+      "after": 1258574,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoStudioInvitationStrip.imageset/KokoStudioInvitationStrip.png",
+      "before": 1454536,
+      "after": 1067180,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoConversationDeckObject.imageset/KokoConversationDeckObject.png",
+      "before": 1376648,
+      "after": 1097654,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoPersonalRoomsButton.imageset/KokoPersonalRoomsButton.png",
+      "before": 1051736,
+      "after": 877033,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoConversationPaper.imageset/KokoConversationPaper.png",
+      "before": 2299560,
+      "after": 2076426,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoDiscoverRoomObject.imageset/KokoDiscoverRoomObject.png",
+      "before": 864317,
+      "after": 711742,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoRoomEditorialCard.imageset/KokoRoomEditorialCard.png",
+      "before": 2461907,
+      "after": 2187504,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoProfilePhotoLibrary.imageset/KokoProfilePhotoLibrary.png",
+      "before": 1349483,
+      "after": 1094828,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoConversationMusicEdition.imageset/KokoConversationMusicEdition.png",
+      "before": 2243041,
+      "after": 1923585,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoConversationPromptPaper.imageset/KokoConversationPromptPaper.png",
+      "before": 2703772,
+      "after": 2226759,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoLanguageConversation.imageset/KokoLanguageConversation.png",
+      "before": 1117954,
+      "after": 872554,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoCommunitySurfaces.imageset/KokoCommunitySurfaces.png",
+      "before": 1566685,
+      "after": 1142611,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoPersonalAlbumButton.imageset/KokoPersonalAlbumButton.png",
+      "before": 1212323,
+      "after": 982795,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/KokoArtwork.xcassets/KokoInboxShortcut.imageset/KokoInboxShortcut.png",
+      "before": 2178194,
+      "after": 1602836,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-e0d8335ac8b052f1-preview.jpg",
+      "before": 50231,
+      "after": 48354,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-3e29a87b4e9a5de9-preview.jpg",
+      "before": 80967,
+      "after": 77203,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-475a6aaf150f2fa1-preview.jpg",
+      "before": 39242,
+      "after": 38186,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-e0209c87c400a9ad-preview.jpg",
+      "before": 87177,
+      "after": 82254,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-dd4b7eba252d137e-preview.jpg",
+      "before": 46877,
+      "after": 45459,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/clip-438292181426a4ec-preview.jpg",
+      "before": 23902,
+      "after": 23902,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/clip-2f455f147f7afd77-preview.jpg",
+      "before": 33585,
+      "after": 33411,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-60fdc95bdde549d8-preview.jpg",
+      "before": 51748,
+      "after": 50072,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-8e3b83fc3a2dbf42-preview.jpg",
+      "before": 46194,
+      "after": 44997,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-902371eab8c796f3-preview.jpg",
+      "before": 62805,
+      "after": 60471,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-f18f8ac9ab90dab5-preview.jpg",
+      "before": 51965,
+      "after": 50454,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-4c4cb4419a028e41-preview.jpg",
+      "before": 100006,
+      "after": 94526,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-0fce7368f1432d83-preview.jpg",
+      "before": 48560,
+      "after": 46988,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/clip-9b7cdfe144e740de-preview.jpg",
+      "before": 37395,
+      "after": 37319,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-64c61c1a1080d87d-preview.jpg",
+      "before": 70218,
+      "after": 67034,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-025842e859b26baa-preview.jpg",
+      "before": 101756,
+      "after": 95506,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-e083ffbc6ca03436-preview.jpg",
+      "before": 60125,
+      "after": 58600,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-d3c3bb7d61690438-preview.jpg",
+      "before": 73181,
+      "after": 69712,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-1d30d65888eeaf38-preview.jpg",
+      "before": 92597,
+      "after": 87153,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/clip-727ad853dcc6c680-preview.jpg",
+      "before": 52546,
+      "after": 50828,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-3ffecd4a84a17ccd-preview.jpg",
+      "before": 57115,
+      "after": 54923,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/clip-624b4c415e314c5c-preview.jpg",
+      "before": 31339,
+      "after": 31338,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-11e15e298376a7d0-preview.jpg",
+      "before": 113607,
+      "after": 105670,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-5c0da2b4e934f464-preview.jpg",
+      "before": 112301,
+      "after": 107684,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-6cf5a11ab933a864-preview.jpg",
+      "before": 91354,
+      "after": 87376,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-34ec6f3593898b3c-preview.jpg",
+      "before": 55867,
+      "after": 54018,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-d1360451d8292f40-preview.jpg",
+      "before": 72714,
+      "after": 69554,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-d89ae3bc08b1927a-preview.jpg",
+      "before": 67282,
+      "after": 64416,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/clip-3c0d55dae21cc5ab-preview.jpg",
+      "before": 85661,
+      "after": 81409,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-411a054c80274d17-preview.jpg",
+      "before": 44766,
+      "after": 43643,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-50c1c44615fa556f-preview.jpg",
+      "before": 73869,
+      "after": 70445,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-387cfb0df9bf707a-preview.jpg",
+      "before": 38074,
+      "after": 36309,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-0b85d7255a7f4aa3-preview.jpg",
+      "before": 52403,
+      "after": 50736,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-180dadb2a35776c8-preview.jpg",
+      "before": 44742,
+      "after": 43587,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-90b59422592b04ae-preview.jpg",
+      "before": 84419,
+      "after": 80391,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-d50e16c961c48661-preview.jpg",
+      "before": 88522,
+      "after": 84241,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/clip-2ade133c926cc675-preview.jpg",
+      "before": 66749,
+      "after": 63789,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-45d2eec9629e984f-preview.jpg",
+      "before": 76076,
+      "after": 72416,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/clip-a61998658ec46dfd-preview.jpg",
+      "before": 32207,
+      "after": 32171,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-e0209c87c400a9ad-display.jpg",
+      "before": 557734,
+      "after": 511633,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-764f948432c41f3b-preview.jpg",
+      "before": 56001,
+      "after": 53893,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-c09d21c84b62e0aa-preview.jpg",
+      "before": 60956,
+      "after": 59073,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-85fef1725610aea2-preview.jpg",
+      "before": 57372,
+      "after": 54417,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-ac7422bbdf59203f-preview.jpg",
+      "before": 85170,
+      "after": 80835,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-49e209386910d672-preview.jpg",
+      "before": 49880,
+      "after": 48068,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/clip-0101e556a214b526-preview.jpg",
+      "before": 19549,
+      "after": 19549,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-cb95a92b76ff26ba-preview.jpg",
+      "before": 64429,
+      "after": 61642,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-90b3dd17963ade3f-preview.jpg",
+      "before": 78107,
+      "after": 73573,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-393c437ceadbdcb4-preview.jpg",
+      "before": 100048,
+      "after": 95524,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-d5ce66d2fa5d3061-preview.jpg",
+      "before": 70399,
+      "after": 67543,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-d05bf869347edf23-preview.jpg",
+      "before": 72007,
+      "after": 69054,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-81de59ec5528ce00-preview.jpg",
+      "before": 80283,
+      "after": 76473,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-d4df27b33da26d96-preview.jpg",
+      "before": 70468,
+      "after": 67841,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/clip-6f8458f557ac70eb-preview.jpg",
+      "before": 42056,
+      "after": 41411,
+      "pixels_identical": true
+    },
+    {
+      "file": "Koko/Resources/CommunityMedia/photo-f56c3760c72ea322-preview.jpg",
+      "before": 68349,
+      "after": 65727,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DdgmQhokyDm.jpg",
+      "before": 157437,
+      "after": 154258,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/Dd_-VmliHn8.jpg",
+      "before": 124951,
+      "after": 95338,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/Dd9XEXygo0k.jpg",
+      "before": 113514,
+      "after": 111829,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DcBSAIyD65V.jpg",
+      "before": 168897,
+      "after": 165775,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DdcaDkGka3U.jpg",
+      "before": 270229,
+      "after": 264734,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DeHySl2mBGn.jpg",
+      "before": 135905,
+      "after": 133621,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DeBws59Cfq9.jpg",
+      "before": 132788,
+      "after": 130150,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DeB_ouejXow.jpg",
+      "before": 156194,
+      "after": 153016,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DeGMzfCEokl.jpg",
+      "before": 234315,
+      "after": 229364,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DeG4p5mAW2o.jpg",
+      "before": 104436,
+      "after": 102899,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DdjVShEjGf-.jpg",
+      "before": 292012,
+      "after": 236053,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DdhGyXkjP9a.jpg",
+      "before": 136746,
+      "after": 134110,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DeHlxYTguV1.jpg",
+      "before": 245127,
+      "after": 239601,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DeMoAzUDg56.jpg",
+      "before": 115468,
+      "after": 114028,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/Dd3-pyhiE0R.jpg",
+      "before": 276902,
+      "after": 271846,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DeB59AQnfer.jpg",
+      "before": 178993,
+      "after": 174938,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DeEI6aNCDII.jpg",
+      "before": 55869,
+      "after": 55481,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/Dd_3fHZDcXB.jpg",
+      "before": 208358,
+      "after": 204665,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DdlwFXpDAEG.jpg",
+      "before": 160065,
+      "after": 131667,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/lapetitebulledekaki_DeG05nEtzjC.jpg",
+      "before": 652366,
+      "after": 640161,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DeCkEM6jTLS.jpg",
+      "before": 111248,
+      "after": 109709,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DeHiNDeDULu.jpg",
+      "before": 177001,
+      "after": 173341,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DeEUKk4iGx9.jpg",
+      "before": 171516,
+      "after": 168956,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DeLt028icrx.jpg",
+      "before": 240163,
+      "after": 235406,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DeBw7HNEkSw.jpg",
+      "before": 114758,
+      "after": 113058,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DdYhAj6oMzF.jpg",
+      "before": 137979,
+      "after": 135368,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/Dd_Hb_ik77f.jpg",
+      "before": 166118,
+      "after": 162395,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DdtvUN7lDaM.jpg",
+      "before": 275428,
+      "after": 270452,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/digernes_DPOnKtRjCBQ.jpg",
+      "before": 131094,
+      "after": 129223,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/Dd6vnleDlls.jpg",
+      "before": 197294,
+      "after": 193207,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DeF0uBkj39T.jpg",
+      "before": 150009,
+      "after": 146970,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DeFPx4UDF7Z.jpg",
+      "before": 99990,
+      "after": 98346,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/Dd9eB7PgPbY.jpg",
+      "before": 178303,
+      "after": 174835,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DdJ00byjCfL.jpg",
+      "before": 295213,
+      "after": 289662,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DdzaQDZDjwQ.jpg",
+      "before": 137817,
+      "after": 135691,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/Db8FYiokwhW.jpg",
+      "before": 324403,
+      "after": 317387,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DdudhbHkhqW.jpg",
+      "before": 200946,
+      "after": 197591,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DdzC9QHmjsz.jpg",
+      "before": 88759,
+      "after": 87788,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DbYgB8EgMFs.jpg",
+      "before": 96500,
+      "after": 95496,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DeEYVxUAI6h.jpg",
+      "before": 184247,
+      "after": 180722,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/Dd_GIHYiJoL.jpg",
+      "before": 232122,
+      "after": 226877,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DdzAuscjOQX.jpg",
+      "before": 217292,
+      "after": 212662,
+      "pixels_identical": true
+    },
+    {
+      "file": "photos/DeHn72wiPVJ.jpg",
+      "before": 137173,
+      "after": 106550,
+      "pixels_identical": true
+    }
+  ],
+  "after_bytes": {
+    "Koko/Resources": 119668347,
+    "photos": 7876384,
+    "videos": 59790311
+  }
+}

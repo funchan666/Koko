@@ -1,19 +1,19 @@
 [
   {
     "asset": "KokoStudioInvitationStrip",
-    "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-76131770-6067-4712-a4b5-edb89028e382.png",
+    "source": "exec-76131770-6067-4712-a4b5-edb89028e382.png",
     "sha256": "83dc2cd2d0fb436753f83d7d756b4714da7374544b534a773bf025a86e878396",
     "modification": "None; full original RGBA bitmap copied unchanged."
   },
   {
     "asset": "KokoStudioNoteSurface",
-    "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-1d1afa6c-4b1d-4405-a63e-452b4cdb6841.png",
+    "source": "exec-1d1afa6c-4b1d-4405-a63e-452b4cdb6841.png",
     "sha256": "e3791e409884350b49e6f7dbc10921189dfe5ece6d84314ca376e9f059d3828f",
     "modification": "None; full original RGBA bitmap copied unchanged."
   },
   {
     "asset": "KokoStudioCoralAction",
-    "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-93f5d837-e423-4a75-ac17-6f8d5b5f4846.png",
+    "source": "exec-93f5d837-e423-4a75-ac17-6f8d5b5f4846.png",
     "sha256": "fd51265aaef07f4acade2fdc04a66983fd3392530e505afbc13eb286591566f5",
     "modification": "None; full original RGBA bitmap copied unchanged."
   }

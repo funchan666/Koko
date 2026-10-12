@@ -4,25 +4,25 @@
     {
       "name": "KokoCollectionMintSurface",
       "asset": "Koko/Resources/KokoArtwork.xcassets/KokoCollectionMintSurface.imageset/KokoCollectionMintSurface.png",
-      "original": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-cf74464e-a33a-4ae1-ad67-18addf6d59da.png",
+      "original": "exec-cf74464e-a33a-4ae1-ad67-18addf6d59da.png",
       "prompt": "design/personal-collection/KokoCollectionMintSurface.txt"
     },
     {
       "name": "KokoCollectionKeepsakeButton",
       "asset": "Koko/Resources/KokoArtwork.xcassets/KokoCollectionKeepsakeButton.imageset/KokoCollectionKeepsakeButton.png",
-      "original": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-5d73e78f-f708-4b64-803b-0f1970a0c8fb.png",
+      "original": "exec-5d73e78f-f708-4b64-803b-0f1970a0c8fb.png",
       "prompt": "design/personal-collection/KokoCollectionKeepsakeButton.txt"
     },
     {
       "name": "KokoCollectionBackpackButton",
       "asset": "Koko/Resources/KokoArtwork.xcassets/KokoCollectionBackpackButton.imageset/KokoCollectionBackpackButton.png",
-      "original": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-25eb6831-7074-481f-b966-3a9cfc7a0fb6.png",
+      "original": "exec-25eb6831-7074-481f-b966-3a9cfc7a0fb6.png",
       "prompt": "design/personal-collection/KokoCollectionBackpackButton.txt"
     },
     {
       "name": "KokoCollectionLevelButton",
       "asset": "Koko/Resources/KokoArtwork.xcassets/KokoCollectionLevelButton.imageset/KokoCollectionLevelButton.png",
-      "original": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-8b9d1cec-b70f-4d9a-b450-d6df6fc22c34.png",
+      "original": "exec-8b9d1cec-b70f-4d9a-b450-d6df6fc22c34.png",
       "prompt": "design/personal-collection/KokoCollectionLevelButton.txt"
     }
   ],

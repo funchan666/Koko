@@ -1,7 +1,7 @@
 [
   {
     "name": "KokoDialogSurface",
-    "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-e37e3e4b-0578-470f-a0cd-adbfba3f0069.png",
+    "source": "exec-e37e3e4b-0578-470f-a0cd-adbfba3f0069.png",
     "original": "assets/original-ui/dialogs/KokoDialogSurface.png",
     "sha256": "d9a050701d219a916bb1d62f01b938e3f48b5568af3e2e9fed138ea2e1854d5a",
     "workflow": "Garden Host-Native / built-in imagegen; original full PNG, no crop or raster editing",
@@ -12,7 +12,7 @@
   },
   {
     "name": "KokoDialogPrimary",
-    "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-324cfe3d-632e-4cc9-9556-ac6796e140c1.png",
+    "source": "exec-324cfe3d-632e-4cc9-9556-ac6796e140c1.png",
     "original": "assets/original-ui/dialogs/KokoDialogPrimary.png",
     "sha256": "5004be0399c019ef8f449f2ee58bc946caa3f4e54fdd6833ddd1c1309650802d",
     "workflow": "Garden Host-Native / built-in imagegen; original full PNG, no crop or raster editing",
@@ -23,7 +23,7 @@
   },
   {
     "name": "KokoDialogSecondary",
-    "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-94f1ee5f-adee-4379-8202-649d118030fd.png",
+    "source": "exec-94f1ee5f-adee-4379-8202-649d118030fd.png",
     "original": "assets/original-ui/dialogs/KokoDialogSecondary.png",
     "sha256": "1e58adb625d7075fd19d4f27ed75619c727cc99beb67f106a6dd29c8c4175ee2",
     "workflow": "Garden Host-Native / built-in imagegen; original full PNG, no crop or raster editing",
@@ -34,7 +34,7 @@
   },
   {
     "name": "KokoDialogClose",
-    "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-0291f120-2c37-480a-bfcb-123dd4416e39.png",
+    "source": "exec-0291f120-2c37-480a-bfcb-123dd4416e39.png",
     "original": "assets/original-ui/dialogs/KokoDialogClose.png",
     "sha256": "4695d92c26def66352731ccdf101ddb712a455642b472919776eb73098d82065",
     "workflow": "Garden Host-Native / built-in imagegen; original full PNG, no crop or raster editing",
@@ -45,7 +45,7 @@
   },
   {
     "name": "KokoDialogConnection",
-    "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-496a7838-51d8-445d-9af9-6730a77c5d6d.png",
+    "source": "exec-496a7838-51d8-445d-9af9-6730a77c5d6d.png",
     "original": "assets/original-ui/dialogs/KokoDialogConnection.png",
     "sha256": "274b8753e21864f98f73469ec51749986a65ed524b89f011612e17d36e4cd944",
     "workflow": "Garden Host-Native / built-in imagegen; original full PNG, no crop or raster editing",
@@ -56,7 +56,7 @@
   },
   {
     "name": "KokoDialogSafety",
-    "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-1a5f1762-1878-489e-8173-7685b216f440.png",
+    "source": "exec-1a5f1762-1878-489e-8173-7685b216f440.png",
     "original": "assets/original-ui/dialogs/KokoDialogSafety.png",
     "sha256": "fa41c534584a2fbb89d2286c3dad347ce418b5c3fbe756c6474dffeb10564459",
     "workflow": "Garden Host-Native / built-in imagegen; original full PNG, no crop or raster editing",
@@ -67,7 +67,7 @@
   },
   {
     "name": "KokoDialogSuccess",
-    "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-da2ceb37-9ab4-4b63-9cfa-44e958a08349.png",
+    "source": "exec-da2ceb37-9ab4-4b63-9cfa-44e958a08349.png",
     "original": "assets/original-ui/dialogs/KokoDialogSuccess.png",
     "sha256": "a8672edddb9715c4c520012de8ddd9b6a0c554ccf7e91148be18215fabb2027b",
     "workflow": "Garden Host-Native / built-in imagegen; original full PNG, no crop or raster editing",
@@ -78,7 +78,7 @@
   },
   {
     "name": "KokoDialogReview",
-    "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-7e81a7f3-9f46-461d-b12f-8e4d6fc079c2.png",
+    "source": "exec-7e81a7f3-9f46-461d-b12f-8e4d6fc079c2.png",
     "original": "assets/original-ui/dialogs/KokoDialogReview.png",
     "sha256": "5249719e4859ee55b0eed4ed69666a09324cd26082ffb675d7c2dc0a194003dd",
     "workflow": "Garden Host-Native / built-in imagegen; original full PNG, no crop or raster editing",

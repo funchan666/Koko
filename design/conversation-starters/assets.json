@@ -1,7 +1,7 @@
 [
   {
     "asset": "KokoConversationDeckObject",
-    "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-e4740846-9cce-4fd3-8382-a31bce7e5a78.png",
+    "source": "exec-e4740846-9cce-4fd3-8382-a31bce7e5a78.png",
     "file": "Koko/Resources/KokoArtwork.xcassets/KokoConversationDeckObject.imageset/KokoConversationDeckObject.png",
     "prompt": "design/conversation-starters/KokoConversationDeckObject.txt",
     "sha256": "da73ff58e76c8e6746f98533c01f0d9f736f3fd728d980c38309aee81c2e4ab4",
@@ -9,7 +9,7 @@
   },
   {
     "asset": "KokoSharedInterestObject",
-    "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-0e86752e-8523-4181-9c73-3b97afa36195.png",
+    "source": "exec-0e86752e-8523-4181-9c73-3b97afa36195.png",
     "file": "Koko/Resources/KokoArtwork.xcassets/KokoSharedInterestObject.imageset/KokoSharedInterestObject.png",
     "prompt": "design/conversation-starters/KokoSharedInterestObject.txt",
     "sha256": "3e01867a876a3dfea813a5af1b9324f92a7446593fbe6936fba9c38f0ee14b09",
@@ -17,7 +17,7 @@
   },
   {
     "asset": "KokoPersonalAnswerObject",
-    "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-be99b3af-3d87-45fe-85dc-6ec682ff1f1c.png",
+    "source": "exec-be99b3af-3d87-45fe-85dc-6ec682ff1f1c.png",
     "file": "Koko/Resources/KokoArtwork.xcassets/KokoPersonalAnswerObject.imageset/KokoPersonalAnswerObject.png",
     "prompt": "design/conversation-starters/KokoPersonalAnswerObject.txt",
     "sha256": "1a5abf5b3013a67445828198ef2b4c29777d9aef5aa0821b4b2ebcfacb17f165",
@@ -25,7 +25,7 @@
   },
   {
     "asset": "KokoConversationPromptPaper",
-    "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-d00f6ab5-425e-47f0-b85f-19e088c7f956.png",
+    "source": "exec-d00f6ab5-425e-47f0-b85f-19e088c7f956.png",
     "file": "Koko/Resources/KokoArtwork.xcassets/KokoConversationPromptPaper.imageset/KokoConversationPromptPaper.png",
     "prompt": "design/conversation-starters/KokoConversationPromptPaper.txt",
     "sha256": "44506910a74567dad404ca5f6452c4f180cd845a0b50ee56066f7fc5ccd59cec",

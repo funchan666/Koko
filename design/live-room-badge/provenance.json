@@ -1,6 +1,6 @@
 {
   "workflow": "Garden GPT Image 2 / Host-Native imagegen",
-  "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-1b51be8e-c088-4b9c-89d7-25474e3d04a5.png",
+  "source": "exec-1b51be8e-c088-4b9c-89d7-25474e3d04a5.png",
   "projectOriginal": "assets/original-ui/live-room-status/KokoBroadcastRoomBadge.png",
   "catalog": "Koko/Resources/KokoArtwork.xcassets/KokoBroadcastRoomBadge.imageset",
   "sha256": "5e665a8fd7439f7dd65747c39ed89c4d5c2d815d2ae9d9e80419d1397a739949",

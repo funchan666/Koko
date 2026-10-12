@@ -1,14 +1,14 @@
 [
   {
     "asset": "KokoProfileVoiceCall",
-    "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-0fcc138b-cd71-49aa-b195-ed0be8b51190.png",
+    "source": "exec-0fcc138b-cd71-49aa-b195-ed0be8b51190.png",
     "original": "assets/original-ui/profile-connections/voice-call.png",
     "sha256": "b03be219d992034f03b3c19a25ab0d5b132cb4c10a5f71a4950ba6d0dfc86d89",
     "workflow": "Host-Native imagegen; original unmodified PNG; no cropping or code-drawn artwork"
   },
   {
     "asset": "KokoProfileVideoCall",
-    "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-8faaac66-7321-45a5-a2b0-30c40bc89bed.png",
+    "source": "exec-8faaac66-7321-45a5-a2b0-30c40bc89bed.png",
     "original": "assets/original-ui/profile-connections/video-call.png",
     "sha256": "089205430cfff65e44269a8a3d75e974e9f5b97a02844d6a01804e45f1d6d4f3",
     "workflow": "Host-Native imagegen; original unmodified PNG; no cropping or code-drawn artwork"

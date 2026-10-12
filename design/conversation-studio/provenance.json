@@ -1,19 +1,19 @@
 [
   {
     "asset": "KokoConversationStudioSurface",
-    "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-cf198d78-3828-4669-b579-a549751071b0.png",
+    "source": "exec-cf198d78-3828-4669-b579-a549751071b0.png",
     "sha256": "092b8c6dd8afc16326beae2c6717bf8d017549fdb93a33d04e130e009c81512c",
     "workflow": "Garden Image 2 / host-native imagegen; copied unchanged"
   },
   {
     "asset": "KokoConversationMusicEdition",
-    "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-bf9ef73b-76fb-45c6-aeb7-fdaf90dd8c04.png",
+    "source": "exec-bf9ef73b-76fb-45c6-aeb7-fdaf90dd8c04.png",
     "sha256": "b9cd9ac33b3c06a110dab011e4627eb1eb3ddd006bc4f30e71484982b496f368",
     "workflow": "Garden Image 2 / host-native imagegen; copied unchanged"
   },
   {
     "asset": "KokoConversationStudioAction",
-    "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-d0aa0611-febe-4368-a3d3-942488d96d12.png",
+    "source": "exec-d0aa0611-febe-4368-a3d3-942488d96d12.png",
     "sha256": "8002f803eda13d08e88f17bc19ddbedbbb579518ab09f5c69b9fa590babc9fde",
     "workflow": "Garden Image 2 / host-native imagegen; copied unchanged"
   }

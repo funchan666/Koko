@@ -25,7 +25,7 @@ Re-export using:
 
 ```sh
 python3 docs/BackendAPI/export_catalog.py
-python3 /Users/chengdupengyuyan/.codex/skills/prada/scripts/render_contract.py docs/BackendAPI/contract.json --out docs/BackendAPI/generated --replace
+python3 "${CODEX_HOME:-$HOME/.codex}/skills/prada/scripts/render_contract.py" docs/BackendAPI/contract.json --out docs/BackendAPI/generated --replace
 cp docs/BackendAPI/generated/IntegrationContract.generated.swift Koko/CommunityGateway/
 xcodegen generate
 ```

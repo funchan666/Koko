@@ -7,4 +7,7 @@ xcuserdata/
 *.xcscmblueprint
 .swiftpm/
 .build/
+*.optimized.png
+*.optimized.jpg
+*.optimized.jpeg
 

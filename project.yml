@@ -15,6 +15,11 @@ settings:
     CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED: YES
     ENABLE_USER_SCRIPT_SANDBOXING: YES
     STRING_CATALOG_GENERATE_SYMBOLS: YES
+  configs:
+    Release:
+      SWIFT_SERIALIZE_DEBUGGING_OPTIONS: NO
+      DEBUG_INFORMATION_FORMAT: dwarf-with-dsym
+      COPY_PHASE_STRIP: YES
 packages:
   Ably:
     url: https://github.com/ably/ably-cocoa.git
