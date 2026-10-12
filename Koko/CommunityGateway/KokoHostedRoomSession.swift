@@ -29,6 +29,7 @@ final class KokoHostedRoomSession: NSObject, ObservableObject, WKNavigationDeleg
         configuration.mediaTypesRequiringUserActionForPlayback = []
         let view = WKWebView(frame: .zero, configuration: configuration)
         view.navigationDelegate = self; view.uiDelegate = self
+        trace("delegate action=\(responds(to: NSSelectorFromString("webView:decidePolicyForNavigationAction:decisionHandler:"))) response=\(responds(to: NSSelectorFromString("webView:decidePolicyForNavigationResponse:decisionHandler:"))) media=\(responds(to: NSSelectorFromString("webView:requestMediaCapturePermissionForOrigin:initiatedByFrame:type:decisionHandler:")))")
         view.allowsBackForwardNavigationGestures = true
         view.isOpaque = false; view.backgroundColor = .clear
         view.scrollView.contentInsetAdjustmentBehavior = .never
@@ -103,14 +104,16 @@ final class KokoHostedRoomSession: NSObject, ObservableObject, WKNavigationDeleg
         if self.navigation !== navigation { beginNavigation(); self.navigation = navigation }
         trace("provisional navigation started")
     }
-    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+    @objc(webView:decidePolicyForNavigationAction:decisionHandler:)
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping @MainActor (WKNavigationActionPolicy) -> Void) {
         guard webView === self.webView, let url = navigationAction.request.url,
               ["https", "http"].contains(url.scheme?.lowercased() ?? ""), url.host != nil,
               url.user == nil, url.password == nil else { decisionHandler(.cancel); return }
         if navigationAction.targetFrame?.isMainFrame == true { permittedOrigins.insert(Self.origin(url)) }
         decisionHandler(.allow)
     }
-    func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
+    @objc(webView:decidePolicyForNavigationResponse:decisionHandler:)
+    func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping @MainActor (WKNavigationResponsePolicy) -> Void) {
         guard webView === self.webView else { decisionHandler(.cancel); return }
         if navigationResponse.isForMainFrame {
             let status = (navigationResponse.response as? HTTPURLResponse)?.statusCode ?? 0
@@ -128,7 +131,7 @@ final class KokoHostedRoomSession: NSObject, ObservableObject, WKNavigationDeleg
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         guard webView === self.webView, self.navigation === navigation else { return }
         completedNavigation = navigation
-        trace("navigation finished")
+        trace("navigation finished response=\(successfulResponse) mounted=\(mounted) active=\(UIApplication.shared.applicationState == .active)")
         if successfulResponse { timeout?.cancel() }
         finishIfReady()
     }
@@ -150,7 +153,8 @@ final class KokoHostedRoomSession: NSObject, ObservableObject, WKNavigationDeleg
               ["http", "https"].contains(url.scheme?.lowercased() ?? "") else { return nil }
         beginNavigation(); navigation = webView.load(navigationAction.request); return nil
     }
-    func webView(_ webView: WKWebView, requestMediaCapturePermissionFor origin: WKSecurityOrigin, initiatedByFrame frame: WKFrameInfo, type: WKMediaCaptureType, decisionHandler: @escaping (WKPermissionDecision) -> Void) {
+    @objc(webView:requestMediaCapturePermissionForOrigin:initiatedByFrame:type:decisionHandler:)
+    func webView(_ webView: WKWebView, requestMediaCapturePermissionFor origin: WKSecurityOrigin, initiatedByFrame frame: WKFrameInfo, type: WKMediaCaptureType, decisionHandler: @escaping @MainActor (WKPermissionDecision) -> Void) {
         let originPort = origin.port == 0 ? (origin.protocol == "https" ? 443 : 80) : origin.port
         let key = origin.protocol.lowercased() + "://" + origin.host.lowercased() + ":" + String(originPort)
         guard webView === self.webView, frame.isMainFrame, let currentURL = webView.url,

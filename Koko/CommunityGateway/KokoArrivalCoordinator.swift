@@ -4,7 +4,12 @@ import Ably
 
 @MainActor
 final class KokoArrivalCoordinator: ObservableObject {
-    enum Destination: Equatable { case undecided, preparingRoom, community, hostedRoom, roomFailure }
+    enum Destination: Equatable { case undecided, preparingRoom, community, hostedRoom, roomFailure, sessionFailure }
+    private struct SavedArrival: Codable {
+        let memberID: String
+        let gatewayOrigin: String?
+    }
+    private static let savedArrivalKey = "koko.gateway.memberArrival.v1"
     struct Entrances {
         var apple = true, email = true, visitor = false, registration = true
         var none: Bool { !apple && !email && !visitor && !registration }
@@ -37,7 +42,11 @@ final class KokoArrivalCoordinator: ObservableObject {
     private var receivedEvents = Set<String>()
     private var started = false
     private var active = true
-    private var sessionSaved: Bool { UserDefaults.standard.bool(forKey: "koko.gateway.arrived") }
+    private var restoringSession = false
+    private var savedArrival: SavedArrival? {
+        guard let data = UserDefaults.standard.data(forKey: Self.savedArrivalKey) else { return nil }
+        return try? JSONDecoder().decode(SavedArrival.self, from: data)
+    }
 
     func start(community: CommunityJournalStore, purchases: KokoAppleCoinPurchases) {
         guard !started else { return }; started = true
@@ -54,7 +63,7 @@ final class KokoArrivalCoordinator: ObservableObject {
         }
         room.onFailure = { [weak self] message in
             guard let self, self.destination == .preparingRoom || self.destination == .hostedRoom else { return }
-            self.destination = .roomFailure; self.caption = message; self.busy = false
+            self.destination = .roomFailure; self.caption = message; self.busy = false; self.restoreRequired = false
         }
         reachability?.startListening(onQueue: .main) { [weak self] status in
             Task { @MainActor in
@@ -63,9 +72,31 @@ final class KokoArrivalCoordinator: ObservableObject {
             }
         }
         loadEntrances()
-        if sessionSaved || community.journal != nil {
-            if reserve() { authenticate(extra: [:], commit: { community.journal != nil || community.enterVisitorIdentity() }) }
-        } else { restoreRequired = false }
+        // The old flag could be set merely by finding a local profile. It cannot
+        // establish that the member explicitly completed gateway sign-in.
+        UserDefaults.standard.removeObject(forKey: "koko.gateway.arrived")
+        restoreSavedSession()
+    }
+    private func restoreSavedSession() {
+        guard let saved = savedArrival, saved.gatewayOrigin == IntegrationContract.baseURLString,
+              let community else { restoreRequired = false; return }
+        if community.storageUnavailable { community.restoreSavedAccount() }
+        guard !community.storageUnavailable else {
+            destination = .sessionFailure; restoreRequired = false
+            caption = "Your saved account could not be opened. Please try again."
+            return
+        }
+        guard community.journal?.member.id == saved.memberID else {
+            // Never create a visitor identity or switch accounts during restore.
+            UserDefaults.standard.removeObject(forKey: Self.savedArrivalKey)
+            destination = .undecided; caption = nil; restoreRequired = false
+            return
+        }
+        guard reserve() else { return }
+        restoringSession = true; restoreRequired = true
+        authenticate(extra: [:]) { [weak community] in
+            community?.journal?.member.id == saved.memberID
+        }
     }
     func foreground(_ foreground: Bool) {
         active = foreground
@@ -99,6 +130,7 @@ final class KokoArrivalCoordinator: ObservableObject {
     }
     func reserve() -> Bool {
         guard !busy else { return false }
+        restoringSession = false; restoreRequired = false
         generation = UUID(); busy = true; caption = "Connecting…"; failure = nil
         destination = .undecided; firstConnection = false; finalizing = false; receivedEvents = []
         renewalTask?.cancel(); renewalTask = nil
@@ -193,7 +225,7 @@ final class KokoArrivalCoordinator: ObservableObject {
             switch event.pageDestination {
             case .absent: commit(.community)
             case .url(let url): destination = .preparingRoom; caption = "Opening your room…"; room.prepare(url)
-            default: destination = .roomFailure; busy = false; caption = "This room address is unavailable. Please try again later."
+            default: destination = .roomFailure; busy = false; restoreRequired = false; caption = "This room address is unavailable. Please try again later."
             }
         case .expire: logout()
         case .purchase:
@@ -216,32 +248,45 @@ final class KokoArrivalCoordinator: ObservableObject {
         Task {
             let success = await commitLocal?() ?? false
             guard generation == id else { return }
-            guard success else { fail("Your account could not be saved. Please try again."); return }
+            guard success, let memberID = community?.journal?.member.id,
+                  let saved = try? JSONEncoder().encode(SavedArrival(memberID: memberID, gatewayOrigin: IntegrationContract.baseURLString)) else {
+                fail("Your account could not be saved. Please try again."); return
+            }
+            // Commit the noncredential marker only after the account is saved
+            // and the final native destination or valid web document is ready.
+            UserDefaults.standard.set(saved, forKey: Self.savedArrivalKey)
+            restoringSession = false
             destination = target; busy = false; caption = nil; restoreRequired = false; commitLocal = nil
-            UserDefaults.standard.set(true, forKey: "koko.gateway.arrived")
             bulletins.applyPending()
         }
     }
     func retryRoom() {
+        guard !busy else { return }
+        if destination == .sessionFailure { restoreSavedSession(); return }
         guard room.initialURL != nil else { fail(nil); return }
         destination = .preparingRoom; busy = true; failure = nil; caption = "Opening your room…"; room.retry()
     }
     private func fail(_ message: String?) {
+        let recoveryNeeded = restoringSession && message != nil
         generation = UUID(); requestTask?.cancel(); requestTask = nil
         renewalTask?.cancel(); renewalTask = nil
         connectDeadline?.cancel(); routeDeadline?.cancel(); realtime.stop(); bulletins.stop(); room.close()
         bulletin = nil; commitLocal = nil; finalizing = false; busy = false; caption = nil; failure = message
-        destination = .undecided
+        restoreRequired = false; restoringSession = false
+        destination = recoveryNeeded ? .sessionFailure : .undecided
+        if recoveryNeeded { caption = message; failure = nil }
     }
     func logout() {
         fail(nil); contentTask?.cancel(); KokoCommunityCollection.shared.cancel()
         UserDefaults.standard.removeObject(forKey: "koko.gateway.arrived")
+        UserDefaults.standard.removeObject(forKey: Self.savedArrivalKey)
         community?.endGatewaySession(); restoreRequired = false; purchases?.detachGatewayMask()
     }
     func bulletinDisplayed() { if let bulletin { bulletins.displayed(bulletin.msgId) } }
     func dismissBulletin() { bulletin = nil; bulletins.applyPending() }
     func noticesChanged() { bulletins.applyPending() }
     func localAccountChanged() {
-        if community?.journal == nil, destination == .community || destination == .hostedRoom { logout() }
+        if community?.journal == nil,
+           savedArrival != nil || restoringSession || destination == .community || destination == .hostedRoom { logout() }
     }
 }

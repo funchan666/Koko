@@ -34,8 +34,8 @@ struct KokoApplicationRoot: View {
                 .allowsHitTesting(arrival.destination == .hostedRoom && purchases.gatewayPaymentCaption == nil && !showsFeedback)
                 .accessibilityHidden(arrival.destination != .hostedRoom)
             Group {
-                if openingApp { KokoLaunchLoading() }
-                else if arrival.destination == .roomFailure { KokoRoomRecoveryPanel() }
+                if openingApp || arrival.restoreRequired { KokoLaunchLoading() }
+                else if arrival.destination == .roomFailure || arrival.destination == .sessionFailure { KokoRoomRecoveryPanel() }
                 else if arrival.destination == .hostedRoom { Color.clear }
                 else if arrival.destination == .community, let journal = community.journal {
                     if !community.hasCurrentPolicyConsent { KokoConsentRenewalGate() }

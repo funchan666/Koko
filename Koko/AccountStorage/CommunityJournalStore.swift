@@ -31,7 +31,10 @@ final class CommunityJournalStore: ObservableObject {
     private let fileManager = FileManager.default
     private let sessionPreference = "koko.activeLocalIdentity"
 
-    init() {
+    init() { restoreSavedAccount() }
+
+    func restoreSavedAccount() {
+        guard journal == nil else { return }
         if let savedIdentity = UserDefaults.standard.string(forKey: sessionPreference) {
             do {
                 let data = try Data(contentsOf: journalURL(savedIdentity))
@@ -43,6 +46,7 @@ final class CommunityJournalStore: ObservableObject {
                 }
                 journal = restored
                 activeIdentity = savedIdentity
+                storageUnavailable = false
             } catch {
                 storageUnavailable = true
                 notice = "Your saved space couldn't be opened. It has not been replaced. Please try again."
