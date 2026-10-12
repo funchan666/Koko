@@ -18,6 +18,17 @@
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.koko.return</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.auroracove.kokoconversation</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>KokoSafetySupportContactEnabled</key>
@@ -30,6 +41,8 @@
 	<string>Use your camera when you choose to take a profile photo or room cover, check your video, or use video in a hosted room.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Use your microphone when you choose to check your audio, speak in a room or join a call.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Choose a photo to share in your profile, room cover or a moment.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Fonts/NunitoSans-Regular.ttf</string>
@@ -58,18 +71,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleURLName</key>
-			<string>com.koko.return</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>com.auroracove.kokoconversation</string>
-			</array>
-		</dict>
-	</array>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Choose a photo to share in your profile, room cover or a moment.</string>
 </dict>
 </plist>
