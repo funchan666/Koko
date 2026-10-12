@@ -198,6 +198,7 @@ struct KokoRoomComposer: View {
     @State private var seats = "6"
     @State private var publicRoom = true
     @State private var coverSelection: PhotosPickerItem?
+    @State private var showingCoverLibrary = false
     @State private var roomCoverJPEG: Data?
     @State private var importingCover = false
     @State private var showingCoverCamera = false
@@ -337,9 +338,10 @@ struct KokoRoomComposer: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Room cover").font(KokoTypography.heading(size: 17))
                 Text("Make it your room.").font(KokoTypography.body(size: 12)).foregroundStyle(KokoInk.secondary)
-                PhotosPicker(selection: $coverSelection, matching: .images, photoLibrary: .shared()) {
+                Button { showingCoverLibrary = true } label: {
                     coverAction("Choose photo", artwork: "KokoProfilePhotoLibrary")
                 }.buttonStyle(KokoPressStyle()).disabled(coverBusy)
+                    .photosPicker(isPresented: $showingCoverLibrary, selection: $coverSelection, matching: .images, photoLibrary: .shared())
                 Button(action: requestCoverCamera) {
                     coverAction("Take photo", artwork: "KokoProfilePortraitCamera")
                 }.buttonStyle(KokoPressStyle()).disabled(coverBusy)

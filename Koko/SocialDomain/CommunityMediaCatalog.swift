@@ -34,24 +34,11 @@ struct CommunityMediaAsset: Identifiable, Decodable, Sendable {
     }
 }
 
+@MainActor
 enum KokoMediaLibrary {
-    static let assets: [CommunityMediaAsset] = {
-        guard let url = Bundle.main.url(forResource: "community-media", withExtension: "json", subdirectory: "CommunityMedia"),
-              let data = try? Data(contentsOf: url),
-              let collection = try? JSONDecoder().decode([CommunityMediaAsset].self, from: data) else { return [] }
-        return collection
-    }()
-    static let photos = assets.filter { !$0.isVideo }
-    private static let roomVideoKeys: [String: String] = [
-        "open-window": "clip-a61998658ec46dfd",
-        "last-light": "clip-727ad853dcc6c680",
-        "morning-window": "clip-438292181426a4ec",
-        "studio-open": "clip-0101e556a214b526",
-        "night-signal": "clip-6f8458f557ac70eb",
-        "tiny-dancefloor": "clip-9b7cdfe144e740de",
-        "table-talk": "clip-2f455f147f7afd77",
-        "trail-stories": "clip-3c0d55dae21cc5ab"
-    ]
+    static var assets: [CommunityMediaAsset] { KokoCommunityCollection.shared.snapshot.media }
+    static var photos: [CommunityMediaAsset] { assets.filter { !$0.isVideo } }
+    private static var roomVideoKeys: [String: String] { KokoCommunityCollection.shared.snapshot.arrangement.roomVideoKeys }
     static var liveRoomPreviewAssetIDs: Set<String> { Set(roomVideoKeys.values) }
     static func asset(_ key: String?) -> CommunityMediaAsset? {
         guard let key else { return nil }
@@ -64,5 +51,5 @@ enum KokoMediaLibrary {
 }
 
 extension SharedMoment {
-    var mediaAsset: CommunityMediaAsset? { KokoMediaLibrary.asset(libraryAssetKey) }
+    @MainActor var mediaAsset: CommunityMediaAsset? { KokoMediaLibrary.asset(libraryAssetKey) }
 }

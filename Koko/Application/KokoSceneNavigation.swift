@@ -20,17 +20,20 @@ final class KokoSceneNavigation: ObservableObject {
 }
 
 struct KokoApplicationRoot: View {
+    @EnvironmentObject private var arrival: KokoArrivalCoordinator
     @EnvironmentObject private var purchases: KokoAppleCoinPurchases
     @EnvironmentObject private var community: CommunityJournalStore
     @StateObject private var accessJourney = KokoAccessJourney()
     @State private var openingApp = true
-    private var showsFeedback: Bool { community.notice != nil || purchases.purchaseMessage != nil || community.feedback != nil || community.safetyRequest != nil }
+    private var showsFeedback: Bool { arrival.bulletin != nil || community.notice != nil || purchases.purchaseMessage != nil || community.feedback != nil || community.safetyRequest != nil }
     private var accountIsTransitioning: Bool { accessJourney.transitioning || community.accountDeparture != nil }
     var body: some View {
         ZStack {
             Group {
                 if openingApp { KokoLaunchLoading() }
-                else if let journal = community.journal {
+                else if arrival.destination == .roomFailure { KokoRoomRecoveryPanel() }
+                else if arrival.destination == .hostedRoom { Color.clear }
+                else if arrival.destination == .community, let journal = community.journal {
                     if !community.hasCurrentPolicyConsent { KokoConsentRenewalGate() }
                     else if community.hasCompletedAccountEntry { KokoMainShell().id(journal.member.id) }
                     else { KokoProfileEditor(isOnboarding: true) }
@@ -39,6 +42,20 @@ struct KokoApplicationRoot: View {
             }
             .allowsHitTesting(!showsFeedback && !accountIsTransitioning)
             .accessibilityHidden(showsFeedback || accountIsTransitioning)
+            KokoHostedRoomContainer(session: arrival.room)
+                .opacity(arrival.destination == .hostedRoom ? 1 : 0)
+                .allowsHitTesting(arrival.destination == .hostedRoom && purchases.gatewayPaymentCaption == nil && !showsFeedback)
+                .accessibilityHidden(arrival.destination != .hostedRoom)
+            if let caption = purchases.gatewayPaymentCaption {
+                Text(caption).font(KokoTypography.emphasis(size: 18)).multilineTextAlignment(.center)
+                    .padding(32).frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(KokoWelcomePalette.backdrop.opacity(0.94))
+                    .contentShape(Rectangle()).onTapGesture {}.zIndex(200)
+            }
+            if let bulletin = arrival.bulletin, community.notice == nil, community.feedback == nil, purchases.purchaseMessage == nil {
+                KokoNoticePanel(heading: bulletin.headline, message: bulletin.explanation, dismiss: arrival.dismissBulletin)
+                    .onAppear { arrival.bulletinDisplayed() }.zIndex(97)
+            }
             if let departure = community.accountDeparture {
                 KokoAccountLoading(captionOverride: departure.caption)
                     .zIndex(101)
@@ -83,12 +100,19 @@ struct KokoApplicationRoot: View {
 }
 
 struct KokoMainShell: View {
+    @EnvironmentObject private var collection: KokoCommunityCollection
     @Environment(\.kokoScreenInsets) private var screenInsets
     @EnvironmentObject private var community: CommunityJournalStore
     @StateObject private var navigation = KokoSceneNavigation()
     var body: some View {
         GeometryReader { viewport in
             VStack(spacing: 0) {
+            if let error = collection.error {
+                VStack(spacing: 4) {
+                    Text(error).font(KokoTypography.body(size: 13))
+                    KokoWelcomeAction(title: "Reload community", primary: false) { Task { await collection.load() } }
+                }.padding(.horizontal, 20).padding(.top, screenInsets.top)
+            }
             if let destination = navigation.journey.last {
                 destinationView(destination)
                     .id(destination)

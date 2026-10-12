@@ -1,0 +1,5 @@
+{
+  "code": 503,
+  "message": "Purchase verification must be handled by the settlement service",
+  "data": null
+}

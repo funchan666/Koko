@@ -23,6 +23,7 @@ struct KokoProfileEditor: View {
     @State private var introduction = ""
     @State private var chosenInterests: Set<String> = []
     @State private var selectedPhoto: PhotosPickerItem?
+    @State private var showingPhotoLibrary = false
     @State private var portraitJPEG: Data?
     @State private var importingPhoto = false
     @State private var showingCamera = false
@@ -175,9 +176,10 @@ struct KokoProfileEditor: View {
                 let layout = textSize.isAccessibilitySize
                     ? AnyLayout(VStackLayout(spacing: 8)) : AnyLayout(HStackLayout(spacing: 10))
                 layout {
-                    PhotosPicker(selection: $selectedPhoto, matching: .images, photoLibrary: .shared()) {
+                    Button { showingPhotoLibrary = true } label: {
                         photoActionLabel("Choose photo", image: "KokoProfilePhotoLibrary")
                     }.buttonStyle(KokoPressStyle()).disabled(importingPhoto || checkingPortraitPermission)
+                        .photosPicker(isPresented: $showingPhotoLibrary, selection: $selectedPhoto, matching: .images, photoLibrary: .shared())
                     Button(action: requestPortraitCamera) {
                         photoActionLabel("Take photo", image: "KokoProfilePortraitCamera")
                     }.buttonStyle(KokoPressStyle()).disabled(importingPhoto || checkingPortraitPermission)

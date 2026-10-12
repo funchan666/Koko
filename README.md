@@ -58,7 +58,7 @@ Koko 使用薄荷、深墨绿与柔白的独立视觉方向，采用 Avenir Next
 - 视频列表只加载提取的封面，不创建播放器；详情按需创建 AVPlayer，支持暂停、静音、前后 10 秒、结束后重播、失败提示与重新加载。离开详情、打开举报面板或进入后台时停止/暂停播放。
 - 列表采用最长边 640px 缩略图；详情按显示用途降采样，后台解码并限制缓存，避免同时解码全部原图。WebP 另生成 JPEG 展示副本，原 WebP 保留。
 
-内容标题和话题维护在 `ContentLibrary/collection-notes.json`；完整逐项清单在 `Koko/Resources/CommunityMedia/community-media.json`，包含每个源文件名、SHA-256、预览文件名、尺寸及视频时长。应用直接读取该目录，不以文件夹里“存在文件”代替页面接入。
+内容标题和话题维护在 `ContentLibrary/collection-notes.json`；完整逐项清单在 `ContentLibrary/community-media.json`，包含每个源文件名、SHA-256、预览文件名、尺寸及视频时长。该文件保留为媒体来源清单；应用展示目录读取配置接口，部署契约见 docs/BackendAPI/INTEGRATION.md。
 
 以后增加或调整媒体时，补全对应内容记录，执行 `python3 scripts/prepare_community_media.py` 生成缩略图与内容目录，再用 XcodeGen 更新工程。脚本使用本机 Pillow 与 ffmpeg/ffprobe，只准备媒体资源，不构建或运行应用。
 

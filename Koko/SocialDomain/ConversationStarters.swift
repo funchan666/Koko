@@ -1,27 +1,14 @@
 import Foundation
 
-struct ConversationStarter: Identifiable, Hashable, Sendable {
+struct ConversationStarter: Identifiable, Codable, Hashable, Sendable {
     let id: String
     let topic: String
     let question: String
     let roomName: String
 
-    static let collection: [ConversationStarter] = [
-        .init(id: "small-joy", topic: "Conversation", question: "What small thing made your day better?", roomName: "Small joys"),
-        .init(id: "unexpected-skill", topic: "Conversation", question: "What could you happily teach someone?", roomName: "Teach me something"),
-        .init(id: "perfect-afternoon", topic: "Conversation", question: "What does your perfect slow afternoon look like?", roomName: "A slow afternoon"),
-        .init(id: "song-memory", topic: "Music", question: "Which song takes you straight back to a memory?", roomName: "Songs with a story"),
-        .init(id: "first-concert", topic: "Music", question: "Which artist would you love to hear live?", roomName: "Dream gig"),
-        .init(id: "soundtrack", topic: "Music", question: "What song would open the movie of your life?", roomName: "Your opening track"),
-        .init(id: "unfinished-project", topic: "Creative", question: "What are you making just for the joy of it?", roomName: "Made for the joy"),
-        .init(id: "curiosity", topic: "Creative", question: "What would you try if being a beginner felt easy?", roomName: "Begin again"),
-        .init(id: "inspiration", topic: "Creative", question: "Where do your best ideas usually find you?", roomName: "Where ideas happen"),
-        .init(id: "unwind", topic: "After hours", question: "What helps you switch off after a long day?", roomName: "The wind-down"),
-        .init(id: "night-snack", topic: "After hours", question: "What is your ideal late-night comfort food?", roomName: "Midnight menu"),
-        .init(id: "weekend-plan", topic: "After hours", question: "What little adventure would you choose this weekend?", roomName: "Weekend daydreams")
-    ]
+    @MainActor static var collection: [ConversationStarter] { KokoCommunityCollection.shared.snapshot.starters }
 
-    static func find(_ id: String?) -> ConversationStarter? {
+    @MainActor static func find(_ id: String?) -> ConversationStarter? {
         collection.first { $0.id == id }
     }
 }

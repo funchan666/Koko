@@ -6,6 +6,7 @@ private enum KokoEmailEntryField: Hashable {
 }
 
 struct KokoEmailEntryForm: View {
+    @EnvironmentObject private var arrival: KokoArrivalCoordinator
     @Environment(\.kokoScreenInsets) private var screenInsets
     let registration: Bool
     @Binding var emailAddress: String
@@ -70,6 +71,8 @@ struct KokoEmailEntryForm: View {
 
                     KokoWelcomeAction(title: registration ? "Sign up" : "Start",
                                       primary: true, action: continueEntry)
+                    KokoArrivalFeedback()
+                    if registration ? arrival.entrances.email : arrival.entrances.registration {
                     Button {
                         editing = nil
                         switchMode()
@@ -80,6 +83,7 @@ struct KokoEmailEntryForm: View {
                             .multilineTextAlignment(.center)
                             .frame(maxWidth: .infinity, minHeight: 48)
                     }.buttonStyle(KokoPressStyle()).padding(.top, 8)
+                    }
                 }
                 .padding(.horizontal, 28).padding(.top, screenInsets.top + 8)
                 .padding(.bottom, editing == nil ? screenInsets.bottom + 24 : 24)

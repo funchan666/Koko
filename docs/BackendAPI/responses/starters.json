@@ -1,0 +1,78 @@
+{
+  "code": 0,
+  "message": "ok",
+  "data": [
+    {
+      "id": "small-joy",
+      "topic": "Conversation",
+      "question": "What small thing made your day better?",
+      "roomName": "Small joys"
+    },
+    {
+      "id": "unexpected-skill",
+      "topic": "Conversation",
+      "question": "What could you happily teach someone?",
+      "roomName": "Teach me something"
+    },
+    {
+      "id": "perfect-afternoon",
+      "topic": "Conversation",
+      "question": "What does your perfect slow afternoon look like?",
+      "roomName": "A slow afternoon"
+    },
+    {
+      "id": "song-memory",
+      "topic": "Music",
+      "question": "Which song takes you straight back to a memory?",
+      "roomName": "Songs with a story"
+    },
+    {
+      "id": "first-concert",
+      "topic": "Music",
+      "question": "Which artist would you love to hear live?",
+      "roomName": "Dream gig"
+    },
+    {
+      "id": "soundtrack",
+      "topic": "Music",
+      "question": "What song would open the movie of your life?",
+      "roomName": "Your opening track"
+    },
+    {
+      "id": "unfinished-project",
+      "topic": "Creative",
+      "question": "What are you making just for the joy of it?",
+      "roomName": "Made for the joy"
+    },
+    {
+      "id": "curiosity",
+      "topic": "Creative",
+      "question": "What would you try if being a beginner felt easy?",
+      "roomName": "Begin again"
+    },
+    {
+      "id": "inspiration",
+      "topic": "Creative",
+      "question": "Where do your best ideas usually find you?",
+      "roomName": "Where ideas happen"
+    },
+    {
+      "id": "unwind",
+      "topic": "After hours",
+      "question": "What helps you switch off after a long day?",
+      "roomName": "The wind-down"
+    },
+    {
+      "id": "night-snack",
+      "topic": "After hours",
+      "question": "What is your ideal late-night comfort food?",
+      "roomName": "Midnight menu"
+    },
+    {
+      "id": "weekend-plan",
+      "topic": "After hours",
+      "question": "What little adventure would you choose this weekend?",
+      "roomName": "Weekend daydreams"
+    }
+  ]
+}

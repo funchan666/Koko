@@ -1,2 +1,3 @@
-"NSCameraUsageDescription" = "プロフィール写真やルームのカバーの撮影、通話前の映像確認にカメラを使います。写真はこのデバイスに保存され、確認中の映像は録画・送信されません。";
-"NSMicrophoneUsageDescription" = "ルームへの参加や通話の準備前にマイク入力を確認します。このバージョンでは音声を録音・送信しません。";
+"NSCameraUsageDescription" = "プロフィール写真やルームカバーの撮影、映像の確認、ルームでのビデオ機能を選択したときにカメラを使用します。";
+"NSMicrophoneUsageDescription" = "音声の確認、ルームでの発言、通話への参加を選択したときにマイクを使用します。";
+"NSPhotoLibraryUsageDescription" = "プロフィール、ルームカバー、投稿に使う写真を選択します。";

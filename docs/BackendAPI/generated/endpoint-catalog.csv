@@ -1,0 +1,11 @@
+﻿role,method,path,response_file,note,response_chars,response_utf8_bytes
+loginMethods,GET,/koko/arrival/entryways,responses/login-methods.json,explicit configured response; backend capability is separate,115,115
+authenticate,POST,/koko/arrival/open-invitation,responses/auth-response.json,explicit configured response; backend capability is separate,59,59
+confirmPurchase,POST,/koko/keepsakes/settlement,responses/purchase-response.json,explicit configured response; backend capability is separate,100,100
+members,GET,/koko/community/members,responses/members.json,content file relative to BackendAPI,1853,1853
+rooms,GET,/koko/community/rooms,responses/rooms.json,content file relative to BackendAPI,5816,5816
+keepsakes,GET,/koko/community/keepsakes,responses/keepsakes.json,content file relative to BackendAPI,843,843
+media,GET,/koko/community/media,responses/media.json,content file relative to BackendAPI,22795,22795
+starters,GET,/koko/community/starters,responses/starters.json,content file relative to BackendAPI,1577,1577
+engagement,GET,/koko/community/engagement,responses/engagement.json,content file relative to BackendAPI,28224,28224
+arrangement,GET,/koko/community/arrangement,responses/arrangement.json,content file relative to BackendAPI,2217,2217

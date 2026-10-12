@@ -1,6 +1,6 @@
 import Foundation
 
-struct ConversationEntry: Identifiable, Codable, Hashable {
+struct ConversationEntry: Identifiable, Codable, Hashable, Sendable {
     var id = UUID().uuidString
     var authorMemberID: String
     var messageText: String

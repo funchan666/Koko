@@ -1,0 +1,6 @@
+{
+  "occasion": "KokoOutsideVisit",
+  "visit": {
+    "destination": "#{openUrl}"
+  }
+}

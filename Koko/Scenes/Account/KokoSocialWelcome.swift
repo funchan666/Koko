@@ -50,13 +50,16 @@ private enum KokoWelcomeArtwork {
 }
 
 struct KokoSocialWelcome: View {
+    @EnvironmentObject private var arrival: KokoArrivalCoordinator
     @Environment(\.kokoScreenInsets) private var screenInsets
     @Binding var agreed: Bool
+    @Binding var visitorAgreed: Bool
     let authorizing: Bool
     let logIn: () -> Void
     let appleSignIn: () -> Void
     let signUp: () -> Void
     let openPolicy: (KokoLegalDocument) -> Void
+    let visitorEntry: () -> Void
     @ScaledMetric(relativeTo: .largeTitle) private var headlineSize: CGFloat = 36
 
     var body: some View {
@@ -82,10 +85,23 @@ struct KokoSocialWelcome: View {
                         // The artwork deliberately reserves its bottom fifth for this headline.
                         .padding(.top, -portraitExtent * 0.16)
                     VStack(spacing: 10) {
-                        KokoWelcomeEntryButton(title: "Log in", style: .email, action: logIn)
-                        KokoWelcomeEntryButton(title: authorizing ? "Waiting for Apple…" : "Continue with Apple",
-                                               style: .apple, action: appleSignIn)
-                        KokoWelcomeEntryButton(title: "Create account", style: .registration, action: signUp)
+                        if arrival.checkingEntrances { Text("Finding your way in…").font(KokoTypography.body(size: 14)) }
+                        else {
+                            if arrival.entrances.email { KokoWelcomeEntryButton(title: "Log in", style: .email, action: logIn) }
+                            if arrival.entrances.apple {
+                                KokoWelcomeEntryButton(title: authorizing ? "Waiting for Apple…" : "Continue with Apple", style: .apple, action: appleSignIn)
+                            }
+                            if arrival.entrances.registration { KokoWelcomeEntryButton(title: "Create account", style: .registration, action: signUp) }
+                            if arrival.entrances.visitor {
+                                KokoWelcomeEntryButton(title: "Continue as a visitor", style: .email, action: visitorEntry)
+                                KokoEntryAgreement(agreed: $visitorAgreed, openPolicy: openPolicy)
+                            }
+                            if arrival.entrances.none {
+                                Text("Sign-in is currently unavailable.")
+                                KokoWelcomeAction(title: "Try again", primary: false, action: arrival.loadEntrances)
+                            }
+                        }
+                        KokoArrivalFeedback()
                     }.padding(.horizontal, 28).padding(.top, 22)
                     KokoEntryAgreement(agreed: $agreed, openPolicy: openPolicy)
                         .padding(.horizontal, 22).padding(.top, 16).padding(.bottom, 12)

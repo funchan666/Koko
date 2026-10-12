@@ -4,6 +4,7 @@ import CryptoKit
 import UIKit
 
 struct KokoAccountEntry: View {
+    @EnvironmentObject private var arrival: KokoArrivalCoordinator
     @EnvironmentObject private var community: CommunityJournalStore
     @EnvironmentObject private var journey: KokoAccessJourney
     @StateObject private var appleEntry = KokoAppleEntry()
@@ -13,6 +14,7 @@ struct KokoAccountEntry: View {
     @State private var passwordDraft = ""
     @State private var repeatedPassword = ""
     @State private var agreed = false
+    @State private var visitorAgreed = true
     @State private var showConsentPrompt = false
     @State private var document: KokoLegalDocument?
     private var welcome: Bool { destination == "Welcome" }
@@ -21,13 +23,13 @@ struct KokoAccountEntry: View {
         ZStack {
             Group {
                 if welcome {
-                    KokoSocialWelcome(agreed: $agreed, authorizing: appleEntry.authorizing,
+                    KokoSocialWelcome(agreed: $agreed, visitorAgreed: $visitorAgreed, authorizing: appleEntry.authorizing,
                         logIn: { guard requireConsent() else { return }; destination = "Log in" },
                         appleSignIn: beginAppleSignIn,
                         signUp: { guard requireConsent() else { return }; destination = "Sign up" },
-                        openPolicy: { document = $0 })
+                        openPolicy: { document = $0 }, visitorEntry: beginVisitorEntry)
                 } else { credentialPage }
-            }.disabled(appleEntry.authorizing || journey.transitioning)
+            }.disabled(appleEntry.authorizing || arrival.busy || journey.transitioning)
                 .accessibilityHidden(showConsentPrompt || document != nil)
             if showConsentPrompt { KokoConsentRequiredPanel(dismiss: { showConsentPrompt = false }) { document = $0 } }
             if let document { KokoLegalWebPage(document: document) { self.document = nil }.id(document) }
@@ -54,12 +56,29 @@ struct KokoAccountEntry: View {
     }
     private func beginAppleSignIn() {
         guard requireConsent() else { return }
-        appleEntry.start { identity, name in
-            journey.enter(caption: "Getting ready…") {
-                _ = community.enterAppleIdentity(identity, fullName: name, consent: agreed)
+        guard arrival.entrances.apple, arrival.reserve() else { return }
+        let attempt = arrival.attemptID
+        appleEntry.start { identity, name, token, code in
+            guard arrival.ownsAttempt(attempt) else { return }
+            arrival.authenticate(extra: ["arrival_method": "apple", "arrival_purpose": "login",
+                                       "apple_identity_assertion": token, "apple_authorization_exchange": code,
+                                       "apple_member_subject": identity]) {
+                community.enterAppleIdentity(identity, fullName: name, consent: true)
             }
-        } failure: { community.notice = $0 }
+        } failure: { message in
+            guard arrival.ownsAttempt(attempt) else { return }
+            arrival.cancelled()
+            if !message.isEmpty { community.notice = message }
+        }
     }
+    private func beginVisitorEntry() {
+        guard visitorAgreed else { showConsentPrompt = true; return }
+        guard arrival.entrances.visitor, arrival.reserve() else { return }
+        arrival.authenticate(extra: ["arrival_method": "visitor", "arrival_purpose": "visit"]) {
+            community.enterVisitorIdentity()
+        }
+    }
+
     private func requireConsent() -> Bool {
         guard agreed else { showConsentPrompt = true; return false }
         return true
@@ -70,11 +89,14 @@ struct KokoAccountEntry: View {
         if registration && repeatedPassword != passwordDraft { community.notice = "Enter the same password in both fields."; return }
         let isRegistration = registration
         let email = emailAddress; let password = passwordDraft
-        journey.enter(caption: isRegistration ? "Creating your account…" : "Getting ready…") {
+        guard isRegistration ? arrival.entrances.registration : arrival.entrances.email, arrival.reserve() else { return }
+        arrival.authenticate(extra: ["arrival_method": "email", "arrival_purpose": isRegistration ? "register" : "login",
+                                   "member_mailbox": KokoAccountValidation.normalizedEmail(email), "member_passphrase": password]) {
             let success: Bool
-            if isRegistration { success = await community.register(email: email, password: password, consent: agreed) }
-            else { success = await community.signIn(email: email, password: password, consent: agreed) }
+            if isRegistration { success = await community.register(email: email, password: password, consent: true) }
+            else { success = await community.signIn(email: email, password: password, consent: true) }
             if success { passwordDraft = ""; repeatedPassword = "" }
+            return success
         }
     }
 }
@@ -82,11 +104,11 @@ struct KokoAccountEntry: View {
 @MainActor
 final class KokoAppleEntry: NSObject, ObservableObject, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
     @Published private(set) var authorizing = false
-    private var success: ((String, String?) -> Void)?
+    private var success: ((String, String?, String, String) -> Void)?
     private var failure: ((String) -> Void)?
     private var authorization: ASAuthorizationController?
     private var requestState: String?
-    func start(success: @escaping (String, String?) -> Void, failure: @escaping (String) -> Void) {
+    func start(success: @escaping (String, String?, String, String) -> Void, failure: @escaping (String) -> Void) {
         guard authorization == nil else { return }
         self.success = success; self.failure = failure
         let request = ASAuthorizationAppleIDProvider().createRequest()
@@ -115,11 +137,14 @@ final class KokoAppleEntry: NSObject, ObservableObject, ASAuthorizationControlle
             let name = PersonNameComponentsFormatter().string(from: components).trimmingCharacters(in: .whitespacesAndNewlines)
             if !name.isEmpty { fullName = name; UserDefaults.standard.set(name, forKey: cacheKey) }
         }
-        success?(credential.user, fullName ?? UserDefaults.standard.string(forKey: cacheKey))
+        guard let identityToken = String(data: token, encoding: .utf8), let authorizationCode = String(data: code, encoding: .utf8) else {
+            failure?("Apple returned an unreadable credential. Please try again."); return
+        }
+        success?(credential.user, fullName ?? UserDefaults.standard.string(forKey: cacheKey), identityToken, authorizationCode)
     }
     func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
         defer { clearRequest() }
-        if (error as? ASAuthorizationError)?.code != .canceled {
+        if (error as? ASAuthorizationError)?.code == .canceled { failure?("") } else {
             failure?("Apple sign-in could not complete. This installation needs a matching App ID, developer team and Sign in with Apple capability. Please try again when configured.")
         }
     }

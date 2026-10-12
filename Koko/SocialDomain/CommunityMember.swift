@@ -1,6 +1,6 @@
 import Foundation
 
-struct CommunityMember: Identifiable, Codable, Hashable {
+struct CommunityMember: Identifiable, Codable, Hashable, Sendable {
     var id: String
     var publicName: String
     var hometownLabel: String

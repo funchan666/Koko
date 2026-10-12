@@ -1,0 +1,10 @@
+{
+  "code": 0,
+  "message": "ok",
+  "data": {
+    "apple_arrival": 1,
+    "mailbox_arrival": 1,
+    "visitor_arrival": 0,
+    "new_member_arrival": 1
+  }
+}

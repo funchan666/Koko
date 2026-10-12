@@ -1,6 +1,6 @@
 import Foundation
 
-struct KokoCoinPack: Identifiable, Sendable {
+struct KokoCoinPack: Identifiable, Codable, Sendable {
     let id: String
     let coinQuantity: Int
     let referenceUSD: String
@@ -9,20 +9,11 @@ struct KokoCoinPack: Identifiable, Sendable {
     var referencePriceLabel: String { "$" + referenceUSD + " USD" }
 }
 
+@MainActor
 enum KokoCoinCatalog {
     static let firstVisitGift = 600
     // StoreKit fetches one selected ID at the moment Buy is tapped. These are not downloaded prices.
-    static let packs: [KokoCoinPack] = [
-        .init(id: "hrsrzorpkreajmwb", coinQuantity: 360, referenceUSD: "0.99", collectionTitle: "A little hello"),
-        .init(id: "nfqsfmisuvrnetzu", coinQuantity: 780, referenceUSD: "1.99", collectionTitle: "Good company"),
-        .init(id: "pmwqzntlcxvfrsda", coinQuantity: 1240, referenceUSD: "2.99", collectionTitle: "Side A"),
-        .init(id: "rkkuocvmcmaqhxlq", coinQuantity: 2280, referenceUSD: "4.99", collectionTitle: "On repeat"),
-        .init(id: "rvthzqpamnueclfd", coinQuantity: 4920, referenceUSD: "9.99", collectionTitle: "The listening room"),
-        .init(id: "ztyjvowtyrkjtspk", coinQuantity: 10600, referenceUSD: "19.99", collectionTitle: "Long weekend"),
-        .init(id: "kdhvxqjpnrtwbsme", coinQuantity: 16800, referenceUSD: "29.99", collectionTitle: "Double album"),
-        .init(id: "tsvizuhgbkfzzhos", coinQuantity: 29600, referenceUSD: "49.99", collectionTitle: "The record shelf"),
-        .init(id: "aiapsuakjxhtmttt", coinQuantity: 64800, referenceUSD: "99.99", collectionTitle: "Full collection")
-    ]
+    static var packs: [KokoCoinPack] { KokoCommunityCollection.shared.snapshot.arrangement.coinPacks }
     static func pack(_ productID: String) -> KokoCoinPack? { packs.first { $0.id == productID } }
 }
 

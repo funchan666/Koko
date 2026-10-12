@@ -46,7 +46,7 @@ def prepare():
         if videos: ordered.append(videos.pop(0))
         for _ in range(4):
             if photos: ordered.append(photos.pop(0))
-    (OUTPUT / 'community-media.json').write_text(json.dumps(ordered, ensure_ascii=False, indent=2) + '\n')
+    (ROOT / 'ContentLibrary/community-media.json').write_text(json.dumps(ordered, ensure_ascii=False, indent=2) + '\n')
     print(f'Prepared {sum(e["mediaKind"] == "photo" for e in ordered)} photos and {sum(e["mediaKind"] == "video" for e in ordered)} videos. Originals unchanged.')
 
 if __name__ == '__main__':

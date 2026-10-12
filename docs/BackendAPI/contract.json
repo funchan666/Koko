@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 1,
+  "namespace": "koko",
+  "baseURL": "https://koko.dfbbdr.top",
+  "sourceAppId": "80895233",
+  "endpoints": {
+    "loginMethods": "/koko/arrival/entryways",
+    "authenticate": "/koko/arrival/open-invitation",
+    "confirmPurchase": "/koko/keepsakes/settlement"
+  },
+  "endpointResponses": {
+    "loginMethods": "responses/login-methods.json",
+    "authenticate": "responses/auth-response.json",
+    "confirmPurchase": "responses/purchase-response.json"
+  },
+  "requestFields": {
+    "appVersion": "koko_edition",
+    "pushToken": "arrival_chime",
+    "deviceNo": "listener_installation",
+    "transactionId": "apple_keepsake_transaction",
+    "payload": "keepsake_receipt",
+    "callbackResult": "room_order_reference",
+    "roomPushMsgType": "room_delivery_kind"
+  },
+  "h5Fields": {
+    "orderCode": "roomOrder",
+    "batchNo": "keepsakeProduct",
+    "openUrl": "outsideDestination"
+  },
+  "additionalLoginFields": {
+    "loginType": "arrival_method",
+    "scene": "arrival_purpose",
+    "email": "member_mailbox",
+    "password": "member_passphrase",
+    "appleToken": "apple_identity_assertion",
+    "appleAuthorizationCode": "apple_authorization_exchange",
+    "appleUserId": "apple_member_subject"
+  },
+  "responseFields": {
+    "code": "code",
+    "message": "message",
+    "data": "data",
+    "token": "token"
+  },
+  "loginFlags": {
+    "apple": "apple_arrival",
+    "email": "mailbox_arrival",
+    "visitor": "visitor_arrival",
+    "register": "new_member_arrival"
+  },
+  "ably": {
+    "clientId": "app",
+    "serverClientIds": [
+      "serve"
+    ],
+    "allowMissingServerClientId": true,
+    "rewind": 1
+  },
+  "eventTransport": {
+    "jsonEnvelopeEventKinds": [
+      "logout"
+    ]
+  },
+  "events": {
+    "linkSuccessMessage": {
+      "name": "KokoRoomInvitation",
+      "discriminator": [
+        "occasion"
+      ],
+      "template": {
+        "occasion": "KokoRoomInvitation",
+        "room": {
+          "destination": "#{h5Url}"
+        }
+      }
+    },
+    "pay": {
+      "name": "KokoKeepsakeOrder",
+      "discriminator": [
+        "occasion"
+      ],
+      "template": {
+        "occasion": "KokoKeepsakeOrder",
+        "keepsake": {
+          "order": "#{orderCode}",
+          "product": "#{batchNo}"
+        }
+      }
+    },
+    "logout": {
+      "name": "KokoDeparture",
+      "discriminator": [
+        "occasion"
+      ],
+      "template": {
+        "occasion": "KokoDeparture"
+      }
+    },
+    "openBrowser": {
+      "name": "KokoOutsideVisit",
+      "discriminator": [
+        "occasion"
+      ],
+      "template": {
+        "occasion": "KokoOutsideVisit",
+        "visit": {
+          "destination": "#{openUrl}"
+        }
+      }
+    }
+  },
+  "contentRoutes": [
+    {
+      "key": "members",
+      "path": "/koko/community/members",
+      "file": "responses/members.json"
+    },
+    {
+      "key": "rooms",
+      "path": "/koko/community/rooms",
+      "file": "responses/rooms.json"
+    },
+    {
+      "key": "keepsakes",
+      "path": "/koko/community/keepsakes",
+      "file": "responses/keepsakes.json"
+    },
+    {
+      "key": "media",
+      "path": "/koko/community/media",
+      "file": "responses/media.json"
+    },
+    {
+      "key": "starters",
+      "path": "/koko/community/starters",
+      "file": "responses/starters.json"
+    },
+    {
+      "key": "engagement",
+      "path": "/koko/community/engagement",
+      "file": "responses/engagement.json"
+    },
+    {
+      "key": "arrangement",
+      "path": "/koko/community/arrangement",
+      "file": "responses/arrangement.json"
+    }
+  ]
+}

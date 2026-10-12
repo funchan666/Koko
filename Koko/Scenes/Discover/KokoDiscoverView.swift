@@ -258,7 +258,7 @@ private struct KokoDiscoverActionCards: View {
     }
 }
 
-/// Uses the host's supplied photograph, never a film thumbnail presented as a live stream.
+/// Shared room-cover source prioritizes the room's independently selected photograph.
 struct KokoRoomHostCover: View {
     @EnvironmentObject private var community: CommunityJournalStore
     let room: HostedConversationRoom

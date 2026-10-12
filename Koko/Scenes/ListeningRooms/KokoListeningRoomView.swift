@@ -351,18 +351,54 @@ final class KokoRoomMusicPlayer: ObservableObject {
     @Published private(set) var currentTrack: String?
     @Published private(set) var volume: Float = 0.5
     @Published private(set) var muted = false
-    private var player: AVAudioPlayer?
-    func play(_ title: String, unavailable: (String) -> Void) {
+    private let playback = KokoRoomMusicPlayback()
+    private var playbackAttempt = UUID()
+    func play(_ title: String, unavailable: @escaping @MainActor (String) -> Void) {
         let key = "koko-" + title.lowercased().replacingOccurrences(of: " ", with: "-")
         guard let url = Bundle.main.url(forResource: key, withExtension: "mp3") else { unavailable("This music file hasn't been added yet. Add \(key).mp3 to enable playback."); return }
-        do {
-            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
-            try AVAudioSession.sharedInstance().setActive(true)
-            player = try AVAudioPlayer(contentsOf: url); player?.volume = muted ? 0 : volume; player?.numberOfLoops = -1
-            if player?.play() == true { currentTrack = title }
-        } catch { unavailable("This audio file couldn't be played.") }
+        let attempt = UUID(); playbackAttempt = attempt; currentTrack = nil
+        playback.play(url, volume: muted ? 0 : volume) { [weak self] success in
+            Task { @MainActor in
+                guard let self, self.playbackAttempt == attempt else { return }
+                if success { self.currentTrack = title }
+                else { unavailable("This audio file couldn't be played.") }
+            }
+        }
     }
-    func adjustVolume(_ change: Float) { volume = min(1, max(0, volume + change)); player?.volume = muted ? 0 : volume }
-    func toggleMute() { muted.toggle(); player?.volume = muted ? 0 : volume }
-    func stop() { player?.stop(); player = nil; currentTrack = nil; try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation) }
+    func adjustVolume(_ change: Float) { volume = min(1, max(0, volume + change)); playback.setVolume(muted ? 0 : volume) }
+    func toggleMute() { muted.toggle(); playback.setVolume(muted ? 0 : volume) }
+    func stop() { playbackAttempt = UUID(); currentTrack = nil; playback.stop() }
+    deinit { playback.stop() }
+}
+
+// The player and audio-session ownership are confined to this serial queue.
+private final class KokoRoomMusicPlayback: @unchecked Sendable {
+    private let queue = DispatchQueue(label: "koko.room-music-playback")
+    private var player: AVAudioPlayer?
+    private var ownsSession = false
+
+    func play(_ url: URL, volume: Float, completion: @escaping @Sendable (Bool) -> Void) {
+        queue.async { [self] in
+            stopOnQueue()
+            do {
+                let session = AVAudioSession.sharedInstance()
+                try session.setCategory(.playback, mode: .default)
+                try session.setActive(true)
+                ownsSession = true
+                let next = try AVAudioPlayer(contentsOf: url)
+                next.volume = volume; next.numberOfLoops = -1; player = next
+                let started = next.play()
+                if !started { stopOnQueue() }
+                completion(started)
+            } catch { stopOnQueue(); completion(false) }
+        }
+    }
+    func setVolume(_ volume: Float) { queue.async { [self] in player?.volume = volume } }
+    func stop() { queue.async { [self] in stopOnQueue() } }
+    private func stopOnQueue() {
+        player?.stop(); player = nil
+        guard ownsSession else { return }
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        ownsSession = false
+    }
 }

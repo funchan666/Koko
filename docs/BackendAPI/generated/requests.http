@@ -1,0 +1,30 @@
+# Synthetic request values only; do not send as a real purchase.
+### loginMethods
+GET https://koko.dfbbdr.top/koko/arrival/entryways
+Accept: application/json
+
+### authenticate
+POST https://koko.dfbbdr.top/koko/arrival/open-invitation
+Accept: application/json
+Content-Type: application/json
+
+{
+  "koko_edition": "1.0",
+  "arrival_chime": "",
+  "listener_installation": "fixture-installation-id",
+  "room_delivery_kind": 2
+}
+
+### confirmPurchase
+POST https://koko.dfbbdr.top/koko/keepsakes/settlement
+Accept: application/json
+Content-Type: application/json
+
+{
+  "koko_edition": "1.0",
+  "listener_installation": "fixture-installation-id",
+  "apple_keepsake_transaction": "fixture-apple-transaction",
+  "keepsake_receipt": "SYNTHETIC_RECEIPT_NOT_VALID_FOR_PAYMENT",
+  "room_order_reference": "fixture-backend-order"
+}
+

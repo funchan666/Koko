@@ -1,0 +1,62 @@
+{
+  "code": 0,
+  "message": "ok",
+  "data": [
+    {
+      "id": "green-rose",
+      "keepsakeName": "A little bloom",
+      "artworkTile": 8,
+      "wearable": false,
+      "tokenCost": 30
+    },
+    {
+      "id": "headphones",
+      "keepsakeName": "Good listening",
+      "artworkTile": 9,
+      "wearable": false,
+      "tokenCost": 75
+    },
+    {
+      "id": "coral-star",
+      "keepsakeName": "You made my day",
+      "artworkTile": 10,
+      "wearable": false,
+      "tokenCost": 160
+    },
+    {
+      "id": "mirror-ball",
+      "keepsakeName": "Room to dance",
+      "artworkTile": 11,
+      "wearable": false,
+      "tokenCost": 320
+    },
+    {
+      "id": "jade-crown",
+      "keepsakeName": "Room regular",
+      "artworkTile": 12,
+      "wearable": true,
+      "tokenCost": 1500
+    },
+    {
+      "id": "green-ribbon",
+      "keepsakeName": "Good company",
+      "artworkTile": 13,
+      "wearable": true,
+      "tokenCost": 480
+    },
+    {
+      "id": "pocket-radio",
+      "keepsakeName": "Pocket radio",
+      "artworkTile": 14,
+      "wearable": true,
+      "tokenCost": 1100
+    },
+    {
+      "id": "weekend-bag",
+      "keepsakeName": "Out of office",
+      "artworkTile": 15,
+      "wearable": true,
+      "tokenCost": 720
+    }
+  ]
+}

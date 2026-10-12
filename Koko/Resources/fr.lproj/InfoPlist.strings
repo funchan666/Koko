@@ -1,2 +1,3 @@
-"NSCameraUsageDescription" = "Utilisez la caméra pour votre photo de profil, la couverture de votre salon ou pour vérifier la vidéo avant un appel. Les photos restent sur cet appareil. Les vérifications vidéo ne sont ni enregistrées ni envoyées.";
-"NSMicrophoneUsageDescription" = "Vérifiez votre microphone avant de rejoindre un salon ou de préparer un appel. Cette version n’enregistre ni n’envoie de son.";
+"NSCameraUsageDescription" = "Utilisez la caméra lorsque vous choisissez de prendre une photo de profil ou de couverture, de vérifier votre vidéo ou d’utiliser la vidéo dans un salon.";
+"NSMicrophoneUsageDescription" = "Utilisez le microphone lorsque vous choisissez de vérifier votre audio, de parler dans un salon ou de participer à un appel.";
+"NSPhotoLibraryUsageDescription" = "Choisissez une photo pour votre profil, la couverture d’un salon ou une publication.";

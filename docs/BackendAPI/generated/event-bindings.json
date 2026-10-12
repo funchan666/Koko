@@ -1,0 +1,49 @@
+{
+  "linkSuccessMessage": {
+    "name": "KokoRoomInvitation",
+    "discriminator": [
+      "occasion"
+    ],
+    "values": {
+      "h5Url": [
+        "room",
+        "destination"
+      ]
+    }
+  },
+  "pay": {
+    "name": "KokoKeepsakeOrder",
+    "discriminator": [
+      "occasion"
+    ],
+    "values": {
+      "orderCode": [
+        "keepsake",
+        "order"
+      ],
+      "batchNo": [
+        "keepsake",
+        "product"
+      ]
+    }
+  },
+  "logout": {
+    "name": "KokoDeparture",
+    "discriminator": [
+      "occasion"
+    ],
+    "values": {}
+  },
+  "openBrowser": {
+    "name": "KokoOutsideVisit",
+    "discriminator": [
+      "occasion"
+    ],
+    "values": {
+      "openUrl": [
+        "visit",
+        "destination"
+      ]
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "occasion": "KokoKeepsakeOrder",
+  "keepsake": {
+    "order": "#{orderCode}",
+    "product": "#{batchNo}"
+  }
+}

@@ -53,10 +53,11 @@ final class KokoRoomDemoSession: ObservableObject {
             guard !senders.isEmpty else { sequence += 1; continue }
             let sender = senders[sequence % senders.count]
             let phrases = Self.phrases(for: currentRoom.conversationTopic)
+            guard !phrases.isEmpty else { sequence += 1; continue }
             // Stable IDs let a reported line stay hidden across room re-entry.
             var entry = ConversationEntry(authorMemberID: sender, messageText: KokoCopy.text(phrases[sequence % phrases.count]))
             entry.id = "room-demo-\(room.id)-\(sender)-\(sequence)"
-            if sequence % 4 == 2 {
+            if sequence % 4 == 2, !KokoCommunity.keepsakes.isEmpty {
                 let gift = KokoCommunity.keepsakes[(sequence / 4) % KokoCommunity.keepsakes.count]
                 let quantity = [1, 3, 1, 5][(sequence / 4) % 4]
                 entry.id += "-gift"
@@ -75,11 +76,8 @@ final class KokoRoomDemoSession: ObservableObject {
     }
 
     private static func phrases(for topic: String) -> [String] {
-        switch topic {
-        case "Music": return ["What song have you had on repeat?", "This is my kind of evening.", "Headphones on, finally unwinding.", "That chorus stays with you.", "I'd love to hear your next pick.", "One more track before I go.", "The best songs come with a story.", "Saving that for my walk tomorrow."]
-        case "Creative": return ["What are you working on today?", "I like seeing the little details.", "That gives me an idea.", "The first draft is always the hardest.", "Keep going, I'd love to see it.", "A quiet evening to make something.", "How did you get started?", "Thanks for sharing the process."]
-        default: return ["Hey everyone, how's your evening?", "Just got home. Happy to listen.", "That made me smile.", "Tell us the rest of the story.", "A little company after a long day.", "Anyone else here with a cup of tea?", "I know exactly what you mean.", "Glad I dropped in tonight."]
-        }
+        let phrases = KokoCommunityCollection.shared.snapshot.arrangement.roomPhrases
+        return phrases[topic] ?? phrases["Conversation"] ?? []
     }
 }
 

@@ -1,6 +1,6 @@
 import Foundation
 
-struct RoomKeepsake: Identifiable, Codable, Hashable {
+struct RoomKeepsake: Identifiable, Codable, Hashable, Sendable {
     let id: String
     let keepsakeName: String
     let artworkTile: Int

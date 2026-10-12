@@ -1,2 +1,3 @@
-"NSCameraUsageDescription" = "用于拍摄个人头像或房间封面，或在通话前检查摄像头。照片保存在此设备；视频检查不会录制或发送。";
-"NSMicrophoneUsageDescription" = "用于进入语音房或准备通话前检查麦克风输入。此版本不会录制或发送音频。";
+"NSCameraUsageDescription" = "在你主动拍摄头像或房间封面、检查视频或使用房间视频功能时使用摄像头。";
+"NSMicrophoneUsageDescription" = "在你主动检查音频、在房间发言或参与通话时使用麦克风。";
+"NSPhotoLibraryUsageDescription" = "选择用于个人资料、房间封面或动态的照片。";

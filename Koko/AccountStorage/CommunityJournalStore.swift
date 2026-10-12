@@ -106,15 +106,29 @@ final class CommunityJournalStore: ObservableObject {
     var hasCurrentPolicyConsent: Bool { journal?.policyConsent?.revision == KokoPolicyConsent.currentRevision }
     var hasCompletedAccountEntry: Bool {
         guard let journal, !requiresAppleProfileReview else { return false }
-        return journal.completedProfile || (journal.accountCredentialKind == "email" && journal.enteredHomeViaEmail == true)
+        return journal.completedProfile || (["email", "visitor"].contains(journal.accountCredentialKind ?? "") && journal.enteredHomeViaEmail == true)
     }
 
+    func enterVisitorIdentity() -> Bool {
+        do {
+            let identity = "visitor-" + (try KokoGatewayClient.shared.installationID())
+            var saved = try readSavedJournal(identity) ?? newJournal(identity: identity)
+            saved.policyConsent = KokoPolicyConsent(); saved.accountCredentialKind = "visitor"
+            saved.enteredHomeViaEmail = true
+            try activate(saved, identity: identity); return true
+        } catch { notice = "Your visitor space could not be saved. Please try again."; return false }
+    }
+    func endGatewaySession() {
+        journal = nil; activeIdentity = nil; requiresAppleProfileReview = false
+        coinSpendRequest = nil; coinShortfall = nil; signedOutDestination = "Welcome"
+        UserDefaults.standard.removeObject(forKey: sessionPreference)
+    }
     func signIn(email: String, password: String, consent: Bool) async -> Bool {
         guard consent else { notice = "Please agree to the Terms of Service and Privacy Policy before continuing."; return false }
         if let issue = KokoAccountValidation.emailIssue(email) ?? KokoAccountValidation.passwordIssue(password) { notice = issue; return false }
         let key = KokoLocalCredentials.identityKey("email:" + KokoAccountValidation.normalizedEmail(email))
         do {
-            // Local preview entry: validate format only; the email selects the saved space.
+            // Remote authentication has completed before this local journal is activated.
             var restored = try readSavedJournal(key) ?? newJournal(identity: key)
             restored.accountCredentialKind = "email"
             restored.policyConsent = KokoPolicyConsent()
@@ -135,7 +149,10 @@ final class CommunityJournalStore: ObservableObject {
         let key = KokoLocalCredentials.identityKey("email:" + KokoAccountValidation.normalizedEmail(email))
         do {
             var draft = try readSavedJournal(key) ?? newJournal(identity: key)
-            guard draft.accountCredentialKind == nil else { notice = "This account already exists on this device. Choose Log in with this email and any password of 8–128 characters."; return false }
+            if draft.accountCredentialKind != nil {
+                draft.policyConsent = KokoPolicyConsent()
+                try activate(draft, identity: key); return true
+            }
             draft.accountCredentialKind = "email"; draft.policyConsent = KokoPolicyConsent(); draft.completedProfile = false
             try activate(draft, identity: key)
             return true

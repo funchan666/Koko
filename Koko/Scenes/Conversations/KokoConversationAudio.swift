@@ -54,6 +54,11 @@ final class KokoConversationAudioPipeline: @unchecked Sendable {
         }
     }
     func stop() { queue.async { [self] in stopOnQueue() } }
+    func readRoute(completion: @escaping @Sendable (String) -> Void) {
+        queue.async {
+            completion(AVAudioSession.sharedInstance().currentRoute.outputs.map(\.portName).joined(separator: ", "))
+        }
+    }
     private func stopOnQueue() {
         if let engine { engine.stop(); engine.inputNode.removeTap(onBus: 0) }
         engine = nil
@@ -123,8 +128,13 @@ final class KokoConversationAudio: ObservableObject {
         }
     }
     func refreshRoute() {
-        routeName = AVAudioSession.sharedInstance().currentRoute.outputs.map(\.portName).joined(separator: ", ")
-        if routeName.isEmpty { routeName = "System audio route" }
+        let attempt = revision
+        pipeline.readRoute { [weak self] route in
+            Task { @MainActor in
+                guard let self, self.revision == attempt else { return }
+                self.routeName = route.isEmpty ? "System audio route" : route
+            }
+        }
     }
 }
 

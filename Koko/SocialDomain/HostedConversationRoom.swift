@@ -1,6 +1,6 @@
 import Foundation
 
-struct HostedConversationRoom: Identifiable, Codable, Hashable {
+struct HostedConversationRoom: Identifiable, Codable, Hashable, Sendable {
     var id: String
     var roomTitle: String
     var conversationPrompt: String

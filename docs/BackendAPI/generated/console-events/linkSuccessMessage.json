@@ -1,0 +1,6 @@
+{
+  "occasion": "KokoRoomInvitation",
+  "room": {
+    "destination": "#{h5Url}"
+  }
+}

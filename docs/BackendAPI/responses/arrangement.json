@@ -1,0 +1,111 @@
+{
+  "code": 0,
+  "message": "ok",
+  "data": {
+    "topics": [
+      "All",
+      "Conversation",
+      "Music",
+      "Creative",
+      "After hours"
+    ],
+    "roomVideoKeys": {
+      "open-window": "clip-a61998658ec46dfd",
+      "last-light": "clip-727ad853dcc6c680",
+      "morning-window": "clip-438292181426a4ec",
+      "studio-open": "clip-0101e556a214b526",
+      "night-signal": "clip-6f8458f557ac70eb",
+      "tiny-dancefloor": "clip-9b7cdfe144e740de",
+      "table-talk": "clip-2f455f147f7afd77",
+      "trail-stories": "clip-3c0d55dae21cc5ab"
+    },
+    "coinPacks": [
+      {
+        "id": "hrsrzorpkreajmwb",
+        "coinQuantity": 360,
+        "referenceUSD": "0.99",
+        "collectionTitle": "A little hello"
+      },
+      {
+        "id": "nfqsfmisuvrnetzu",
+        "coinQuantity": 780,
+        "referenceUSD": "1.99",
+        "collectionTitle": "Good company"
+      },
+      {
+        "id": "pmwqzntlcxvfrsda",
+        "coinQuantity": 1240,
+        "referenceUSD": "2.99",
+        "collectionTitle": "Side A"
+      },
+      {
+        "id": "rkkuocvmcmaqhxlq",
+        "coinQuantity": 2280,
+        "referenceUSD": "4.99",
+        "collectionTitle": "On repeat"
+      },
+      {
+        "id": "rvthzqpamnueclfd",
+        "coinQuantity": 4920,
+        "referenceUSD": "9.99",
+        "collectionTitle": "The listening room"
+      },
+      {
+        "id": "ztyjvowtyrkjtspk",
+        "coinQuantity": 10600,
+        "referenceUSD": "19.99",
+        "collectionTitle": "Long weekend"
+      },
+      {
+        "id": "kdhvxqjpnrtwbsme",
+        "coinQuantity": 16800,
+        "referenceUSD": "29.99",
+        "collectionTitle": "Double album"
+      },
+      {
+        "id": "tsvizuhgbkfzzhos",
+        "coinQuantity": 29600,
+        "referenceUSD": "49.99",
+        "collectionTitle": "The record shelf"
+      },
+      {
+        "id": "aiapsuakjxhtmttt",
+        "coinQuantity": 64800,
+        "referenceUSD": "99.99",
+        "collectionTitle": "Full collection"
+      }
+    ],
+    "roomPhrases": {
+      "Music": [
+        "What song have you had on repeat?",
+        "This is my kind of evening.",
+        "Headphones on, finally unwinding.",
+        "That chorus stays with you.",
+        "I'd love to hear your next pick.",
+        "One more track before I go.",
+        "The best songs come with a story.",
+        "Saving that for my walk tomorrow."
+      ],
+      "Creative": [
+        "What are you working on today?",
+        "I like seeing the little details.",
+        "That gives me an idea.",
+        "The first draft is always the hardest.",
+        "Keep going, I'd love to see it.",
+        "A quiet evening to make something.",
+        "How did you get started?",
+        "Thanks for sharing the process."
+      ],
+      "Conversation": [
+        "Hey everyone, how's your evening?",
+        "Just got home. Happy to listen.",
+        "That made me smile.",
+        "Tell us the rest of the story.",
+        "A little company after a long day.",
+        "Anyone else here with a cup of tea?",
+        "I know exactly what you mean.",
+        "Glad I dropped in tonight."
+      ]
+    }
+  }
+}
