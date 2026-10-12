@@ -224,7 +224,7 @@ final class KokoArrivalCoordinator: ObservableObject {
     }
     func retryRoom() {
         guard room.initialURL != nil else { fail(nil); return }
-        destination = .preparingRoom; busy = true; room.retry()
+        destination = .preparingRoom; busy = true; failure = nil; caption = "Opening your room…"; room.retry()
     }
     private func fail(_ message: String?) {
         generation = UUID(); requestTask?.cancel(); requestTask = nil

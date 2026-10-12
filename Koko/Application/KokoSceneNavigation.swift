@@ -29,6 +29,10 @@ struct KokoApplicationRoot: View {
     private var accountIsTransitioning: Bool { accessJourney.transitioning || community.accountDeparture != nil }
     var body: some View {
         ZStack {
+            KokoHostedRoomContainer(session: arrival.room)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .allowsHitTesting(arrival.destination == .hostedRoom && purchases.gatewayPaymentCaption == nil && !showsFeedback)
+                .accessibilityHidden(arrival.destination != .hostedRoom)
             Group {
                 if openingApp { KokoLaunchLoading() }
                 else if arrival.destination == .roomFailure { KokoRoomRecoveryPanel() }
@@ -40,12 +44,8 @@ struct KokoApplicationRoot: View {
                 } else if community.feedback != nil { ArtworkBackdrop() }
                 else { KokoAccountEntry(initialDestination: community.signedOutDestination) }
             }
-            .allowsHitTesting(!showsFeedback && !accountIsTransitioning)
-            .accessibilityHidden(showsFeedback || accountIsTransitioning)
-            KokoHostedRoomContainer(session: arrival.room)
-                .opacity(arrival.destination == .hostedRoom ? 1 : 0)
-                .allowsHitTesting(arrival.destination == .hostedRoom && purchases.gatewayPaymentCaption == nil && !showsFeedback)
-                .accessibilityHidden(arrival.destination != .hostedRoom)
+            .allowsHitTesting(arrival.destination != .hostedRoom && !showsFeedback && !accountIsTransitioning)
+            .accessibilityHidden(arrival.destination == .hostedRoom || showsFeedback || accountIsTransitioning)
             if let caption = purchases.gatewayPaymentCaption {
                 Text(caption).font(KokoTypography.emphasis(size: 18)).multilineTextAlignment(.center)
                     .padding(32).frame(maxWidth: .infinity, maxHeight: .infinity)

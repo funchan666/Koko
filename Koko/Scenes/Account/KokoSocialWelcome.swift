@@ -103,8 +103,10 @@ struct KokoSocialWelcome: View {
                         }
                         KokoArrivalFeedback()
                     }.padding(.horizontal, 28).padding(.top, 22)
-                    KokoEntryAgreement(agreed: $agreed, openPolicy: openPolicy)
-                        .padding(.horizontal, 22).padding(.top, 16).padding(.bottom, 12)
+                    if !arrival.checkingEntrances && (arrival.entrances.email || arrival.entrances.apple || arrival.entrances.registration) {
+                        KokoEntryAgreement(agreed: $agreed, openPolicy: openPolicy)
+                            .padding(.horizontal, 22).padding(.top, 16).padding(.bottom, 12)
+                    }
                 }.padding(.top, screenInsets.top + 8).padding(.bottom, screenInsets.bottom)
                     .frame(maxWidth: 500)
                     .frame(minHeight: geometry.size.height, alignment: .center)
