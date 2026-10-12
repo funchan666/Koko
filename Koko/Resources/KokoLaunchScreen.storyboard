@@ -45,7 +45,7 @@
     </scenes>
     <resources>
         <image name="KokoBrandMark" width="1024" height="1024"/>
-        <image name="KokoLoadingLight" width="1280" height="1280"/>
+        <image name="KokoLoadingLight" width="1254" height="1254"/>
         <namedColor name="KokoLaunchBackdrop">
             <color red="0.07843137255" green="0.04313725490" blue="0.14117647059" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
