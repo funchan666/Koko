@@ -1,5 +1,19 @@
 import SwiftUI
 
+/// Original bitmaps include transparent export margins. Scale the complete image
+/// behind the hit area; no cropping, masking, or pixel modification is applied.
+private struct KokoStudioArtwork: View {
+    let name: String
+    let heightScale: CGFloat
+    var body: some View {
+        GeometryReader { geometry in
+            Image(name).resizable()
+                .frame(width: geometry.size.width, height: geometry.size.height * heightScale)
+                .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+        }.allowsHitTesting(false).accessibilityHidden(true)
+    }
+}
+
 struct KokoStudioAction: View {
     let title: String
     let action: () -> Void
@@ -7,9 +21,9 @@ struct KokoStudioAction: View {
         Button(action: action) {
             Text(LocalizedStringKey(title)).font(KokoTypography.emphasis(size: 15))
                 .multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
-                .foregroundStyle(KokoInk.primary).padding(.horizontal, 26).padding(.vertical, 22)
-                .frame(maxWidth: .infinity, minHeight: 64)
-                .background { Image("KokoConversationStudioAction").resizable().accessibilityHidden(true) }
+                .foregroundStyle(KokoInk.canvas).padding(.horizontal, 24).padding(.vertical, 14)
+                .frame(maxWidth: .infinity, minHeight: 48)
+                .background { KokoStudioArtwork(name: "KokoStudioCoralAction", heightScale: 2.22) }
                 .contentShape(Rectangle())
         }.buttonStyle(KokoPressStyle())
     }
@@ -18,22 +32,31 @@ struct KokoStudioAction: View {
 struct KokoStudioPaper<Content: View>: View {
     @ViewBuilder var content: Content
     var body: some View {
-        VStack(alignment: .leading, spacing: 18) { content }
-            .foregroundStyle(KokoInk.canvas).padding(24).padding(.bottom, 50)
+        VStack(alignment: .leading, spacing: 12) { content }
+            .foregroundStyle(KokoInk.canvas).padding(20).padding(.bottom, 8)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background { Image("KokoConversationStudioSurface").resizable().accessibilityHidden(true) }
+            .background { KokoStudioArtwork(name: "KokoStudioNoteSurface", heightScale: 1.10) }
     }
 }
 
 struct KokoStudioEntry: View {
     @EnvironmentObject private var navigation: KokoSceneNavigation
     var body: some View {
-        KokoStudioPaper {
-            Text("Conversation studio").font(KokoTypography.heading(size: 24))
-            Text("Give a conversation a beginning, a little depth and a next time.")
-                .font(KokoTypography.medium(size: 15))
-            KokoStudioAction(title: "Arrange a conversation") { navigation.open(.conversationStudio(nil)) }
-        }
+        Button { navigation.open(.conversationStudio(nil)) } label: {
+            VStack(alignment: .leading, spacing: 5) {
+                Text("Conversation studio").font(KokoTypography.heading(size: 18))
+                Text("A few questions. A closer conversation.")
+                    .font(KokoTypography.medium(size: 12))
+            }
+            .fixedSize(horizontal: false, vertical: true)
+            .foregroundStyle(KokoInk.canvas)
+            .padding(.leading, 90).padding(.trailing, 38).padding(.vertical, 16)
+            .frame(maxWidth: 380, minHeight: 88, alignment: .leading)
+            .background { KokoStudioArtwork(name: "KokoStudioInvitationStrip", heightScale: 1.86) }
+            .contentShape(Rectangle())
+        }.buttonStyle(KokoPressStyle())
+            .accessibilityElement(children: .combine)
+            .accessibilityHint(Text("Arrange a conversation"))
     }
 }
 
@@ -42,37 +65,46 @@ struct KokoConversationStudio: View {
     @EnvironmentObject private var navigation: KokoSceneNavigation
     let roomID: String?
     @State private var confirmEditionOwner: String?
+    @State private var showsEditionQuestions = false
     private var hasConfirmation: Bool { confirmEditionOwner != nil }
     var body: some View {
         ZStack {
             KokoPage(title: "Conversation studio", subtitle: "Prepare. Listen. Remember.", back: navigation.back) {
-                KokoStudioPaper {
-                    Text("A little structure. More room to listen.").font(KokoTypography.heading(size: 28))
-                    Text("Arrange three questions, keep private notes and leave yourself a thread for next time.")
-                        .font(KokoTypography.medium(size: 15))
+                VStack(alignment: .leading, spacing: 14) {
+                    Text("Start with a good question.").font(KokoTypography.heading(size: 23))
+                    Text("Three prompts, space to listen, a thought to keep.")
+                        .font(KokoTypography.body(size: 14)).foregroundStyle(KokoInk.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
                     KokoStudioAction(title: "Make a free plan") { create() }
-                    Text("Writing, hosting cues and reflections are free.").font(KokoTypography.medium(size: 12))
-                }
-                Text("Your conversations").font(KokoTypography.heading(size: 22))
-                if community.conversationPlans.isEmpty {
-                    Text("Your first plan starts with a question. Only you can see your notes.")
-                        .font(KokoTypography.body(size: 15)).foregroundStyle(KokoInk.secondary)
-                }
-                ForEach(community.conversationPlans) { plan in
-                    Button { navigation.open(.conversationPlan(plan.id, roomID)) } label: {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(verbatim: plan.sessionTitle).font(KokoTypography.heading(size: 19))
-                            HStack {
-                                Text(LocalizedStringKey(plan.hostingFinishedAt != nil ? "Reflection" : plan.isActive ? "Hosting cues" : "Draft plan"))
-                                Spacer()
-                                Text(plan.lastEditedAt, style: .date)
-                            }.font(KokoTypography.medium(size: 12)).foregroundStyle(KokoInk.secondary)
-                        }.frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 14).contentShape(Rectangle())
-                    }.buttonStyle(KokoPressStyle())
+                    Text("Writing, hosting cues and reflections are free.")
+                        .font(KokoTypography.medium(size: 11)).foregroundStyle(KokoInk.secondary)
+                }.padding(.bottom, 6)
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Your conversations").font(KokoTypography.heading(size: 20))
+                    if community.conversationPlans.isEmpty {
+                        KokoStudioPaper {
+                            Text("Your next hello starts here.").font(KokoTypography.emphasis(size: 16))
+                            Text("Create a plan above. Your questions and private notes will be kept here.")
+                                .font(KokoTypography.body(size: 13)).fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                    ForEach(community.conversationPlans) { plan in
+                        Button { navigation.open(.conversationPlan(plan.id, roomID)) } label: {
+                            KokoStudioPaper {
+                                Text(verbatim: plan.sessionTitle).font(KokoTypography.heading(size: 18))
+                                    .multilineTextAlignment(.leading).fixedSize(horizontal: false, vertical: true)
+                                HStack(alignment: .firstTextBaseline) {
+                                    Text(LocalizedStringKey(plan.hostingFinishedAt != nil ? "Reflection" : plan.isActive ? "Hosting cues" : "Draft plan"))
+                                    Spacer(minLength: 8)
+                                    Text(plan.lastEditedAt, style: .date)
+                                }.font(KokoTypography.medium(size: 11))
+                            }.contentShape(Rectangle())
+                        }.buttonStyle(KokoPressStyle())
+                    }
                 }
                 edition
                 Text("Plans and unlocks stay in this account on this device. No broadcast or invitation is sent. Deleting the account or app data removes them.")
-                    .font(KokoTypography.medium(size: 12)).foregroundStyle(KokoInk.secondary)
+                    .font(KokoTypography.medium(size: 11)).foregroundStyle(KokoInk.secondary)
             }.allowsHitTesting(!hasConfirmation).accessibilityHidden(hasConfirmation)
             if let owner = confirmEditionOwner {
                 KokoModal(title: "Unlock Music memories?", dismiss: { confirmEditionOwner = nil }) {
@@ -87,20 +119,39 @@ struct KokoConversationStudio: View {
         }
     }
     private var edition: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            Image("KokoConversationMusicEdition").resizable().scaledToFit().accessibilityHidden(true)
-            Text("Music memories").font(KokoTypography.heading(size: 25))
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .center, spacing: 14) {
+                Image("KokoConversationMusicEdition").resizable().scaledToFit()
+                    .frame(width: 86).accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 5) {
+                    Text("Music memories").font(KokoTypography.heading(size: 19))
+                    Text("Six questions. Two ways to connect.")
+                        .font(KokoTypography.medium(size: 12)).foregroundStyle(KokoInk.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
             Text("Two conversations about the people, places and memories inside a song. Music recordings are not included.")
-                .font(KokoTypography.medium(size: 14))
-            // Show the exact contents before asking for any coin spend.
-            ForEach(Array(ConversationEditions.music.enumerated()), id: \.offset) { index, question in
-                HStack(alignment: .top, spacing: 12) {
-                    Text(String(index + 1)).font(KokoTypography.heading(size: 16)).foregroundStyle(KokoInk.accent)
-                    Text(LocalizedStringKey(question)).font(KokoTypography.body(size: 14))
+                .font(KokoTypography.body(size: 13)).foregroundStyle(KokoInk.secondary)
+            Button {
+                showsEditionQuestions.toggle()
+            } label: {
+                Text(LocalizedStringKey(showsEditionQuestions ? "Hide the questions" : "Read all six questions"))
+                    .font(KokoTypography.emphasis(size: 13)).foregroundStyle(KokoInk.accent)
+                    .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                    .contentShape(Rectangle())
+            }.buttonStyle(KokoPressStyle())
+                .accessibilityValue(Text(LocalizedStringKey(showsEditionQuestions ? "Expanded" : "Collapsed")))
+            // Exact contents remain available before any spend confirmation.
+            if showsEditionQuestions {
+                ForEach(Array(ConversationEditions.music.enumerated()), id: \.offset) { index, question in
+                    HStack(alignment: .top, spacing: 12) {
+                        Text(String(index + 1)).font(KokoTypography.heading(size: 15)).foregroundStyle(KokoInk.accent)
+                        Text(LocalizedStringKey(question)).font(KokoTypography.body(size: 14))
+                    }
                 }
             }
             if community.ownsMusicEdition {
-                Text("Unlocked · use as often as you like").font(KokoTypography.emphasis(size: 13))
+                Text("Unlocked · use as often as you like").font(KokoTypography.emphasis(size: 12))
                 KokoStudioAction(title: "The room inside a song") { create(sequence: 0) }
                 KokoStudioAction(title: "A song someone gave you") { create(sequence: 1) }
             } else {
@@ -159,8 +210,8 @@ struct KokoConversationPlanView: View {
                 KokoStudioPaper {
                     Text(LocalizedStringKey(ConversationRunSheet.stages[index])).font(KokoTypography.heading(size: 20))
                     TextField(KokoCopy.text("Your question · 240 characters"), text: questionBinding(index), axis: .vertical)
-                        .textFieldStyle(.plain).font(KokoTypography.handwritten(size: 29))
-                        .tint(KokoInk.canvas).lineLimit(3...6)
+                        .textFieldStyle(.plain).font(KokoTypography.handwritten(size: 25))
+                        .tint(KokoInk.canvas).lineLimit(2...6)
                         .accessibilityLabel(Text(LocalizedStringKey(ConversationRunSheet.stages[index])))
                     HStack {
                         if index > 0 { Button("Move earlier") { swap(index, index - 1) }.frame(minHeight: 44) }
@@ -234,8 +285,8 @@ struct KokoConversationPlanView: View {
             TextField(KokoCopy.text(label), text: value, axis: .vertical)
                 .textFieldStyle(.plain).font(KokoTypography.body(size: 17)).lineLimit(2...8)
                 .foregroundStyle(KokoInk.canvas).tint(KokoInk.canvas)
-                .padding(24).padding(.bottom, 30)
-                .background { Image("KokoConversationStudioSurface").resizable().accessibilityHidden(true) }
+                .padding(20).padding(.bottom, 8)
+                .background { KokoStudioArtwork(name: "KokoStudioNoteSurface", heightScale: 1.10) }
         }
     }
     private func binding(_ path: WritableKeyPath<ConversationRunSheet, String>) -> Binding<String> {

@@ -13,3 +13,7 @@ Core files: `SocialDomain/ConversationRunSheet.swift`, `AccountStorage/Community
 Model fields are optional additions to MemberAccountArchive, preserving old account decoding. Draft text, active step, room binding, private notes, reflection and entitlement persist with the existing atomic protected journal write. The music entitlement has a stable edition ID and no expiry. Repeated unlock requests are idempotent. All core hosting functions remain free.
 
 Static source/resource review only. Images were visually inspected as generated, but no simulator layout acceptance, compilation, payment test or app execution was performed.
+
+## Compact revision
+
+The entrance, studio overview and shared writing/action surfaces now use the [compact revision](compact-revision/README.md). The original 50 pt lower inset and oversized edition image described above are superseded. Music memories retains its complete original cover as a small thumbnail; model, persistence and unlock rules are unchanged.

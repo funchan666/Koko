@@ -27,6 +27,7 @@
 "A conversation worth keeping" = "Una conversación para recordar";
 "A different topic could be the start." = "Otro tema puede ser el comienzo.";
 "A few details to start with." = "Unos detalles para empezar.";
+"A few questions. A closer conversation." = "Unas preguntas. Más conexión.";
 "A few shared threads" = "Algunas afinidades";
 "A gesture waiting to happen" = "Un detalle por compartir";
 "A hello goes both ways." = "Un hola va en ambos sentidos.";
@@ -219,6 +220,7 @@
 "Clear your conversations?" = "¿Borrar tus conversaciones?";
 "Close" = "Cerrar";
 "Coin packs" = "Paquetes de monedas";
+"Collapsed" = "Contraído";
 "Collection filters" = "Filtros de colección";
 "Come say\nhello." = "Ven a\nsaludar.";
 "Comfort comes first" = "Tu comodidad primero";
@@ -245,6 +247,7 @@
 "Create\naccount." = "Crear\ncuenta.";
 "Create a live room" = "Crear un directo";
 "Create a password" = "Crear una contraseña";
+"Create a plan above. Your questions and private notes will be kept here." = "Crea un plan arriba. Tus preguntas y notas privadas se guardarán aquí.";
 "Create a post" = "Crear publicación";
 "Create a room: +20 points" = "Crear sala: +20 puntos";
 "Create a video room" = "Crear sala de vídeo";
@@ -300,6 +303,7 @@
 "Every available sample guest already has a seat." = "Todos los invitados de ejemplo ya tienen asiento.";
 "Every day you check in adds 10 activity points. Once a day, at your own pace." = "Cada visita diaria suma 10 puntos. Una vez al día, a tu ritmo.";
 "Every friendship\nstarts with hello." = "Toda amistad\nempieza con un hola.";
+"Expanded" = "Expandido";
 "Explore Music memories" = "Explorar Recuerdos musicales";
 "Explore all interests" = "Explorar todos los intereses";
 "Explore people" = "Descubrir personas";
@@ -372,6 +376,7 @@
 "Help shape Koko" = "Ayuda a mejorar Koko";
 "Hidden on this device. Your report is saved here; it has not been sent to a moderation service." = "Oculto en este dispositivo. La denuncia se guardó aquí; no se envió a moderación.";
 "Hide" = "Ocultar";
+"Hide the questions" = "Ocultar las preguntas";
 "History" = "Historial";
 "Host" = "Anfitrión";
 "Host · preview" = "Anfitrión · vista previa";
@@ -626,6 +631,7 @@
 "ROOM PREVIEW · SAVED ON THIS DEVICE" = "VISTA PREVIA · GUARDADO EN ESTE DISPOSITIVO";
 "Ranking" = "Clasificación";
 "Re-enter your password" = "Repite tu contraseña";
+"Read all six questions" = "Leer las seis preguntas";
 "Read and agree to both policies before continuing." = "Lee y acepta ambas políticas para continuar.";
 "Reading view" = "Vista de lectura";
 "Recorded preview" = "Vista grabada";
@@ -738,6 +744,7 @@
 "Signing out…" = "Cerrando sesión…";
 "Simplified Chinese" = "Chino simplificado";
 "Six music questions and two hosting sequences are ready. Reusing them is free." = "Seis preguntas musicales y dos guías listas. Reutilizarlas es gratis.";
+"Six questions. Two ways to connect." = "Seis preguntas. Dos formas de conectar.";
 "Small gestures.\nYour own rhythm." = "Pequeños gestos.\nA tu ritmo.";
 "Small joys" = "Pequeñas alegrías";
 "Something to improve" = "Algo que mejorar";
@@ -752,6 +759,7 @@
 "Start a voice room" = "Crear sala de voz";
 "Start a voice room →" = "Crear sala de voz →";
 "Start private cue board" = "Iniciar guía privada";
+"Start with a good question." = "Empieza con una buena pregunta.";
 "Start with a shared interest" = "Empieza por un interés común";
 "Start with what you love" = "Empieza por lo que te gusta";
 "Starts here." = "Empieza aquí.";
@@ -827,6 +835,7 @@
 "This room is no longer available." = "Esta sala ya no está disponible.";
 "This room is no longer available. No coins were spent." = "La sala ya no está disponible. No se gastaron monedas.";
 "This room's video is unavailable." = "El vídeo de esta sala no está disponible.";
+"Three prompts, space to listen, a thought to keep." = "Tres preguntas, tiempo para escuchar y algo que recordar.";
 "Top up →" = "Recargar →";
 "Travel" = "Viajes";
 "Try a new connection" = "Prueba una nueva conexión";
@@ -981,6 +990,7 @@
 "Your mutual friends will appear here." = "Tus amistades mutuas aparecerán aquí.";
 "Your name" = "Tu nombre";
 "Your next conversation starts here" = "Tu próxima conversación empieza aquí";
+"Your next hello starts here." = "Tu próxima conversación empieza aquí.";
 "Your notes belong to you. Save a thought, not a transcript of someone else." = "Tus notas son tuyas. Guarda una idea, no una transcripción de otra persona.";
 "Your opening track" = "Tu canción de apertura";
 "Your password could not be secured. Please try again." = "No se pudo proteger tu contraseña. Reinténtalo.";
