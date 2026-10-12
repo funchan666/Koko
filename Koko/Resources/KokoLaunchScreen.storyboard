@@ -15,28 +15,26 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="KokoBrandMark" translatesAutoresizingMaskIntoConstraints="NO" id="KokoLaunchMark">
-                                <rect key="frame" x="96.5" y="287" width="200" height="200"/>
+                                <rect key="frame" x="116.5" y="346" width="160" height="160"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="200" id="KokoLaunchMarkWidth"/>
-                                    <constraint firstAttribute="height" constant="200" id="KokoLaunchMarkHeight"/>
+                                    <constraint firstAttribute="width" constant="160" id="KokoLaunchMarkWidth"/>
+                                    <constraint firstAttribute="height" constant="160" id="KokoLaunchMarkHeight"/>
                                 </constraints>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="•••" textAlignment="center" lineBreakMode="tailTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KokoLaunchLoading">
-                                <rect key="frame" x="176.5" y="507" width="40" height="30"/>
-                                <color key="textColor" red="0.725" green="0.929" blue="0.808" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="20"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="KokoLoadingLight" translatesAutoresizingMaskIntoConstraints="NO" id="KokoLaunchLoading">
+                                <rect key="frame" x="182.5" y="530" width="28" height="28"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="KokoLaunchLoadingHeight"/>
-                                    <constraint firstAttribute="width" constant="40" id="KokoLaunchLoadingWidth"/>
+                                    <constraint firstAttribute="height" constant="28" id="KokoLaunchLoadingHeight"/>
+                                    <constraint firstAttribute="width" constant="28" id="KokoLaunchLoadingWidth"/>
                                 </constraints>
-                            </label>
+                            </imageView>
                         </subviews>
-                        <color key="backgroundColor" red="0.075" green="0.165" blue="0.149" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" name="KokoLaunchBackdrop"/>
                         <constraints>
                             <constraint firstItem="KokoLaunchMark" firstAttribute="centerX" secondItem="KokoLaunchView" secondAttribute="centerX" id="KokoLaunchMarkCenterX"/>
-                            <constraint firstItem="KokoLaunchMark" firstAttribute="centerY" secondItem="KokoLaunchView" secondAttribute="centerY" constant="-26" id="KokoLaunchMarkCenterY"/>
+                            <constraint firstItem="KokoLaunchMark" firstAttribute="centerY" secondItem="KokoLaunchView" secondAttribute="centerY" id="KokoLaunchMarkCenterY"/>
                             <constraint firstItem="KokoLaunchLoading" firstAttribute="centerX" secondItem="KokoLaunchView" secondAttribute="centerX" id="KokoLaunchLoadingCenterX"/>
-                            <constraint firstItem="KokoLaunchLoading" firstAttribute="top" secondItem="KokoLaunchMark" secondAttribute="bottom" constant="18" id="KokoLaunchLoadingTop"/>
+                            <constraint firstItem="KokoLaunchLoading" firstAttribute="top" secondItem="KokoLaunchMark" secondAttribute="bottom" constant="24" id="KokoLaunchLoadingTop"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -45,4 +43,11 @@
             <point key="canvasLocation" x="0" y="0"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="KokoBrandMark" width="1024" height="1024"/>
+        <image name="KokoLoadingLight" width="1280" height="1280"/>
+        <namedColor name="KokoLaunchBackdrop">
+            <color red="0.07843137255" green="0.04313725490" blue="0.14117647059" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
 </document>

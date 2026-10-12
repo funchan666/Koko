@@ -26,7 +26,8 @@ These are licensed third-party typefaces, not Koko-authored font designs.
 
 ## Loading and language behavior
 
-project.yml includes this directory as a folder resource. UIAppFonts registers
+project.yml includes Koko/Resources/Fonts as a folder resource. This documentation
+and font-provenance.json stay outside the app bundle in design/fonts. UIAppFonts registers
 Fonts/<filename>.ttf at application launch. KokoTypography uses the original
 PostScript names, rather than relying on filenames or platform-installed Avenir.
 There is no runtime font download or registration request to an external service.

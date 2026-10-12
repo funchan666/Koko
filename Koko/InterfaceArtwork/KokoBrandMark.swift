@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// The supplied Live artwork is the single Koko brand mark used in launch and loading surfaces.
+/// The user's supplied icon is shared by the app icon and every in-app brand placement.
 struct KokoBrandMark: View {
     var size: CGFloat = 148
     var body: some View {
@@ -8,7 +8,6 @@ struct KokoBrandMark: View {
             .resizable()
             .scaledToFit()
             .frame(width: size, height: size)
-            .clipShape(RoundedRectangle(cornerRadius: size * 0.18, style: .continuous))
             .accessibilityLabel("Koko Live")
     }
 }
@@ -16,28 +15,37 @@ struct KokoBrandMark: View {
 struct KokoBrandLoading: View {
     let caption: String
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var breathe = false
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var animationOrigin = Date()
+
+    private var loadingLight: some View {
+        Image("KokoLoadingLight")
+            .resizable()
+            .scaledToFit()
+            .frame(width: 28, height: 28)
+            .accessibilityHidden(true)
+    }
 
     var body: some View {
-        VStack(spacing: 20) {
-            KokoBrandMark(size: 156)
-                .scaleEffect(reduceMotion || !breathe ? 1 : 1.035)
-                .opacity(reduceMotion || !breathe ? 1 : 0.82)
-            Text(LocalizedStringKey(caption))
-                .font(KokoTypography.heading(size: 11))
-                .tracking(2.4)
-                .foregroundStyle(KokoWelcomePalette.mint)
-                .textCase(.uppercase)
-            Text("•••")
-                .font(KokoTypography.heading(size: 20))
-                .tracking(6)
-                .foregroundStyle(KokoWelcomePalette.paper)
-                .opacity(reduceMotion || !breathe ? 0.45 : 1)
+        ZStack {
+            // Keep the icon itself at the exact window center, matching the launch storyboard.
+            KokoBrandMark(size: 160)
+            Group {
+                if reduceMotion || scenePhase != .active {
+                    loadingLight
+                } else {
+                    TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { timeline in
+                        loadingLight.rotationEffect(.degrees(
+                            timeline.date.timeIntervalSince(animationOrigin)
+                                .truncatingRemainder(dividingBy: 1.4) / 1.4 * 360
+                        ))
+                    }
+                }
+            }
+            .offset(y: 118)
         }
-        .onAppear {
-            guard !reduceMotion else { return }
-            withAnimation(.easeInOut(duration: 1.1).repeatForever(autoreverses: true)) { breathe = true }
-        }
-        .onChange(of: reduceMotion) { reduced in breathe = !reduced }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(LocalizedStringKey(caption)))
     }
 }

@@ -50,31 +50,15 @@ struct KokoAccountLoading: View {
     }
 }
 
-/// Background artwork never participates in measuring the loading content.
-/// The viewport comes from KokoScreenCanvas, so both waiting screens stay centered.
+/// Shares the launch storyboard's backdrop, icon size and centered composition.
 private struct KokoLoadingSurface: View {
     let caption: String
-    @Environment(\.kokoScreenInsets) private var screenInsets
 
     var body: some View {
         GeometryReader { viewport in
-            let verticalPadding = max(screenInsets.top, screenInsets.bottom) + 24
-            ScrollView(showsIndicators: false) {
-                KokoBrandLoading(caption: caption)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 32)
-                    .padding(.vertical, verticalPadding)
-                    .frame(width: viewport.size.width, alignment: .center)
-                    .frame(minHeight: viewport.size.height, alignment: .center)
-            }
-            .frame(width: viewport.size.width, height: viewport.size.height)
-            .background {
-                KokoGradientBackdrop()
-                    .frame(width: viewport.size.width, height: viewport.size.height)
-                    .clipped()
-            }
-            .clipped()
+            KokoBrandLoading(caption: caption)
+                .frame(width: viewport.size.width, height: viewport.size.height)
+                .background(Color("KokoLaunchBackdrop"))
         }
-        .foregroundStyle(KokoInk.primary)
     }
 }

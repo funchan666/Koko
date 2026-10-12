@@ -1,0 +1,10 @@
+{
+  "asset_catalog_entries": 91,
+  "unused_imagesets_removed": 27,
+  "lossless_images": 188,
+  "media_sources_retained": 54,
+  "coin_products_matched": 9,
+  "local_path_hits": [],
+  "errors": [],
+  "verification": "Static file and configuration inspection only; no build or tests."
+}
