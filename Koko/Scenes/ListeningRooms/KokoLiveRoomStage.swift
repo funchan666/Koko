@@ -30,6 +30,7 @@ struct KokoLiveRoomStage: View {
             VStack(alignment: .leading, spacing: 14) {
                 hostBar
                 HStack(spacing: 8) {
+                    KokoBroadcastRoomBadge(hasRecordedPreview: videoAsset != nil)
                     Text(room.roomTitle).font(KokoTypography.emphasis(size: 12)).lineLimit(1)
                     Spacer(minLength: 0)
                 }

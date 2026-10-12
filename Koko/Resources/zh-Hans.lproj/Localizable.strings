@@ -432,7 +432,10 @@
 "Little favorites" = "心头好";
 "Little moments, real connections" = "分享日常，认识彼此";
 "Little things, kept close" = "小小心意，珍藏身边";
+"Live room" = "直播间";
 "Live room preview cover. No broadcast is connected." = "直播房间预览封面，尚未接入直播。";
+"Live room · not broadcasting" = "直播间 · 未开播";
+"Live room · recorded preview" = "直播间 · 录制预览";
 "Live rooms" = "直播间";
 "Log in" = "登录";
 "Long weekend" = "悠长周末";
@@ -512,6 +515,7 @@
 "No submissions yet" = "还没有投稿";
 "No unfinished coin purchases were found for this Koko account. Completed consumable packs are not credited again." = "此账号没有未完成的金币购买，已完成的消耗型套餐不会重复入账。";
 "Non-binary" = "非二元性别";
+"Not broadcasting" = "未开播";
 "Not now" = "暂时不用";
 "Not selected" = "未选择";
 "Nothing here yet" = "暂时还没有内容";
@@ -624,6 +628,7 @@
 "Re-enter your password" = "再次输入密码";
 "Read and agree to both policies before continuing." = "继续前，请阅读并同意两份协议。";
 "Reading view" = "阅读模式";
+"Recorded preview" = "录制预览";
 "Recorded video · messages & gifts stay on this device" = "录制视频 · 消息与礼物保存在此设备";
 "Reflection" = "私人回顾";
 "Refund adjustment: %lld coins. New credits settle this amount before becoming available." = "退款调整：%lld 金币。新入账会先抵扣此金额再计入可用余额。";

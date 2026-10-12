@@ -403,6 +403,7 @@ struct KokoLiveRoomCard: View {
     @EnvironmentObject private var navigation: KokoSceneNavigation
     let room: HostedConversationRoom
     private var host: CommunityMember? { community.member(room.hostMemberID) }
+    private var recordedPreview: CommunityMediaAsset? { KokoMediaLibrary.liveRoomPreview(for: room.id) }
 
     var body: some View {
         Group {
@@ -411,13 +412,15 @@ struct KokoLiveRoomCard: View {
                                     openContent: { navigation.open(.room(room.id)) },
                                     openProfile: { navigation.open(.profile(room.hostMemberID)) }) {
                 ZStack(alignment: .topLeading) {
-                    if let preview = KokoMediaLibrary.liveRoomPreview(for: room.id) {
+                    if let preview = recordedPreview {
                         KokoContentImage(asset: preview)
                     } else if let host {
                         KokoMemberCoverPhoto(member: host)
                     } else {
                         KokoPhotoPlaceholder()
                     }
+                    KokoBroadcastRoomBadge(hasRecordedPreview: recordedPreview != nil)
+                        .padding(.leading, 9).padding(.top, 9)
                 }
             }
         }

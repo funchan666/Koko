@@ -80,6 +80,7 @@
 		DCA2B3CBA801CABCC0BD0559 /* KokoCapturePermission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C31F5E85BE4917D9443D005 /* KokoCapturePermission.swift */; };
 		E3E6D5577270E96DAF633FBD /* KokoConsentRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A54D05072A835A505EC9A41 /* KokoConsentRecord.swift */; };
 		EAC16E867169C98B9A968EDB /* KokoWalletAndKeepsakes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8032D00DF57EC520AB5DFC /* KokoWalletAndKeepsakes.swift */; };
+		F0841B9758DA158F5D6A6E77 /* KokoBroadcastRoomBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF74494EE406617441AA004 /* KokoBroadcastRoomBadge.swift */; };
 		F2F23B65648ABE253C138FEE /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1D1E034D377BB08FB9E35382 /* Localizable.strings */; };
 		F761CE56C7FA714677534730 /* CommunityCoinAccounting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FD4ADBC96DB97A716CD92B6 /* CommunityCoinAccounting.swift */; };
 		F793E0634BE2E6071CBCD007 /* ConversationEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15322C02F5826AF43193E004 /* ConversationEntry.swift */; };
@@ -107,6 +108,7 @@
 		32616A68685757D2BCD58505 /* KokoAccessJourney.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoAccessJourney.swift; sourceTree = "<group>"; };
 		33B2AC1946F9E745B99229EB /* KokoPersonalSpace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoPersonalSpace.swift; sourceTree = "<group>"; };
 		3A5EE3A81D323DD28D2336F2 /* CommunityMember.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityMember.swift; sourceTree = "<group>"; };
+		3FF74494EE406617441AA004 /* KokoBroadcastRoomBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoBroadcastRoomBadge.swift; sourceTree = "<group>"; };
 		40332B236CA93BFCC335D5C2 /* KokoRoomConnectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoRoomConnectionView.swift; sourceTree = "<group>"; };
 		40F0127B4E0690519DEF7C6B /* CommunityContentCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityContentCatalog.swift; sourceTree = "<group>"; };
 		43E24D7CA8AA2BD18566BFEA /* ConversationStarters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationStarters.swift; sourceTree = "<group>"; };
@@ -422,6 +424,7 @@
 			children = (
 				FB801E150A7951D53A014273 /* KokoArtworkComponents.swift */,
 				E9B0F68A8A85D5F59043038E /* KokoBrandMark.swift */,
+				3FF74494EE406617441AA004 /* KokoBroadcastRoomBadge.swift */,
 				A4B8AC6B080F79FE5B98F937 /* KokoContentPhotography.swift */,
 				0E247A52D29AC403CEEC4DE9 /* KokoNoticePanel.swift */,
 				F4151323AF851CB2BCF8FE94 /* KokoTypography.swift */,
@@ -541,6 +544,7 @@
 				16966AA51F524178C8F9CF84 /* KokoAppleCoinPurchases.swift in Sources */,
 				B3D896C28B322B8240B552D9 /* KokoArtworkComponents.swift in Sources */,
 				04DFBB4CA64E71C8A6931306 /* KokoBrandMark.swift in Sources */,
+				F0841B9758DA158F5D6A6E77 /* KokoBroadcastRoomBadge.swift in Sources */,
 				DCA2B3CBA801CABCC0BD0559 /* KokoCapturePermission.swift in Sources */,
 				60E4D910897F949D34AEAFC4 /* KokoCoinCatalog.swift in Sources */,
 				51809EFCE8CAA70D4A946C40 /* KokoCoinCelebration.swift in Sources */,

@@ -432,7 +432,10 @@
 "Little favorites" = "Pequeños favoritos";
 "Little moments, real connections" = "Pequeños momentos, nuevas conexiones";
 "Little things, kept close" = "Pequeños detalles, cerca de ti";
+"Live room" = "Sala en directo";
 "Live room preview cover. No broadcast is connected." = "Portada de vista previa. No hay emisión conectada.";
+"Live room · not broadcasting" = "Sala en directo · sin emisión";
+"Live room · recorded preview" = "Sala en directo · vista grabada";
 "Live rooms" = "Salas en directo";
 "Log in" = "Iniciar sesión";
 "Long weekend" = "Fin de semana largo";
@@ -512,6 +515,7 @@
 "No submissions yet" = "Aún no hay envíos";
 "No unfinished coin purchases were found for this Koko account. Completed consumable packs are not credited again." = "No hay compras pendientes para esta cuenta. Los paquetes consumibles completados no se acreditan de nuevo.";
 "Non-binary" = "No binario";
+"Not broadcasting" = "Sin emisión";
 "Not now" = "Ahora no";
 "Not selected" = "No seleccionado";
 "Nothing here yet" = "Aún no hay nada";
@@ -624,6 +628,7 @@
 "Re-enter your password" = "Repite tu contraseña";
 "Read and agree to both policies before continuing." = "Lee y acepta ambas políticas para continuar.";
 "Reading view" = "Vista de lectura";
+"Recorded preview" = "Vista grabada";
 "Recorded video · messages & gifts stay on this device" = "Vídeo grabado · Mensajes y regalos en este dispositivo";
 "Reflection" = "Reflexión";
 "Refund adjustment: %lld coins. New credits settle this amount before becoming available." = "Ajuste por reembolso: %lld monedas. Los nuevos créditos cubren esta cantidad antes de estar disponibles.";

@@ -20,23 +20,16 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
-	<!-- Placeholder only. Do not expose as a working contact or create a mailto link.
-         Replace with an owned, monitored mailbox before enabling support contact. -->
-	<key>KokoSafetySupportEmail</key>
-	<string>support@example.invalid</string>
 	<key>KokoSafetySupportContactEnabled</key>
 	<false/>
+	<key>KokoSafetySupportEmail</key>
+	<string>support@example.invalid</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Use the camera to take your profile photo or check your video before a call. Photos stay on this device. Video checks are not recorded or sent.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Check your microphone input before joining a room or preparing a call. This version does not record or send audio.</string>
-	<key>UIApplicationSceneManifest</key>
-	<dict>
-		<key>UIApplicationSupportsMultipleScenes</key>
-		<false/>
-	</dict>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Fonts/NunitoSans-Regular.ttf</string>
@@ -45,6 +38,11 @@
 		<string>Fonts/Outfit-Bold.ttf</string>
 		<string>Fonts/Caveat-Bold.ttf</string>
 	</array>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+	</dict>
 	<key>UILaunchStoryboardName</key>
 	<string>KokoLaunchScreen</string>
 	<key>UISupportedInterfaceOrientations</key>

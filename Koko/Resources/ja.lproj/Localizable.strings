@@ -432,7 +432,10 @@
 "Little favorites" = "お気に入り";
 "Little moments, real connections" = "日常から、つながろう";
 "Little things, kept close" = "大切なものをそばに";
+"Live room" = "ライブ配信ルーム";
 "Live room preview cover. No broadcast is connected." = "ライブ配信のプレビュー画像です。配信は接続されていません。";
+"Live room · not broadcasting" = "ライブ配信ルーム・配信していません";
+"Live room · recorded preview" = "ライブ配信ルーム・録画プレビュー";
 "Live rooms" = "ライブ配信";
 "Log in" = "ログイン";
 "Long weekend" = "長い週末";
@@ -512,6 +515,7 @@
 "No submissions yet" = "投稿申請はまだありません";
 "No unfinished coin purchases were found for this Koko account. Completed consumable packs are not credited again." = "このアカウントに未完了の購入はありません。完了済みの消費型パックは再加算されません。";
 "Non-binary" = "ノンバイナリー";
+"Not broadcasting" = "配信していません";
 "Not now" = "今はしない";
 "Not selected" = "未選択";
 "Nothing here yet" = "まだ何もありません";
@@ -624,6 +628,7 @@
 "Re-enter your password" = "パスワードを再入力";
 "Read and agree to both policies before continuing." = "続ける前に両方の規約を読み、同意してください。";
 "Reading view" = "閲覧モード";
+"Recorded preview" = "録画プレビュー";
 "Recorded video · messages & gifts stay on this device" = "録画動画 · メッセージとギフトはこの端末に保存";
 "Reflection" = "振り返り";
 "Refund adjustment: %lld coins. New credits settle this amount before becoming available." = "返金調整：%lldコイン。新しい入金はこの金額の精算後に利用可能になります。";

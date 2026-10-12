@@ -432,7 +432,10 @@
 "Little favorites" = "Little favorites";
 "Little moments, real connections" = "Little moments, real connections";
 "Little things, kept close" = "Little things, kept close";
+"Live room" = "Live room";
 "Live room preview cover. No broadcast is connected." = "Live room preview cover. No broadcast is connected.";
+"Live room · not broadcasting" = "Live room · not broadcasting";
+"Live room · recorded preview" = "Live room · recorded preview";
 "Live rooms" = "Live rooms";
 "Log in" = "Log in";
 "Long weekend" = "Long weekend";
@@ -512,6 +515,7 @@
 "No submissions yet" = "No submissions yet";
 "No unfinished coin purchases were found for this Koko account. Completed consumable packs are not credited again." = "No unfinished coin purchases were found for this Koko account. Completed consumable packs are not credited again.";
 "Non-binary" = "Non-binary";
+"Not broadcasting" = "Not broadcasting";
 "Not now" = "Not now";
 "Not selected" = "Not selected";
 "Nothing here yet" = "Nothing here yet";
@@ -624,6 +628,7 @@
 "Re-enter your password" = "Re-enter your password";
 "Read and agree to both policies before continuing." = "Read and agree to both policies before continuing.";
 "Reading view" = "Reading view";
+"Recorded preview" = "Recorded preview";
 "Recorded video · messages & gifts stay on this device" = "Recorded video · messages & gifts stay on this device";
 "Reflection" = "Reflection";
 "Refund adjustment: %lld coins. New credits settle this amount before becoming available." = "Refund adjustment: %lld coins. New credits settle this amount before becoming available.";
