@@ -8,6 +8,7 @@ struct KokoLiveRoomStage: View {
     @Environment(\.kokoScreenInsets) private var screenInsets
     @Environment(\.scenePhase) private var scenePhase
     @StateObject private var playback = KokoRoomVideoPlayback()
+    @StateObject private var activity = KokoRoomStageActivity()
     let room: HostedConversationRoom
     let videoAsset: CommunityMediaAsset?
     @Binding var message: String
@@ -41,7 +42,6 @@ struct KokoLiveRoomStage: View {
                     }.padding(12).background(KokoInk.canvas)
                 }
                 Spacer(minLength: 0)
-                giftBanner
                 HStack(alignment: .bottom, spacing: 12) {
                     VStack(alignment: .leading, spacing: 10) {
                         Text(room.conversationPrompt).font(KokoTypography.heading(size: 16))
@@ -54,35 +54,40 @@ struct KokoLiveRoomStage: View {
                                 .onAppear { proxy.scrollTo("latest-message", anchor: .bottom) }
                         }
                     }
-                    VStack(spacing: 14) {
-                        stageAction(tile: 14, label: playback.isMuted ? "Sound on" : "Mute") { playback.toggleMute() }
-                        stageAction(tile: 11, label: "More") { onOpenPanel("Around this room") }
-                        Button { onOpenPanel("Send a little something") } label: {
-                            VStack(spacing: 3) {
-                                Artwork(sheet: .liveControls, tile: 4).frame(width: 28, height: 28)
-                                    .frame(width: 58, height: 58)
-                                    .background(Color.black.opacity(0.28))
-                                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-                                    .overlay(RoundedRectangle(cornerRadius: 18, style: .continuous).stroke(Color.white.opacity(0.22), lineWidth: 1))
-                                Text("Gifts").font(KokoTypography.heading(size: 10))
-                            }
-                        }.buttonStyle(KokoPressStyle()).accessibilityLabel("Choose from eight gifts")
-                    }
+                    stageAction(tile: 14, label: playback.isMuted ? "Sound on" : "Mute") { playback.toggleMute() }
                 }
                 Text("Recorded video · messages & gifts stay on this device")
                     .font(KokoTypography.medium(size: 10)).foregroundStyle(.white.opacity(0.75))
                 KokoLiveRoomComposer(message: $message, send: { onSendMessage(message) }, gift: { onOpenPanel("Send a little something") })
             }
             .padding(.horizontal, 18).padding(.top, screenInsets.top + 8).padding(.bottom, screenInsets.bottom + 10)
-            KokoRoomBarrage(entries: room.roomConversation)
+            KokoRoomBarrage(flights: activity.flights, isPlaying: scenePhase == .active)
                 .padding(.top, screenInsets.top + 120).frame(maxHeight: .infinity, alignment: .top)
-                .allowsHitTesting(false).accessibilityHidden(true)
+                .accessibilityHidden(true)
+            KokoRoomGiftShower(flights: activity.flights, isPlaying: scenePhase == .active)
+                .frame(height: 190).padding(.horizontal, 18)
+                .padding(.bottom, screenInsets.bottom + 240)
+                .frame(maxHeight: .infinity, alignment: .bottom)
+                .accessibilityHidden(true)
         }
         .foregroundStyle(.white).background(Color.black)
-        .onAppear { playback.start(videoAsset) }
-        .onDisappear { playback.stop() }
+        .onAppear { playback.start(videoAsset); activity.begin(room.roomConversation) }
+        .onDisappear { playback.stop(); activity.reset() }
+        .onChange(of: room.roomConversation) { entries in
+            if scenePhase == .active { activity.receive(entries) }
+        }
+        .onChange(of: room.id) { _ in
+            activity.begin(room.roomConversation)
+            playback.start(videoAsset)
+        }
         .onChange(of: scenePhase) { phase in
-            if phase == .active { playback.resume() } else { playback.pause() }
+            if phase == .active {
+                activity.begin(room.roomConversation)
+                playback.resume()
+            } else {
+                activity.reset()
+                playback.pause()
+            }
         }
     }
 
@@ -112,25 +117,9 @@ struct KokoLiveRoomStage: View {
                 }
             }
             Spacer(minLength: 0)
+            KokoLiveRoomMiniButton(assetTile: 3, label: "More") { onOpenPanel("Around this room") }
             KokoLiveRoomMiniButton(assetTile: 0, label: "Leave live room", action: onBack)
         }
-    }
-
-    @ViewBuilder private var giftBanner: some View {
-        TimelineView(.periodic(from: .now, by: 1)) { context in
-            if let gift = room.roomConversation.last(where: { $0.attachmentTile != nil }),
-               context.date.timeIntervalSince(gift.postedAt) < 8 {
-                HStack(spacing: 10) {
-                    Artwork(sheet: .collection, tile: gift.attachmentTile ?? 8).frame(width: 58, height: 58)
-                    VStack(alignment: .leading, spacing: 4) {
-                        KokoProfileLink(memberID: gift.authorMemberID) { Text(community.member(gift.authorMemberID)?.publicName ?? "You").font(KokoTypography.heading(size: 13)) }
-                        Text(gift.messageText).font(KokoTypography.emphasis(size: 12)).lineLimit(2)
-                    }
-                    Spacer(minLength: 0)
-                }.padding(10).background(ArtworkSurface()).id(gift.id)
-                    .transition(.move(edge: .leading).combined(with: .opacity))
-            }
-        }.animation(.easeOut(duration: 0.3), value: room.roomConversation.last?.id)
     }
 
     private func stageAction(tile: Int, label: String, action: @escaping () -> Void) -> some View {
@@ -221,30 +210,6 @@ struct KokoRoomChatLog: View {
                 }.id(entry.id)
             }
         }.frame(maxWidth: .infinity, alignment: .leading)
-    }
-}
-
-/// Only actual local messages fly across the stage. Old entries stay in the chat log.
-private struct KokoRoomBarrage: View {
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    let entries: [ConversationEntry]
-    var body: some View {
-        GeometryReader { bounds in
-            TimelineView(.animation(minimumInterval: 1.0 / 30, paused: reduceMotion)) { context in
-                let recent = Array(entries.suffix(3))
-                ForEach(Array(recent.enumerated()), id: \.element.id) { index, entry in
-                    let age = context.date.timeIntervalSince(entry.postedAt)
-                    if age >= 0 && age < 7 && !reduceMotion {
-                        HStack(spacing: 6) {
-                            if let tile = entry.attachmentTile { Artwork(sheet: .collection, tile: tile).frame(width: 30, height: 30) }
-                            Text(entry.messageText).font(KokoTypography.heading(size: 14)).lineLimit(1)
-                        }.padding(.horizontal, 12).padding(.vertical, 8)
-                            .frame(width: 270, alignment: .leading).background(KokoInk.canvas.opacity(0.75)).clipShape(Capsule())
-                            .offset(x: bounds.size.width - (bounds.size.width + 290) * age / 7, y: CGFloat(index) * 46)
-                    }
-                }
-            }
-        }.frame(height: 145).clipped()
     }
 }
 

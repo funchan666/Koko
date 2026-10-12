@@ -7,6 +7,7 @@ struct KokoListeningRoomView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.kokoScreenInsets) private var screenInsets
     @StateObject private var music = KokoRoomMusicPlayer()
+    @StateObject private var voiceActivity = KokoRoomStageActivity()
     let roomID: String
     @State private var panel: String?
     @State private var roomMessage = ""
@@ -114,11 +115,13 @@ struct KokoListeningRoomView: View {
                     KokoRoomChatLog(entries: room.roomConversation)
                 }.padding(.horizontal, 22).padding(.bottom, 20)
             }.scrollDismissesKeyboard(.interactively)
+                .overlay {
+                    voiceActivityOverlay
+                }
             VStack(spacing: 10) {
                 HStack(spacing: 8) {
                     roomTool(13, "Join mic", "Voice connection")
                     roomTool(14, "Music", "Room music")
-                    roomTool(8, "Gifts", "Send a little something")
                 }
                 KokoLiveRoomComposer(message: $roomMessage, send: { sendRoomMessage(roomMessage) }, gift: { panel = "Send a little something" })
             }.padding(.horizontal, 18).padding(.top, 12).padding(.bottom, screenInsets.bottom + 8)
@@ -126,6 +129,40 @@ struct KokoListeningRoomView: View {
         }
         .foregroundStyle(KokoInk.primary)
         .background(LinearGradient(colors: [KokoInk.panelRaised, KokoInk.canvas, Color(red: 0.08, green: 0.08, blue: 0.18)], startPoint: .topLeading, endPoint: .bottomTrailing))
+        .onAppear { voiceActivity.begin(room.roomConversation) }
+        .onDisappear { voiceActivity.reset() }
+        .onChange(of: room.roomConversation) { entries in
+            if scenePhase == .active { voiceActivity.receive(entries) }
+        }
+        .onChange(of: room.id) { _ in voiceActivity.begin(room.roomConversation) }
+        .onChange(of: scenePhase) { phase in
+            if phase == .active { voiceActivity.begin(room.roomConversation) }
+            else { voiceActivity.reset() }
+        }
+    }
+
+    /// Effects stay inside the scroll viewport, above the fixed composer and below
+    /// room navigation. The persistent chat log remains the accessible history.
+    private var voiceActivityOverlay: some View {
+        GeometryReader { bounds in
+            let hasGifts = voiceActivity.flights.contains(where: \.isGift)
+            ZStack {
+                // On a short viewport (for example with the keyboard visible),
+                // prioritize the gift ribbon instead of covering it with text.
+                if bounds.size.height >= 350 || !hasGifts {
+                    KokoRoomBarrage(flights: voiceActivity.flights, isPlaying: scenePhase == .active)
+                        .padding(.top, 12)
+                        .frame(maxHeight: .infinity, alignment: .top)
+                }
+                KokoRoomGiftShower(flights: voiceActivity.flights, isPlaying: scenePhase == .active)
+                    .frame(height: min(190, bounds.size.height))
+                    .padding(.horizontal, 18)
+                    .frame(maxHeight: .infinity, alignment: .bottom)
+            }
+            .frame(width: bounds.size.width, height: bounds.size.height)
+            .clipped()
+            .accessibilityHidden(true)
+        }
     }
 
     private func seatView(_ position: Int, room: HostedConversationRoom) -> some View {
