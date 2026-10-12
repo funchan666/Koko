@@ -135,11 +135,17 @@ struct KokoControlSurface: View {
 
 struct KokoGradientBackdrop: View {
     var body: some View {
-        Image("KokoSocialCanvasBackground")
-            .resizable()
-            .scaledToFill()
-            .clipped()
-            .accessibilityHidden(true)
+        // Aspect-fill pixels must not determine a parent ZStack's width. This
+        // backdrop is also a direct sibling of global feedback after sign-out.
+        GeometryReader { viewport in
+            Image("KokoSocialCanvasBackground")
+                .resizable()
+                .scaledToFill()
+                .frame(width: viewport.size.width, height: viewport.size.height)
+                .clipped()
+        }
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 }
 
@@ -503,34 +509,55 @@ struct KokoModal<Content: View>: View {
 
     var body: some View {
         GeometryReader { viewport in
+            let gutter: CGFloat = viewport.size.width < 360 ? 14 : 22
+            let leadingInset = screenInsets.leading + gutter
+            let trailingInset = screenInsets.trailing + gutter
+            let topInset = screenInsets.top + 16
+            let bottomInset = screenInsets.bottom + 16
+            let panelWidth = max(0, min(presentation.width, viewport.size.width - leadingInset - trailingInset))
+            let availableHeight = max(0, viewport.size.height - topInset - bottomInset)
             ZStack {
                 Color.black.opacity(0.72)
                     .ignoresSafeArea(.container)
                     .contentShape(Rectangle())
                     .onTapGesture { if dismissOnBackdrop { dismiss() } }
                     .accessibilityHidden(true)
-                VStack(alignment: .leading, spacing: 16) {
-                    dialogHeading
-                    // Short confirmations keep their natural height; long pickers and
-                    // enlarged text scroll below a persistent title and close action.
-                    ViewThatFits(in: .vertical) {
-                        dialogContent.fixedSize(horizontal: false, vertical: true)
-                        ScrollView { dialogContent }
-                            .scrollDismissesKeyboard(.interactively)
+                ViewThatFits(in: .vertical) {
+                    VStack(alignment: .leading, spacing: 16) {
+                        dialogHeading
+                        // Normal long pickers scroll below a persistent close action.
+                        ViewThatFits(in: .vertical) {
+                            dialogContent.fixedSize(horizontal: false, vertical: true)
+                            ScrollView { dialogContent }
+                                .scrollDismissesKeyboard(.interactively)
+                        }
                     }
+                    // When the keyboard or accessibility text leaves too little
+                    // room for the heading itself, keep every control reachable.
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 16) {
+                            dialogHeading
+                            dialogContent
+                        }
+                    }
+                    .scrollDismissesKeyboard(.interactively)
                 }
                 .padding(24)
-                .frame(maxWidth: presentation.width)
+                .frame(width: panelWidth)
+                .frame(maxHeight: availableHeight)
                 .background {
                     Image("KokoDialogSurface").resizable().accessibilityHidden(true)
                 }
-                .padding(.horizontal, viewport.size.width < 360 ? 14 : 22)
-                .padding(.top, screenInsets.top + 16)
-                .padding(.bottom, screenInsets.bottom + 16)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                .frame(width: max(0, viewport.size.width - leadingInset - trailingInset),
+                       height: availableHeight, alignment: .center)
+                .padding(.leading, leadingInset)
+                .padding(.trailing, trailingInset)
+                .padding(.top, topInset)
+                .padding(.bottom, bottomInset)
                 .opacity(appeared ? 1 : 0)
                 .offset(y: appeared || reduceMotion ? 0 : 10)
             }
+            .frame(width: viewport.size.width, height: viewport.size.height)
         }
         .environment(\.kokoDialogContent, true)
         .foregroundStyle(KokoInk.primary)
