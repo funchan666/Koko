@@ -9,6 +9,7 @@
 "%lld connections" = "%lld conexiones";
 "%lld conversations" = "%lld conversaciones";
 "%lld kept" = "%lld guardados";
+"%lld online" = "%lld en línea";
 "%lld points" = "%lld puntos";
 "%lld questions" = "%lld preguntas";
 "%lld rooms created" = "%lld salas creadas";
@@ -34,6 +35,7 @@
 "A little about you." = "Un poco sobre ti.";
 "A little appreciation, a touch of you." = "Un poco de aprecio, un toque tuyo.";
 "A little bloom" = "Una pequeña flor";
+"A little company after a long day." = "Un poco de compañía tras un día largo.";
 "A little context" = "Un poco de contexto";
 "A little gesture, on purpose" = "Un pequeño gesto con intención";
 "A little goes a long way" = "Un poco significa mucho";
@@ -54,6 +56,7 @@
 "A problem" = "Un problema";
 "A profile with room to connect." = "Un perfil para conectar.";
 "A question for next time · 240 characters" = "Una pregunta para la próxima vez · 240 caracteres";
+"A quiet evening to make something." = "Una noche tranquila para crear algo.";
 "A room for your kind of people." = "Una sala para gente como tú.";
 "A room for your mood" = "Una sala para cada ánimo";
 "A seat in the conversation" = "Un lugar en la conversación";
@@ -99,6 +102,7 @@
 "Any gender" = "Cualquier género";
 "Any language" = "Cualquier idioma";
 "Any region" = "Cualquier región";
+"Anyone else here with a cup of tea?" = "¿Alguien más tiene una taza de té?";
 "App language" = "Idioma de la app";
 "Apple authorization did not return a complete credential. Please try again." = "Apple no devolvió una credencial completa. Reinténtalo.";
 "Apple authorization has changed. Please sign in with Apple again. Your saved profile remains on this device." = "La autorización de Apple ha cambiado. Vuelve a iniciar sesión con Apple. Tu perfil guardado permanece aquí.";
@@ -356,6 +360,7 @@
 "Give people a reason to stay." = "Dales un motivo para quedarse.";
 "Give someone a reason to say hello." = "Dale a alguien un motivo para saludar.";
 "Give to " = "Regalar a ";
+"Glad I dropped in tonight." = "Me alegra haberme pasado esta noche.";
 "Glad you stopped by." = "Qué bueno que estés aquí.";
 "Go a little deeper" = "Profundizar un poco";
 "Go back" = "Volver";
@@ -372,8 +377,10 @@
 "Guest · preview" = "Invitado · vista previa";
 "Harassment" = "Acoso";
 "Hateful content" = "Contenido de odio";
+"Headphones on, finally unwinding." = "Auriculares puestos, por fin a descansar.";
 "Hello, again" = "Hola de nuevo";
 "Help shape Koko" = "Ayuda a mejorar Koko";
+"Hey everyone, how's your evening?" = "Hola, ¿qué tal la noche?";
 "Hidden on this device. Your report is saved here; it has not been sent to a moderation service." = "Oculto en este dispositivo. La denuncia se guardó aquí; no se envió a moderación.";
 "Hide" = "Ocultar";
 "Hide the questions" = "Ocultar las preguntas";
@@ -384,9 +391,13 @@
 "Hosted by " = "Anfitrión: ";
 "Hosted by %@" = "Anfitrión: %@";
 "Hosting cues" = "Guía para anfitriones";
+"How did you get started?" = "¿Cómo empezaste?";
 "How has the meaning of that song changed for you?" = "¿Cómo ha cambiado para ti el significado de esa canción?";
 "I agree to" = "Acepto";
 "I have read and agree to both policies below." = "He leído y acepto ambas políticas.";
+"I know exactly what you mean." = "Sé exactamente a qué te refieres.";
+"I like seeing the little details." = "Me gusta ver los pequeños detalles.";
+"I'd love to hear your next pick." = "Me encantaría escuchar tu próxima elección.";
 "If someone is in danger" = "Si alguien está en peligro";
 "Image unavailable" = "Imagen no disponible";
 "In their words" = "En sus palabras";
@@ -400,9 +411,11 @@
 "Japanese" = "Japonés";
 "Join mic" = "Activar voz";
 "Join room →" = "Entrar →";
+"Just got home. Happy to listen." = "Acabo de llegar. Me apetece escuchar.";
 "Keep a little inspiration" = "Guarda algo de inspiración";
 "Keep a question for another hello." = "Guarda una pregunta para otro hola.";
 "Keep a reflection?" = "¿Guardar una reflexión?";
+"Keep going, I'd love to see it." = "Sigue, me encantaría verlo.";
 "Keep me here" = "Quedarme aquí";
 "Keep my coins" = "Conservar mis monedas";
 "Keep the good bits" = "Guarda lo mejor";
@@ -433,6 +446,7 @@
 "Level %lld · Your activity" = "Nivel %lld · Tu actividad";
 "Like" = "Me gusta";
 "Liked" = "Te gusta";
+"Listening" = "Escuchando";
 "Little answers. More you." = "Pequeñas respuestas. Más de ti.";
 "Little favorites" = "Pequeños favoritos";
 "Little moments, real connections" = "Pequeños momentos, nuevas conexiones";
@@ -528,7 +542,9 @@
 "Notifications" = "Notificaciones";
 "OFF" = "NO";
 "ON" = "SÍ";
+"On mic" = "Al micrófono";
 "On repeat" = "En bucle";
+"One more track before I go." = "Una canción más antes de irme.";
 "One quick step." = "Un paso rápido.";
 "One-time consumable purchases. No subscription. Coins do not expire and have no cash value. Chats, photos in chats, voice and video conversations are always free." = "Compras consumibles únicas, sin suscripción. Las monedas no caducan ni tienen valor en efectivo. Chats, fotos y conversaciones de voz y vídeo son gratis.";
 "Only the little extras" = "Solo los pequeños extras";
@@ -701,6 +717,7 @@
 "Saved illustration" = "Ilustración guardada";
 "Saved on this device" = "Guardado en este dispositivo";
 "Saved questions" = "Preguntas guardadas";
+"Saving that for my walk tomorrow." = "La guardaré para mi paseo de mañana.";
 "Saving your profile…" = "Guardando tu perfil…";
 "Say hello →" = "Di hola →";
 "Say something..." = "Di algo…";
@@ -752,6 +769,7 @@
 "Sound on" = "Activar sonido";
 "Spam or scam" = "Spam o estafa";
 "Spanish" = "Español";
+"Speaking" = "Hablando";
 "Spend" = "Gastar";
 "Start" = "Empezar";
 "Start a friendship. Find your people" = "Inicia una amistad. Encuentra a tu gente";
@@ -781,11 +799,18 @@
 "Talk, listen, and leave a little room for someone new." = "Habla, escucha y deja espacio a alguien nuevo.";
 "Tap to join" = "Toca para entrar";
 "Teach me something" = "Enséñame algo";
+"Tell us the rest of the story." = "Cuéntanos el resto.";
 "Terms" = "Términos";
 "Terms of Service" = "Términos del servicio";
 "Text and image messages, voice and video conversations, entering or hosting rooms, follows, comments, likes and saved moments cost 0 coins." = "Mensajes de texto e imagen, voz y vídeo, entrar o crear salas, seguir, comentar, dar me gusta y guardar momentos cuestan 0 monedas.";
+"Thanks for sharing the process." = "Gracias por compartir el proceso.";
+"That chorus stays with you." = "Ese estribillo se te queda.";
 "That date doesn't exist. Check the day, month and year." = "Esa fecha no existe. Revisa el día, mes y año.";
+"That gives me an idea." = "Eso me da una idea.";
+"That made me smile." = "Eso me hizo sonreír.";
 "The Apple purchase could not be completed. Check your connection and try again. If Apple charged you, use Check unfinished purchases; do not buy again." = "No se completó la compra. Revisa la conexión. Si Apple cobró, revisa las compras pendientes; no vuelvas a comprar.";
+"The best songs come with a story." = "Las mejores canciones tienen una historia.";
+"The first draft is always the hardest." = "El primer borrador siempre es lo más difícil.";
 "The listening room" = "La sala de escucha";
 "The little shop" = "La pequeña tienda";
 "The media cache couldn't be cleared. Please try again." = "No se pudo borrar la caché. Reinténtalo.";
@@ -815,6 +840,7 @@
 "This film is missing from the collection." = "Este vídeo no está en la colección.";
 "This is an interactive preview with sample profiles and rooms. Optional coin packs use genuine Apple In-App Purchase, with the wallet currently stored on this device." = "Es una vista interactiva con perfiles y salas de ejemplo. Los paquetes opcionales usan compras reales de Apple; la cartera se guarda en este dispositivo.";
 "This is an optional room gift. No message, call or conversation requires it." = "Es un regalo opcional. Ningún mensaje, llamada o conversación lo requiere.";
+"This is my kind of evening." = "Esta es mi clase de noche.";
 "This item goes into your backpack." = "Este artículo irá a tu mochila.";
 "This item is not available in the bundled collection." = "Este artículo no está en la colección incluida.";
 "This moment is hidden" = "Este momento está oculto";
@@ -882,6 +908,7 @@
 "View moment →" = "Ver momento →";
 "View profile" = "Ver perfil";
 "View profile →" = "Ver perfil →";
+"View room audience" = "Ver participantes";
 "Violence" = "Violencia";
 "Visit the little shop" = "Visitar la tienda";
 "Visit the shop" = "Ir a la tienda";
@@ -891,6 +918,7 @@
 "Voice and video calls are for mutual followers. Open this profile to manage your connection." = "Las llamadas son para seguidores mutuos. Abre el perfil para gestionar la conexión.";
 "Voice call" = "Llamada de voz";
 "Voice connection" = "Conexión de voz";
+"Voice room" = "Sala de voz";
 "Voice room preview" = "Vista previa de sala de voz";
 "Voice room preview cover. No audio is broadcast." = "Portada de sala de voz. No se transmite audio.";
 "Voice room previews · pick a topic you love" = "Vista previa de salas · Elige un tema";
@@ -908,6 +936,7 @@
 "What are we listening to?" = "¿Qué escuchamos?";
 "What are we talking about?" = "¿De qué hablamos?";
 "What are you making just for the joy of it?" = "¿Qué estás creando por puro placer?";
+"What are you working on today?" = "¿En qué estás trabajando hoy?";
 "What could you happily teach someone?" = "¿Qué te gustaría enseñar a alguien?";
 "What did it bring to mind?" = "¿Qué te hizo recordar?";
 "What did that moment change about the way you felt?" = "¿Cómo cambió ese momento tu forma de sentir?";
@@ -918,6 +947,7 @@
 "What should we call you?" = "¿Cómo te llamamos?";
 "What small moment made you pause today?" = "¿Qué pequeño momento te hizo detenerte hoy?";
 "What small thing made your day better?" = "¿Qué pequeño detalle te alegró el día?";
+"What song have you had on repeat?" = "¿Qué canción tienes en bucle?";
 "What song would open the movie of your life?" = "¿Qué canción abriría la película de tu vida?";
 "What story would you share before playing your next song?" = "¿Qué historia contarías antes de poner tu próxima canción?";
 "What they are into" = "Sus intereses";

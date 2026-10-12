@@ -1,0 +1,8 @@
+{
+  "tool": "host-native image_gen",
+  "assets": {
+    "KokoVoiceSeatOrbit": "exec-f0f5f3e8-430f-4b40-9e0f-35821fd08752.png",
+    "KokoVoiceOrbitStage": "exec-a2f3c00f-4790-4d41-84dc-85729a0d0388.png"
+  },
+  "processing": "Unmodified full PNG copies; native layout only."
+}

@@ -5,9 +5,11 @@ struct KokoListeningRoomView: View {
     @EnvironmentObject private var community: CommunityJournalStore
     @EnvironmentObject private var navigation: KokoSceneNavigation
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.kokoScreenInsets) private var screenInsets
     @StateObject private var music = KokoRoomMusicPlayer()
     @StateObject private var voiceActivity = KokoRoomStageActivity()
+    @StateObject private var roomDemo = KokoRoomDemoSession()
     let roomID: String
     @State private var panel: String?
     @State private var roomMessage = ""
@@ -21,23 +23,29 @@ struct KokoListeningRoomView: View {
     var body: some View {
         ZStack {
             if let room {
+                let stageRoom = roomDemo.stageRoom(room, in: community)
                 if room.isVideoStage {
                     KokoLiveRoomStage(
-                        room: room,
+                        room: stageRoom,
                         videoAsset: liveVideoAsset,
+                        audience: roomDemo.audience(in: community),
                         message: $roomMessage,
                         onBack: { panel = "Leave this room?" },
                         onSendMessage: { message in sendRoomMessage(message) },
                         onOpenPanel: { panel = $0 }
                     )
                 } else {
-                    voiceStage(room)
+                    voiceStage(stageRoom)
                 }
                 if let panel { roomPanel(panel, room: room) }
                 if showSafety { KokoSafetyPanel(reportedContentID: room.id, memberID: room.hostMemberID) { showSafety = false; navigation.back() } }
             } else { KokoPage(title: "Room unavailable", back: navigation.back) { KokoEmpty(title: "This door is closed", detail: "It may have been removed or hidden on this device.") } }
-        }.onDisappear { music.stop() }
-            .onChange(of: scenePhase) { phase in if phase != .active { music.stop() } }
+        }.onDisappear { music.stop(); roomDemo.pause() }
+            .onChange(of: scenePhase) { phase in if phase != .active { music.stop(); roomDemo.pause() } }
+            .task(id: roomID + (scenePhase == .active ? "-active" : "-paused")) {
+                guard scenePhase == .active, let room else { return }
+                await roomDemo.run(room: room, community: community)
+            }
     }
     private var liveVideoAsset: CommunityMediaAsset? {
         // The stage must play the same recording whose first frame is on the room card.
@@ -45,7 +53,7 @@ struct KokoListeningRoomView: View {
     }
     private func roomTool(_ icon: Int, _ label: String, _ destination: String) -> some View {
         Button { panel = destination } label: {
-            VStack(spacing: 5) { Artwork(sheet: .navigation, tile: icon).frame(width: 30, height: 30); Text(LocalizedStringKey(label)).font(KokoTypography.emphasis(size: 11)) }.frame(maxWidth: .infinity).padding(.vertical, 12).background(ArtworkSurface())
+            HStack(spacing: 7) { Artwork(sheet: .navigation, tile: icon).frame(width: 22, height: 22); Text(LocalizedStringKey(label)).font(KokoTypography.emphasis(size: 11)) }.frame(maxWidth: .infinity).frame(minHeight: 44).background(KokoControlSurface())
         }.buttonStyle(KokoPressStyle())
     }
     private func voiceStage(_ room: HostedConversationRoom) -> some View {
@@ -61,8 +69,7 @@ struct KokoListeningRoomView: View {
                 KokoIconAction(icon: 11, label: "Room options") { panel = "Around this room" }
             }.padding(.horizontal, 18).padding(.top, screenInsets.top + 8).padding(.bottom, 12)
             ScrollView(showsIndicators: false) {
-                VStack(spacing: 18) {
-                    KokoVoiceRoomHeroCard(room: room)
+                VStack(spacing: 14) {
                     if isHost {
                         if let plan = community.activeConversationPlan(in: room.id) {
                             KokoStudioPaper {
@@ -93,27 +100,28 @@ struct KokoListeningRoomView: View {
                                 .background(ArtworkSurface(tile: 3)).foregroundStyle(KokoInk.onMint).buttonStyle(.plain)
                         }
                     }
-                    HStack {
-                        Artwork(sheet: .tabs, tile: 1).frame(width: 34, height: 34)
-                        Text(room.conversationPrompt).font(KokoTypography.medium(size: 13))
+                    HStack(spacing: 8) {
+                        Artwork(sheet: .liveControls, tile: 2).frame(width: 23, height: 23)
+                            .modifier(KokoRoomSignalBreathing())
+                        Text("Voice room").font(KokoTypography.emphasis(size: 12)).foregroundStyle(KokoInk.accent)
                         Spacer(minLength: 0)
+                        KokoRoomAudienceButton(members: roomDemo.audience(in: community)) { panel = "Room audience" }
                     }
-                    LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3), spacing: 20) {
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3), spacing: 10) {
                         ForEach(0..<room.seatLimit, id: \.self) { position in seatView(position, room: room) }
-                    }.padding(.vertical, 8)
-                    HStack {
-                        Text("ROOM PREVIEW · MICROPHONE OFF")
-                            .font(KokoTypography.emphasis(size: 9)).tracking(0.6).foregroundStyle(KokoInk.secondary)
-                        Spacer()
-                        Button("People") { panel = "Room audience" }.font(KokoTypography.emphasis(size: 12)).buttonStyle(.plain)
+                    }.padding(.vertical, 2)
+                    HStack { Text("Room chat").font(KokoTypography.heading(size: 15)); Spacer(); Button("Quick hello") { panel = "Quick hellos" }.font(KokoTypography.emphasis(size: 11)).frame(minHeight: 44).buttonStyle(.plain) }
+                    ScrollViewReader { proxy in
+                        ScrollView(showsIndicators: false) {
+                            KokoRoomChatLog(entries: Array(room.roomConversation.suffix(30)), showsEmptyState: false, compact: true)
+                                .id("voice-chat-bottom")
+                        }.frame(height: 176)
+                            .onChange(of: room.roomConversation.last?.id) { _ in
+                                withAnimation { proxy.scrollTo("voice-chat-bottom", anchor: .bottom) }
+                            }
+                            .onAppear { proxy.scrollTo("voice-chat-bottom", anchor: .bottom) }
                     }
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("ROOM NOTE").font(KokoTypography.heading(size: 9)).tracking(1.5).foregroundStyle(KokoInk.accent)
-                        Text(room.hostNote).font(KokoTypography.body(size: 12))
-                    }.frame(maxWidth: .infinity, alignment: .leading).padding(14).background(ArtworkSurface())
-                    HStack { Text("Room chat").font(KokoTypography.heading(size: 18)); Spacer(); Button("Quick hello") { panel = "Quick hellos" }.font(KokoTypography.emphasis(size: 12)).buttonStyle(.plain) }
-                    KokoRoomChatLog(entries: room.roomConversation)
-                }.padding(.horizontal, 22).padding(.bottom, 20)
+                }.padding(.horizontal, 18).padding(.bottom, 12)
             }.scrollDismissesKeyboard(.interactively)
                 .overlay {
                     voiceActivityOverlay
@@ -128,7 +136,12 @@ struct KokoListeningRoomView: View {
                 .background(KokoInk.canvas.opacity(0.92))
         }
         .foregroundStyle(KokoInk.primary)
-        .background(LinearGradient(colors: [KokoInk.panelRaised, KokoInk.canvas, Color(red: 0.08, green: 0.08, blue: 0.18)], startPoint: .topLeading, endPoint: .bottomTrailing))
+        .background {
+            GeometryReader { bounds in
+                Image("KokoVoiceOrbitStage").resizable().scaledToFill()
+                    .frame(width: bounds.size.width, height: bounds.size.height).clipped()
+            }.allowsHitTesting(false).accessibilityHidden(true)
+        }
         .onAppear { voiceActivity.begin(room.roomConversation) }
         .onDisappear { voiceActivity.reset() }
         .onChange(of: room.roomConversation) { entries in
@@ -177,12 +190,22 @@ struct KokoListeningRoomView: View {
             } label: {
                 VStack(spacing: 6) {
                     if let memberID = room.seatAssignments[position], let member = community.member(memberID) {
-                        KokoMemberPortrait(member: member).frame(width: 66, height: 66).clipShape(Circle())
+                        ZStack {
+                            KokoMemberPortrait(member: member).frame(width: 54, height: 54).clipShape(Circle())
+                            Image("KokoVoiceSeatOrbit").resizable().scaledToFit().frame(width: 82, height: 82)
+                                .opacity(roomDemo.speakingMemberID == memberID ? 1 : 0.55)
+                                .scaleEffect(roomDemo.speakingMemberID == memberID ? 1.04 : 0.96)
+                                .animation(reduceMotion ? nil : .easeInOut(duration: 0.5), value: roomDemo.speakingMemberID)
+                                .accessibilityHidden(true)
+                        }.frame(height: 82)
                         Text(member.publicName).lineLimit(1)
-                        Text(LocalizedStringKey(room.mutedSeatNumbers.contains(position) ? "Muted" : (position == 0 ? "Host · preview" : "Guest · preview")))
+                        Text(LocalizedStringKey(room.mutedSeatNumbers.contains(position) ? "Muted" : (roomDemo.speakingMemberID == memberID ? "Speaking" : (position == 0 ? "Host" : "On mic"))))
                             .font(KokoTypography.body(size: 9)).foregroundStyle(KokoInk.accent)
                     } else {
-                        Artwork(sheet: .tabs, tile: 1).frame(width: 58, height: 58).opacity(0.55).frame(height: 66)
+                        ZStack {
+                            Image("KokoVoiceSeatOrbit").resizable().scaledToFit().frame(width: 82, height: 82).opacity(0.3)
+                            Artwork(sheet: .navigation, tile: 13).frame(width: 26, height: 26).opacity(0.7)
+                        }.frame(height: 82)
                         Text("Open mic \(position + 1)")
                         Text("Tap to join").font(KokoTypography.body(size: 9)).foregroundStyle(KokoInk.secondary)
                     }
@@ -268,7 +291,21 @@ struct KokoListeningRoomView: View {
                     }
                 }
             case "Room audience":
-                ForEach(Array(Set(room.seatAssignments.values)).sorted(), id: \.self) { memberID in if let member = community.member(memberID) { KokoMemberRow(member: member) } }
+                Text("\(roomDemo.audience(in: community).count) online").font(KokoTypography.heading(size: 20))
+                ForEach(roomDemo.audience(in: community)) { member in
+                    Button { panel = nil; navigation.open(.profile(member.id)) } label: {
+                        HStack(spacing: 12) {
+                            KokoMemberPortrait(member: member).frame(width: 42, height: 42).clipShape(Circle())
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(member.publicName).font(KokoTypography.emphasis(size: 15))
+                                Text(LocalizedStringKey(member.id == room.hostMemberID ? "Host" : (room.seatAssignments.values.contains(member.id) ? "On mic" : "Listening")))
+                                    .font(KokoTypography.medium(size: 11)).foregroundStyle(KokoInk.accent)
+                            }
+                            Spacer()
+                            Artwork(sheet: .navigation, tile: 4).frame(width: 18, height: 18)
+                        }.padding(.vertical, 8).contentShape(Rectangle())
+                    }.buttonStyle(KokoPressStyle())
+                }
             case "Voice connection":
                 Artwork(sheet: .navigation, tile: 13)
                     .frame(width: 30, height: 30)
@@ -312,35 +349,6 @@ struct KokoListeningRoomView: View {
     }
 }
 
-
-private struct KokoVoiceRoomHeroCard: View {
-    let room: HostedConversationRoom
-    var body: some View {
-        ZStack(alignment: .bottomLeading) {
-            Image("KokoVoiceRoomHero")
-                .resizable()
-                .scaledToFill()
-                .frame(height: 190)
-                .clipped()
-            LinearGradient(colors: [.clear, Color.black.opacity(0.82)], startPoint: .top, endPoint: .bottom)
-            VStack(alignment: .leading, spacing: 5) {
-                HStack(spacing: 7) {
-                    Artwork(sheet: .tabs, tile: 1).frame(width: 23, height: 23)
-                    Text("VOICE ROOM").font(KokoTypography.heading(size: 10)).tracking(1.2)
-                }.foregroundStyle(KokoInk.accent)
-                Text("Pull up a chair")
-                    .font(KokoTypography.heading(size: 24))
-                Text("Talk, listen, and leave a little room for someone new.")
-                    .font(KokoTypography.medium(size: 12)).foregroundStyle(.white.opacity(0.8))
-            }.padding(16)
-        }
-        .frame(maxWidth: .infinity)
-        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 24, style: .continuous).stroke(KokoInk.accent.opacity(0.45), lineWidth: 1))
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("Voice room artwork for \(room.roomTitle)")
-    }
-}
 
 @MainActor
 final class KokoRoomMusicPlayer: ObservableObject {

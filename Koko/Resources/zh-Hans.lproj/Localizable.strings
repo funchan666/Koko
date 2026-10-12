@@ -9,6 +9,7 @@
 "%lld connections" = "%lld 位好友";
 "%lld conversations" = "%lld 段聊天";
 "%lld kept" = "已收藏 %lld 件";
+"%lld online" = "%lld 人在线";
 "%lld points" = "%lld 积分";
 "%lld questions" = "%lld 个问题";
 "%lld rooms created" = "已创建 %lld 个房间";
@@ -34,6 +35,7 @@
 "A little about you." = "关于你的一点点。";
 "A little appreciation, a touch of you." = "一点心意，一点你的独特。";
 "A little bloom" = "一朵小花";
+"A little company after a long day." = "忙了一天，来这里坐坐。";
 "A little context" = "了解更多";
 "A little gesture, on purpose" = "用心的一点表示";
 "A little goes a long way" = "一点心意，温暖很久";
@@ -54,6 +56,7 @@
 "A problem" = "遇到问题";
 "A profile with room to connect." = "从认识彼此开始。";
 "A question for next time · 240 characters" = "下次想问的问题 · 最多240字";
+"A quiet evening to make something." = "安静的夜晚，做点喜欢的东西。";
 "A room for your kind of people." = "给聊得来的人留个位置。";
 "A room for your mood" = "找到此刻想聊的房间";
 "A seat in the conversation" = "加入这场聊天";
@@ -99,6 +102,7 @@
 "Any gender" = "不限性别";
 "Any language" = "不限语言";
 "Any region" = "不限地区";
+"Anyone else here with a cup of tea?" = "还有谁也在喝茶吗？";
 "App language" = "应用语言";
 "Apple authorization did not return a complete credential. Please try again." = "Apple 授权未返回完整凭证，请重试。";
 "Apple authorization has changed. Please sign in with Apple again. Your saved profile remains on this device." = "Apple 授权已变更，请重新使用 Apple 登录。已保存的资料仍在此设备上。";
@@ -356,6 +360,7 @@
 "Give people a reason to stay." = "说说这里有什么好聊的。";
 "Give someone a reason to say hello." = "让别人多一个认识你的理由。";
 "Give to " = "赠送给 ";
+"Glad I dropped in tonight." = "很高兴今晚进来聊聊。";
 "Glad you stopped by." = "很高兴遇见你。";
 "Go a little deeper" = "再聊深一些";
 "Go back" = "返回";
@@ -372,8 +377,10 @@
 "Guest · preview" = "嘉宾 · 体验";
 "Harassment" = "骚扰";
 "Hateful content" = "仇恨内容";
+"Headphones on, finally unwinding." = "戴上耳机，终于可以放松了。";
 "Hello, again" = "又见面啦";
 "Help shape Koko" = "一起完善 Koko";
+"Hey everyone, how's your evening?" = "大家好，今晚过得怎么样？";
 "Hidden on this device. Your report is saved here; it has not been sent to a moderation service." = "已在此设备上隐藏并保存举报，尚未发送至审核服务。";
 "Hide" = "隐藏";
 "Hide the questions" = "收起问题";
@@ -384,9 +391,13 @@
 "Hosted by " = "房主：";
 "Hosted by %@" = "房主：%@";
 "Hosting cues" = "主持提示";
+"How did you get started?" = "你是怎么开始的？";
 "How has the meaning of that song changed for you?" = "那首歌对你的意义有怎样的变化？";
 "I agree to" = "我同意";
 "I have read and agree to both policies below." = "我已阅读并同意以下两份协议。";
+"I know exactly what you mean." = "太懂你说的感觉了。";
+"I like seeing the little details." = "喜欢看这些小细节。";
+"I'd love to hear your next pick." = "想听听你下一首选什么。";
 "If someone is in danger" = "遇到紧急危险时";
 "Image unavailable" = "图片不可用";
 "In their words" = "听听自我介绍";
@@ -400,9 +411,11 @@
 "Japanese" = "日语";
 "Join mic" = "上麦";
 "Join room →" = "进入房间 →";
+"Just got home. Happy to listen." = "刚到家，来听大家聊聊。";
 "Keep a little inspiration" = "留住一点灵感";
 "Keep a question for another hello." = "收藏一个问题，留给下次聊天。";
 "Keep a reflection?" = "留下一段回顾？";
+"Keep going, I'd love to see it." = "继续呀，想看看完成的样子。";
 "Keep me here" = "暂不离开";
 "Keep my coins" = "保留金币";
 "Keep the good bits" = "收藏美好瞬间";
@@ -433,6 +446,7 @@
 "Level %lld · Your activity" = "等级 %lld · 我的活跃度";
 "Like" = "点赞";
 "Liked" = "已点赞";
+"Listening" = "正在收听";
 "Little answers. More you." = "一点回答，多一点了解。";
 "Little favorites" = "心头好";
 "Little moments, real connections" = "分享日常，认识彼此";
@@ -528,7 +542,9 @@
 "Notifications" = "通知";
 "OFF" = "关闭";
 "ON" = "开启";
+"On mic" = "在麦上";
 "On repeat" = "循环心意";
+"One more track before I go." = "走之前再听一首。";
 "One quick step." = "只需简单一步。";
 "One-time consumable purchases. No subscription. Coins do not expire and have no cash value. Chats, photos in chats, voice and video conversations are always free." = "一次性消耗型购买，无订阅。金币不过期且无现金价值。文字、聊天照片、语音和视频聊天始终免费。";
 "Only the little extras" = "为小小心意增添色彩";
@@ -701,6 +717,7 @@
 "Saved illustration" = "已保存的插画";
 "Saved on this device" = "保存在此设备上";
 "Saved questions" = "收藏的问题";
+"Saving that for my walk tomorrow." = "留着明天散步时听。";
 "Saving your profile…" = "正在保存资料…";
 "Say hello →" = "打个招呼 →";
 "Say something..." = "说点什么…";
@@ -752,6 +769,7 @@
 "Sound on" = "开启声音";
 "Spam or scam" = "垃圾信息或诈骗";
 "Spanish" = "西班牙语";
+"Speaking" = "正在发言";
 "Spend" = "使用金币";
 "Start" = "开始";
 "Start a friendship. Find your people" = "从打招呼开始，认识新朋友";
@@ -781,11 +799,18 @@
 "Talk, listen, and leave a little room for someone new." = "聊聊、听听，也为新朋友留个位置。";
 "Tap to join" = "点击加入";
 "Teach me something" = "教我点什么";
+"Tell us the rest of the story." = "想听听后面的故事。";
 "Terms" = "条款";
 "Terms of Service" = "服务条款";
 "Text and image messages, voice and video conversations, entering or hosting rooms, follows, comments, likes and saved moments cost 0 coins." = "文字及图片消息、语音视频聊天、加入或创建房间、关注、评论、点赞和收藏均不消耗金币。";
+"Thanks for sharing the process." = "谢谢分享创作过程。";
+"That chorus stays with you." = "那段副歌一直在脑海里。";
 "That date doesn't exist. Check the day, month and year." = "日期不存在，请检查年月日。";
+"That gives me an idea." = "这让我有了个想法。";
+"That made me smile." = "听到这里笑了。";
 "The Apple purchase could not be completed. Check your connection and try again. If Apple charged you, use Check unfinished purchases; do not buy again." = "Apple 购买未能完成，请检查网络。若已扣款，请检查未完成购买，不要重复购买。";
+"The best songs come with a story." = "好歌背后总有故事。";
+"The first draft is always the hardest." = "初稿总是最难的。";
 "The listening room" = "倾听小屋";
 "The little shop" = "心意小店";
 "The media cache couldn't be cleared. Please try again." = "无法清理媒体缓存，请重试。";
@@ -815,6 +840,7 @@
 "This film is missing from the collection." = "素材库中缺少此视频。";
 "This is an interactive preview with sample profiles and rooms. Optional coin packs use genuine Apple In-App Purchase, with the wallet currently stored on this device." = "这是包含示例资料和房间的交互体验版。可选金币套餐使用真实 Apple 内购，钱包目前保存在此设备。";
 "This is an optional room gift. No message, call or conversation requires it." = "这是可选房间礼物，消息、通话和聊天都不需要购买。";
+"This is my kind of evening." = "就喜欢这样的夜晚。";
 "This item goes into your backpack." = "此物品将放入背包。";
 "This item is not available in the bundled collection." = "内置素材库中没有此物品。";
 "This moment is hidden" = "此动态已隐藏";
@@ -882,6 +908,7 @@
 "View moment →" = "查看动态 →";
 "View profile" = "查看资料";
 "View profile →" = "查看资料 →";
+"View room audience" = "查看房间观众";
 "Violence" = "暴力内容";
 "Visit the little shop" = "逛逛小店";
 "Visit the shop" = "前往商店";
@@ -891,6 +918,7 @@
 "Voice and video calls are for mutual followers. Open this profile to manage your connection." = "语音视频通话仅面向互关用户，请打开资料页管理关系。";
 "Voice call" = "语音通话";
 "Voice connection" = "语音连麦";
+"Voice room" = "语音房";
 "Voice room preview" = "语音房预览";
 "Voice room preview cover. No audio is broadcast." = "语音房预览封面，不会广播音频。";
 "Voice room previews · pick a topic you love" = "语音房体验 · 选择感兴趣的话题";
@@ -908,6 +936,7 @@
 "What are we listening to?" = "我们来听点什么？";
 "What are we talking about?" = "想聊什么话题？";
 "What are you making just for the joy of it?" = "最近有没有什么创作，单纯是因为喜欢？";
+"What are you working on today?" = "今天在做什么作品？";
 "What could you happily teach someone?" = "有什么事情你很愿意教别人？";
 "What did it bring to mind?" = "它让你想到了什么？";
 "What did that moment change about the way you felt?" = "那个瞬间让你的心情有了什么变化？";
@@ -918,6 +947,7 @@
 "What should we call you?" = "怎么称呼你？";
 "What small moment made you pause today?" = "今天哪个小瞬间让你停了下来？";
 "What small thing made your day better?" = "今天有什么小事让你心情变好了？";
+"What song have you had on repeat?" = "最近在单曲循环哪首歌？";
 "What song would open the movie of your life?" = "如果你的人生是一部电影，开场曲会是哪首歌？";
 "What story would you share before playing your next song?" = "播放下一首歌前，你想先分享什么故事？";
 "What they are into" = "兴趣爱好";

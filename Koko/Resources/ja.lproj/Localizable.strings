@@ -9,6 +9,7 @@
 "%lld connections" = "%lld人のつながり";
 "%lld conversations" = "%lld件の会話";
 "%lld kept" = "%lld件保存";
+"%lld online" = "%lld 人がオンライン";
 "%lld points" = "%lldポイント";
 "%lld questions" = "%lld個の質問";
 "%lld rooms created" = "%lld件のルームを作成";
@@ -34,6 +35,7 @@
 "A little about you." = "あなたについて少し。";
 "A little appreciation, a touch of you." = "感謝に、あなたらしさを添えて。";
 "A little bloom" = "小さな花";
+"A little company after a long day." = "長い一日の終わりに誰かと話せるのっていいね。";
 "A little context" = "もう少し知る";
 "A little gesture, on purpose" = "心を込めた小さな贈り物";
 "A little goes a long way" = "小さな気持ちが大きな喜びに";
@@ -54,6 +56,7 @@
 "A problem" = "問題を報告";
 "A profile with room to connect." = "つながりが生まれるプロフィール。";
 "A question for next time · 240 characters" = "次回への質問 · 240文字まで";
+"A quiet evening to make something." = "静かな夜に何か作るの、いいね。";
 "A room for your kind of people." = "気の合う仲間のためのルーム。";
 "A room for your mood" = "今の気分に合うルーム";
 "A seat in the conversation" = "会話に参加する席";
@@ -99,6 +102,7 @@
 "Any gender" = "性別指定なし";
 "Any language" = "言語指定なし";
 "Any region" = "地域指定なし";
+"Anyone else here with a cup of tea?" = "お茶を飲みながら聞いてる人いる？";
 "App language" = "アプリの言語";
 "Apple authorization did not return a complete credential. Please try again." = "Appleの認証情報が不完全です。再試行してください。";
 "Apple authorization has changed. Please sign in with Apple again. Your saved profile remains on this device." = "Appleの認証が変更されました。Appleで再度ログインしてください。保存済みのプロフィールはこの端末に残ります。";
@@ -356,6 +360,7 @@
 "Give people a reason to stay." = "一緒に話したくなる紹介を。";
 "Give someone a reason to say hello." = "話しかけたくなる、あなたらしさを。";
 "Give to " = "贈り先：";
+"Glad I dropped in tonight." = "今夜ここに来てよかった。";
 "Glad you stopped by." = "来てくれてうれしいです。";
 "Go a little deeper" = "もう少し深く";
 "Go back" = "戻る";
@@ -372,8 +377,10 @@
 "Guest · preview" = "ゲスト · プレビュー";
 "Harassment" = "嫌がらせ";
 "Hateful content" = "憎悪表現";
+"Headphones on, finally unwinding." = "ヘッドホンをつけて、やっとひと息。";
 "Hello, again" = "また会えましたね";
 "Help shape Koko" = "Kokoを一緒に育てよう";
+"Hey everyone, how's your evening?" = "みんな、今夜はどう？";
 "Hidden on this device. Your report is saved here; it has not been sent to a moderation service." = "この端末で非表示にしました。通報は端末内に保存され、審査サービスには送信されていません。";
 "Hide" = "非表示";
 "Hide the questions" = "質問を閉じる";
@@ -384,9 +391,13 @@
 "Hosted by " = "ホスト：";
 "Hosted by %@" = "ホスト：%@";
 "Hosting cues" = "進行カード";
+"How did you get started?" = "始めたきっかけは？";
 "How has the meaning of that song changed for you?" = "その歌の意味は、自分にとってどう変わりましたか？";
 "I agree to" = "同意する：";
 "I have read and agree to both policies below." = "以下の両方の規約を読み、同意します。";
+"I know exactly what you mean." = "その気持ち、よくわかる。";
+"I like seeing the little details." = "細かいところを見るのが好き。";
+"I'd love to hear your next pick." = "次に選ぶ曲も聴きたい。";
 "If someone is in danger" = "危険が迫っている場合";
 "Image unavailable" = "画像を表示できません";
 "In their words" = "自己紹介";
@@ -400,9 +411,11 @@
 "Japanese" = "日本語";
 "Join mic" = "マイクに参加";
 "Join room →" = "参加する →";
+"Just got home. Happy to listen." = "今帰ったところ。話を聞きに来たよ。";
 "Keep a little inspiration" = "ひらめきを残そう";
 "Keep a question for another hello." = "次の会話のために、質問を残そう。";
 "Keep a reflection?" = "振り返りを残しますか？";
+"Keep going, I'd love to see it." = "完成したところも見たいな。";
 "Keep me here" = "このまま続ける";
 "Keep my coins" = "コインを使わない";
 "Keep the good bits" = "大切な瞬間を残そう";
@@ -433,6 +446,7 @@
 "Level %lld · Your activity" = "レベル%lld · アクティビティ";
 "Like" = "いいね";
 "Liked" = "いいね済み";
+"Listening" = "リスニング中";
 "Little answers. More you." = "短い答えに、あなたらしさ。";
 "Little favorites" = "お気に入り";
 "Little moments, real connections" = "日常から、つながろう";
@@ -528,7 +542,9 @@
 "Notifications" = "通知";
 "OFF" = "オフ";
 "ON" = "オン";
+"On mic" = "マイク参加中";
 "On repeat" = "リピート";
+"One more track before I go." = "あと一曲聴いてから帰ろう。";
 "One quick step." = "あと少しです。";
 "One-time consumable purchases. No subscription. Coins do not expire and have no cash value. Chats, photos in chats, voice and video conversations are always free." = "買い切りの消費型購入で、定期購読はありません。コインに有効期限や換金価値はありません。チャット、写真、音声・ビデオ会話は無料です。";
 "Only the little extras" = "ちょっとした特別を";
@@ -701,6 +717,7 @@
 "Saved illustration" = "保存したイラスト";
 "Saved on this device" = "この端末に保存済み";
 "Saved questions" = "保存した質問";
+"Saving that for my walk tomorrow." = "明日の散歩用にメモしておこう。";
 "Saving your profile…" = "プロフィールを保存中…";
 "Say hello →" = "話しかける →";
 "Say something..." = "何か話してみよう…";
@@ -752,6 +769,7 @@
 "Sound on" = "音声オン";
 "Spam or scam" = "迷惑行為・詐欺";
 "Spanish" = "スペイン語";
+"Speaking" = "発言中";
 "Spend" = "使う";
 "Start" = "始める";
 "Start a friendship. Find your people" = "挨拶から友だちに。仲間を探そう";
@@ -781,11 +799,18 @@
 "Talk, listen, and leave a little room for someone new." = "話して、聞いて、新しい仲間にも場所を。";
 "Tap to join" = "タップして参加";
 "Teach me something" = "何か教えて";
+"Tell us the rest of the story." = "続きが聞きたい。";
 "Terms" = "規約";
 "Terms of Service" = "利用規約";
 "Text and image messages, voice and video conversations, entering or hosting rooms, follows, comments, likes and saved moments cost 0 coins." = "テキスト・画像メッセージ、音声・ビデオ会話、ルームへの参加・作成、フォロー、コメント、いいね、保存は0コインです。";
+"Thanks for sharing the process." = "制作の様子を見せてくれてありがとう。";
+"That chorus stays with you." = "あのサビが頭から離れない。";
 "That date doesn't exist. Check the day, month and year." = "日付が正しくありません。年月日を確認してください。";
+"That gives me an idea." = "アイデアが浮かんだ。";
+"That made me smile." = "思わず笑顔になった。";
 "The Apple purchase could not be completed. Check your connection and try again. If Apple charged you, use Check unfinished purchases; do not buy again." = "Appleの購入を完了できませんでした。接続を確認してください。課金済みなら再購入せず、未完了の購入を確認してください。";
+"The best songs come with a story." = "好きな曲には思い出があるね。";
+"The first draft is always the hardest." = "最初の下書きが一番難しいよね。";
 "The listening room" = "リスニングルーム";
 "The little shop" = "小さなショップ";
 "The media cache couldn't be cleared. Please try again." = "キャッシュを削除できませんでした。再試行してください。";
@@ -815,6 +840,7 @@
 "This film is missing from the collection." = "コレクションにこの動画がありません。";
 "This is an interactive preview with sample profiles and rooms. Optional coin packs use genuine Apple In-App Purchase, with the wallet currently stored on this device." = "サンプルのプロフィールとルームを含む体験版です。任意のコインパックは正規のApple内課金を使い、ウォレットは端末に保存されます。";
 "This is an optional room gift. No message, call or conversation requires it." = "任意のギフトです。メッセージ、通話、会話に購入は必要ありません。";
+"This is my kind of evening." = "こういう夜が好き。";
 "This item goes into your backpack." = "このアイテムはバッグに入ります。";
 "This item is not available in the bundled collection." = "このアイテムは内蔵コレクションにありません。";
 "This moment is hidden" = "この投稿は非表示です";
@@ -882,6 +908,7 @@
 "View moment →" = "投稿を見る →";
 "View profile" = "プロフィールを見る";
 "View profile →" = "プロフィール →";
+"View room audience" = "ルームの参加者を見る";
 "Violence" = "暴力";
 "Visit the little shop" = "ショップを見る";
 "Visit the shop" = "ショップへ";
@@ -891,6 +918,7 @@
 "Voice and video calls are for mutual followers. Open this profile to manage your connection." = "音声・ビデオ通話は相互フォロー向けです。プロフィールで関係を管理してください。";
 "Voice call" = "音声通話";
 "Voice connection" = "音声接続";
+"Voice room" = "ボイスルーム";
 "Voice room preview" = "音声ルームのプレビュー";
 "Voice room preview cover. No audio is broadcast." = "音声ルームのプレビュー画像です。音声配信はありません。";
 "Voice room previews · pick a topic you love" = "音声ルームのプレビュー · 好きな話題を選ぼう";
@@ -908,6 +936,7 @@
 "What are we listening to?" = "何を聴こう？";
 "What are we talking about?" = "何について話そう？";
 "What are you making just for the joy of it?" = "楽しむためだけに作っているものは？";
+"What are you working on today?" = "今日は何を作っているの？";
 "What could you happily teach someone?" = "誰かに喜んで教えたいことは？";
 "What did it bring to mind?" = "何を思い浮かべましたか？";
 "What did that moment change about the way you felt?" = "その瞬間で、気持ちはどう変わりましたか？";
@@ -918,6 +947,7 @@
 "What should we call you?" = "何とお呼びしましょう？";
 "What small moment made you pause today?" = "今日、ふと立ち止まったのはどんな瞬間でしたか？";
 "What small thing made your day better?" = "今日、ちょっと嬉しかったことは？";
+"What song have you had on repeat?" = "最近リピートしている曲は？";
 "What song would open the movie of your life?" = "人生が映画なら、オープニング曲は？";
 "What story would you share before playing your next song?" = "次の曲を流す前に、どんな話をしたいですか？";
 "What they are into" = "興味のあること";

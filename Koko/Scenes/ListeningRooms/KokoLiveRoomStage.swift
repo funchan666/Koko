@@ -11,6 +11,7 @@ struct KokoLiveRoomStage: View {
     @StateObject private var activity = KokoRoomStageActivity()
     let room: HostedConversationRoom
     let videoAsset: CommunityMediaAsset?
+    let audience: [CommunityMember]
     @Binding var message: String
     let onBack: () -> Void
     let onSendMessage: (String) -> Bool
@@ -31,9 +32,9 @@ struct KokoLiveRoomStage: View {
             VStack(alignment: .leading, spacing: 14) {
                 hostBar
                 HStack(spacing: 8) {
-                    KokoBroadcastRoomBadge(hasRecordedPreview: videoAsset != nil)
-                    Text(room.roomTitle).font(KokoTypography.emphasis(size: 12)).lineLimit(1)
+                    KokoBroadcastRoomBadge(hasRecordedPreview: videoAsset != nil, showsStatusDetail: false)
                     Spacer(minLength: 0)
+                    KokoRoomAudienceButton(members: audience) { onOpenPanel("Room audience") }
                 }
                 if let issue = playback.issue {
                     VStack(alignment: .leading, spacing: 8) {
@@ -44,20 +45,17 @@ struct KokoLiveRoomStage: View {
                 Spacer(minLength: 0)
                 HStack(alignment: .bottom, spacing: 12) {
                     VStack(alignment: .leading, spacing: 10) {
-                        Text(room.conversationPrompt).font(KokoTypography.heading(size: 16))
                         ScrollViewReader { proxy in
                             ScrollView(showsIndicators: false) {
-                                KokoRoomChatLog(entries: Array(room.roomConversation.suffix(30)))
+                                KokoRoomChatLog(entries: Array(room.roomConversation.suffix(30)), showsEmptyState: false, compact: true)
                                     .id("latest-message")
                             }.frame(maxHeight: 170)
-                                .onChange(of: room.roomConversation.count) { _ in withAnimation { proxy.scrollTo("latest-message", anchor: .bottom) } }
+                                .onChange(of: room.roomConversation.last?.id) { _ in withAnimation { proxy.scrollTo("latest-message", anchor: .bottom) } }
                                 .onAppear { proxy.scrollTo("latest-message", anchor: .bottom) }
                         }
                     }
                     stageAction(tile: 14, label: playback.isMuted ? "Sound on" : "Mute") { playback.toggleMute() }
                 }
-                Text("Recorded video · messages & gifts stay on this device")
-                    .font(KokoTypography.medium(size: 10)).foregroundStyle(.white.opacity(0.75))
                 KokoLiveRoomComposer(message: $message, send: { onSendMessage(message) }, gift: { onOpenPanel("Send a little something") })
             }
             .padding(.horizontal, 18).padding(.top, screenInsets.top + 8).padding(.bottom, screenInsets.bottom + 10)
@@ -185,19 +183,21 @@ private struct KokoLiveRoomMiniButton: View {
 struct KokoRoomChatLog: View {
     @EnvironmentObject private var community: CommunityJournalStore
     let entries: [ConversationEntry]
+    var showsEmptyState = true
+    var compact = false
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            if entries.isEmpty {
+            if entries.isEmpty && showsEmptyState {
                 Text("Say the first hello. Your message will appear here.")
                     .font(KokoTypography.body(size: 12)).foregroundStyle(KokoInk.secondary)
             }
             ForEach(entries) { entry in
                 HStack(alignment: .top, spacing: 7) {
                     if let tile = entry.attachmentTile { Artwork(sheet: .collection, tile: tile).frame(width: 34, height: 34) }
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: compact ? 1 : 4) {
                         KokoProfileLink(memberID: entry.authorMemberID) {
                             Text(community.member(entry.authorMemberID)?.publicName ?? "You")
-                                .foregroundStyle(KokoInk.accent).font(KokoTypography.heading(size: 12)).frame(minHeight: 44)
+                                .foregroundStyle(KokoInk.accent).font(KokoTypography.heading(size: 12)).frame(minHeight: compact ? 22 : 44)
                         }
                         Text(entry.messageText).font(KokoTypography.medium(size: 12))
                             .fixedSize(horizontal: false, vertical: true)

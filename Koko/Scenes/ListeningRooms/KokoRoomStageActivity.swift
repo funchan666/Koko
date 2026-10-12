@@ -30,6 +30,7 @@ final class KokoRoomStageActivity: ObservableObject {
 
     func receive(_ entries: [ConversationEntry], at now: Date = .now) {
         let visibleIDs = Set(entries.map(\.id))
+        seenEntryIDs.formIntersection(visibleIDs)
         var scheduled = flights.filter { visibleIDs.contains($0.id) && $0.endsAt > now }
         for entry in entries where seenEntryIDs.insert(entry.id).inserted {
             let isGift = entry.attachmentTile != nil
@@ -133,7 +134,7 @@ struct KokoRoomGiftShower: View {
                         .offset(x: reduceMotion ? 0 : -(1 - entrance) * (width + 18), y: CGFloat(flight.lane) * 82 + 20)
                         .opacity(fade)
                         if !reduceMotion {
-                            // One enlarged artwork per actual gift event, no synthetic senders or counts.
+                            // One enlarged artwork per delivered gift event.
                             Artwork(sheet: .collection, tile: tile)
                                 .frame(width: 76, height: 76)
                                 .scaleEffect(0.75 + 0.35 * sin(progress * .pi))

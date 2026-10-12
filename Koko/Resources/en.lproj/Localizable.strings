@@ -9,6 +9,7 @@
 "%lld connections" = "%lld connections";
 "%lld conversations" = "%lld conversations";
 "%lld kept" = "%lld kept";
+"%lld online" = "%lld online";
 "%lld points" = "%lld points";
 "%lld questions" = "%lld questions";
 "%lld rooms created" = "%lld rooms created";
@@ -34,6 +35,7 @@
 "A little about you." = "A little about you.";
 "A little appreciation, a touch of you." = "A little appreciation, a touch of you.";
 "A little bloom" = "A little bloom";
+"A little company after a long day." = "A little company after a long day.";
 "A little context" = "A little context";
 "A little gesture, on purpose" = "A little gesture, on purpose";
 "A little goes a long way" = "A little goes a long way";
@@ -54,6 +56,7 @@
 "A problem" = "A problem";
 "A profile with room to connect." = "A profile with room to connect.";
 "A question for next time · 240 characters" = "A question for next time · 240 characters";
+"A quiet evening to make something." = "A quiet evening to make something.";
 "A room for your kind of people." = "A room for your kind of people.";
 "A room for your mood" = "A room for your mood";
 "A seat in the conversation" = "A seat in the conversation";
@@ -99,6 +102,7 @@
 "Any gender" = "Any gender";
 "Any language" = "Any language";
 "Any region" = "Any region";
+"Anyone else here with a cup of tea?" = "Anyone else here with a cup of tea?";
 "App language" = "App language";
 "Apple authorization did not return a complete credential. Please try again." = "Apple authorization did not return a complete credential. Please try again.";
 "Apple authorization has changed. Please sign in with Apple again. Your saved profile remains on this device." = "Apple authorization has changed. Please sign in with Apple again. Your saved profile remains on this device.";
@@ -356,6 +360,7 @@
 "Give people a reason to stay." = "Give people a reason to stay.";
 "Give someone a reason to say hello." = "Give someone a reason to say hello.";
 "Give to " = "Give to ";
+"Glad I dropped in tonight." = "Glad I dropped in tonight.";
 "Glad you stopped by." = "Glad you stopped by.";
 "Go a little deeper" = "Go a little deeper";
 "Go back" = "Go back";
@@ -372,8 +377,10 @@
 "Guest · preview" = "Guest · preview";
 "Harassment" = "Harassment";
 "Hateful content" = "Hateful content";
+"Headphones on, finally unwinding." = "Headphones on, finally unwinding.";
 "Hello, again" = "Hello, again";
 "Help shape Koko" = "Help shape Koko";
+"Hey everyone, how's your evening?" = "Hey everyone, how's your evening?";
 "Hidden on this device. Your report is saved here; it has not been sent to a moderation service." = "Hidden on this device. Your report is saved here; it has not been sent to a moderation service.";
 "Hide" = "Hide";
 "Hide the questions" = "Hide the questions";
@@ -384,9 +391,13 @@
 "Hosted by " = "Hosted by ";
 "Hosted by %@" = "Hosted by %@";
 "Hosting cues" = "Hosting cues";
+"How did you get started?" = "How did you get started?";
 "How has the meaning of that song changed for you?" = "How has the meaning of that song changed for you?";
 "I agree to" = "I agree to";
 "I have read and agree to both policies below." = "I have read and agree to both policies below.";
+"I know exactly what you mean." = "I know exactly what you mean.";
+"I like seeing the little details." = "I like seeing the little details.";
+"I'd love to hear your next pick." = "I'd love to hear your next pick.";
 "If someone is in danger" = "If someone is in danger";
 "Image unavailable" = "Image unavailable";
 "In their words" = "In their words";
@@ -400,9 +411,11 @@
 "Japanese" = "Japanese";
 "Join mic" = "Join mic";
 "Join room →" = "Join room →";
+"Just got home. Happy to listen." = "Just got home. Happy to listen.";
 "Keep a little inspiration" = "Keep a little inspiration";
 "Keep a question for another hello." = "Keep a question for another hello.";
 "Keep a reflection?" = "Keep a reflection?";
+"Keep going, I'd love to see it." = "Keep going, I'd love to see it.";
 "Keep me here" = "Keep me here";
 "Keep my coins" = "Keep my coins";
 "Keep the good bits" = "Keep the good bits";
@@ -433,6 +446,7 @@
 "Level %lld · Your activity" = "Level %lld · Your activity";
 "Like" = "Like";
 "Liked" = "Liked";
+"Listening" = "Listening";
 "Little answers. More you." = "Little answers. More you.";
 "Little favorites" = "Little favorites";
 "Little moments, real connections" = "Little moments, real connections";
@@ -528,7 +542,9 @@
 "Notifications" = "Notifications";
 "OFF" = "OFF";
 "ON" = "ON";
+"On mic" = "On mic";
 "On repeat" = "On repeat";
+"One more track before I go." = "One more track before I go.";
 "One quick step." = "One quick step.";
 "One-time consumable purchases. No subscription. Coins do not expire and have no cash value. Chats, photos in chats, voice and video conversations are always free." = "One-time consumable purchases. No subscription. Coins do not expire and have no cash value. Chats, photos in chats, voice and video conversations are always free.";
 "Only the little extras" = "Only the little extras";
@@ -701,6 +717,7 @@
 "Saved illustration" = "Saved illustration";
 "Saved on this device" = "Saved on this device";
 "Saved questions" = "Saved questions";
+"Saving that for my walk tomorrow." = "Saving that for my walk tomorrow.";
 "Saving your profile…" = "Saving your profile…";
 "Say hello →" = "Say hello →";
 "Say something..." = "Say something...";
@@ -752,6 +769,7 @@
 "Sound on" = "Sound on";
 "Spam or scam" = "Spam or scam";
 "Spanish" = "Spanish";
+"Speaking" = "Speaking";
 "Spend" = "Spend";
 "Start" = "Start";
 "Start a friendship. Find your people" = "Start a friendship. Find your people";
@@ -781,11 +799,18 @@
 "Talk, listen, and leave a little room for someone new." = "Talk, listen, and leave a little room for someone new.";
 "Tap to join" = "Tap to join";
 "Teach me something" = "Teach me something";
+"Tell us the rest of the story." = "Tell us the rest of the story.";
 "Terms" = "Terms";
 "Terms of Service" = "Terms of Service";
 "Text and image messages, voice and video conversations, entering or hosting rooms, follows, comments, likes and saved moments cost 0 coins." = "Text and image messages, voice and video conversations, entering or hosting rooms, follows, comments, likes and saved moments cost 0 coins.";
+"Thanks for sharing the process." = "Thanks for sharing the process.";
+"That chorus stays with you." = "That chorus stays with you.";
 "That date doesn't exist. Check the day, month and year." = "That date doesn't exist. Check the day, month and year.";
+"That gives me an idea." = "That gives me an idea.";
+"That made me smile." = "That made me smile.";
 "The Apple purchase could not be completed. Check your connection and try again. If Apple charged you, use Check unfinished purchases; do not buy again." = "The Apple purchase could not be completed. Check your connection and try again. If Apple charged you, use Check unfinished purchases; do not buy again.";
+"The best songs come with a story." = "The best songs come with a story.";
+"The first draft is always the hardest." = "The first draft is always the hardest.";
 "The listening room" = "The listening room";
 "The little shop" = "The little shop";
 "The media cache couldn't be cleared. Please try again." = "The media cache couldn't be cleared. Please try again.";
@@ -815,6 +840,7 @@
 "This film is missing from the collection." = "This film is missing from the collection.";
 "This is an interactive preview with sample profiles and rooms. Optional coin packs use genuine Apple In-App Purchase, with the wallet currently stored on this device." = "This is an interactive preview with sample profiles and rooms. Optional coin packs use genuine Apple In-App Purchase, with the wallet currently stored on this device.";
 "This is an optional room gift. No message, call or conversation requires it." = "This is an optional room gift. No message, call or conversation requires it.";
+"This is my kind of evening." = "This is my kind of evening.";
 "This item goes into your backpack." = "This item goes into your backpack.";
 "This item is not available in the bundled collection." = "This item is not available in the bundled collection.";
 "This moment is hidden" = "This moment is hidden";
@@ -882,6 +908,7 @@
 "View moment →" = "View moment →";
 "View profile" = "View profile";
 "View profile →" = "View profile →";
+"View room audience" = "View room audience";
 "Violence" = "Violence";
 "Visit the little shop" = "Visit the little shop";
 "Visit the shop" = "Visit the shop";
@@ -891,6 +918,7 @@
 "Voice and video calls are for mutual followers. Open this profile to manage your connection." = "Voice and video calls are for mutual followers. Open this profile to manage your connection.";
 "Voice call" = "Voice call";
 "Voice connection" = "Voice connection";
+"Voice room" = "Voice room";
 "Voice room preview" = "Voice room preview";
 "Voice room preview cover. No audio is broadcast." = "Voice room preview cover. No audio is broadcast.";
 "Voice room previews · pick a topic you love" = "Voice room previews · pick a topic you love";
@@ -908,6 +936,7 @@
 "What are we listening to?" = "What are we listening to?";
 "What are we talking about?" = "What are we talking about?";
 "What are you making just for the joy of it?" = "What are you making just for the joy of it?";
+"What are you working on today?" = "What are you working on today?";
 "What could you happily teach someone?" = "What could you happily teach someone?";
 "What did it bring to mind?" = "What did it bring to mind?";
 "What did that moment change about the way you felt?" = "What did that moment change about the way you felt?";
@@ -918,6 +947,7 @@
 "What should we call you?" = "What should we call you?";
 "What small moment made you pause today?" = "What small moment made you pause today?";
 "What small thing made your day better?" = "What small thing made your day better?";
+"What song have you had on repeat?" = "What song have you had on repeat?";
 "What song would open the movie of your life?" = "What song would open the movie of your life?";
 "What story would you share before playing your next song?" = "What story would you share before playing your next song?";
 "What they are into" = "What they are into";
