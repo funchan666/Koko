@@ -7,7 +7,8 @@ struct KokoAccountEntry: View {
     @EnvironmentObject private var community: CommunityJournalStore
     @EnvironmentObject private var journey: KokoAccessJourney
     @StateObject private var appleEntry = KokoAppleEntry()
-    @State private var destination = "Welcome"
+    @State private var destination: String
+    init(initialDestination: String = "Welcome") { _destination = State(initialValue: initialDestination) }
     @State private var emailAddress = ""
     @State private var passwordDraft = ""
     @State private var repeatedPassword = ""
@@ -126,19 +127,24 @@ final class KokoAppleEntry: NSObject, ObservableObject, ASAuthorizationControlle
 }
 
 struct KokoPolicyView: View {
+    @State private var policy: KokoLegalDocument?
     let kind: String
     var onBack: () -> Void
     var body: some View {
         if kind == "Community guidelines" {
             KokoPage(title: kind, back: onBack) {
-                Artwork(sheet: .navigation, tile: 11)
-                    .frame(width: 30, height: 30)
-                    .padding(24)
-                    .background(KokoControlSurface())
-                Text("Make room for one another.").font(.custom("AvenirNext-Bold", size: 26))
-                Text("Respect people's boundaries. Do not share harassment, hate, exploitation, threats, scams or private information. Report or block content that makes you uncomfortable.")
-                Text("Koko is for adults. Reports remain on this device until a moderation service is connected.").foregroundStyle(KokoInk.secondary)
-            }
+                Text("Make room for one another.").font(KokoTypography.heading(size: 26))
+                ForEach(KokoCommunityGuidelines.sections, id: \.title) { section in
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text(LocalizedStringKey(section.title)).font(KokoTypography.emphasis(size: 20))
+                        Text(LocalizedStringKey(section.body)).font(KokoTypography.body(size: 15))
+                            .lineSpacing(4).fixedSize(horizontal: false, vertical: true)
+                    }.padding(.vertical, 8)
+                }
+                KokoAction(title: "Privacy notice", emphasis: false) { policy = .privacy }
+                KokoAction(title: "Terms of Service", emphasis: false) { policy = .terms }
+            }.allowsHitTesting(policy == nil).accessibilityHidden(policy != nil)
+                .overlay { if let policy { KokoLegalWebPage(document: policy) { self.policy = nil } } }
         } else { KokoLegalWebPage(document: kind == "Privacy" ? .privacy : .terms, close: onBack) }
     }
 }

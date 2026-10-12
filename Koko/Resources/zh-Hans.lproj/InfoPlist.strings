@@ -1,0 +1,2 @@
+"NSCameraUsageDescription" = "用于拍摄个人头像，或在通话前检查摄像头。照片保存在此设备；视频检查不会录制或发送。";
+"NSMicrophoneUsageDescription" = "用于进入语音房或准备通话前检查麦克风输入。此版本不会录制或发送音频。";

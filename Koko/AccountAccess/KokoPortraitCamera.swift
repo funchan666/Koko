@@ -68,21 +68,16 @@ final class KokoPortraitCameraModel: ObservableObject {
         guard !busy, photoJPEG == nil else { return }
         busy = true; ready = false
         let current = UUID(); revision = current
-        Task { [weak self] in
-            let granted: Bool
-            switch AVCaptureDevice.authorizationStatus(for: .video) {
-            case .authorized: granted = true
-            case .notDetermined: granted = await AVCaptureDevice.requestAccess(for: .video)
-            default: granted = false
-            }
-            guard let self, self.revision == current else { return }
-            guard granted else { self.busy = false; self.explanation = "Allow camera access in iOS Settings, or choose a photo from your library."; return }
-            self.capture.start(front: self.front) { [weak self] active in
-                Task { @MainActor in
-                    guard let self, self.revision == current else { return }
-                    self.ready = active; self.busy = false
-                    self.explanation = active ? "Find your light. This photo stays on your device." : "No camera is available. You can choose a library photo instead."
-                }
+        // The editor requested access before presenting this screen. Never re-prompt here.
+        guard AVCaptureDevice.authorizationStatus(for: .video) == .authorized else {
+            busy = false; explanation = "Camera is off."
+            return
+        }
+        capture.start(front: front) { [weak self] active in
+            Task { @MainActor in
+                guard let self, self.revision == current else { return }
+                self.ready = active; self.busy = false
+                self.explanation = active ? "Find your light. This photo stays on your device." : "No camera is available. You can choose a library photo instead."
             }
         }
     }
@@ -124,16 +119,19 @@ struct KokoPortraitCameraPage: View {
                         .background(KokoControlSurface())
                 }
             }.frame(height: 350).clipped()
-            Text(camera.explanation).font(.custom("AvenirNext-Regular", size: 14)).foregroundStyle(KokoInk.secondary)
+            Text(LocalizedStringKey(camera.explanation)).font(KokoTypography.body(size: 14)).foregroundStyle(KokoInk.secondary)
             if let data = camera.photoJPEG {
                 KokoAction(title: "Use this photo") { selected(data) }
                 KokoAction(title: "Take another", emphasis: false) { camera.retake() }
             } else {
+                if !camera.ready && !camera.busy {
+                    KokoAction(title: "Resume camera", emphasis: false) { camera.start() }
+                }
                 KokoAction(title: camera.busy ? "One moment…" : "Take photo", icon: 14) { camera.takePhoto() }.disabled(!camera.ready || camera.busy)
                 KokoAction(title: "Turn camera", emphasis: false) { camera.flip() }.disabled(!camera.ready || camera.busy)
             }
             KokoAction(title: "Back to profile", emphasis: false, action: close)
         }.onAppear { camera.start() }.onDisappear { camera.stop() }
-            .onChange(of: scenePhase) { phase in if phase == .active { camera.start() } else { camera.stop() } }
+            .onChange(of: scenePhase) { phase in if phase != .active { camera.stop() } }
     }
 }

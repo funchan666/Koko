@@ -3,6 +3,21 @@ import Foundation
 /// Presentation only: no policy text, links or document nodes are replaced.
 /// Limited to the two supplied Koko policy sites; other destinations stay intact.
 enum KokoPolicyReadingStyle {
+    // Supply licensed local font bytes to the existing, allowlisted reader only.
+    // No external font service and no changes to policy text, links or consent.
+    private static let bundledFontCSS: String = {
+        let faces: [(String, String, Int)] = [
+            ("NunitoSans-Regular", "Koko Reading", 400),
+            ("NunitoSans-SemiBold", "Koko Reading", 600),
+            ("Outfit-Bold", "Koko Heading", 700)
+        ]
+        return faces.compactMap { file, family, weight -> String? in
+            guard let url = Bundle.main.url(forResource: file, withExtension: "ttf", subdirectory: "Fonts"),
+                  let data = try? Data(contentsOf: url) else { return nil }
+            return "@font-face { font-family: '\(family)'; src: url(data:font/ttf;base64,\(data.base64EncodedString())) format('truetype'); font-style: normal; font-weight: \(weight); font-display: swap; }"
+        }.joined(separator: "\n")
+    }()
+
     static func script(enabled: Bool) -> String {
         let enabledLiteral = enabled ? "true" : "false"
         return """
@@ -21,6 +36,7 @@ enum KokoPolicyReadingStyle {
           const style = document.createElement('style');
           style.id = styleID;
           style.textContent = `
+            \(bundledFontCSS)
             html, body { background: #F6F9F3 !important; color: #132A26 !important; }
             #atIdViewHeader { display: none !important; }
             .UtePc { padding-top: 0 !important; }
@@ -42,7 +58,7 @@ enum KokoPolicyReadingStyle {
             }
             .tyJCtd { padding: 0 !important; }
             .tyJCtd p, .tyJCtd li {
-              color: #243C34 !important; font-family: 'Avenir Next', sans-serif !important;
+              color: #243C34 !important; font-family: 'Koko Reading', sans-serif !important;
               font-size: 16px !important; line-height: 1.65 !important;
               margin-top: 0 !important; margin-bottom: 16px !important;
               overflow-wrap: anywhere;
@@ -52,7 +68,7 @@ enum KokoPolicyReadingStyle {
               line-height: inherit !important; color: inherit !important;
             }
             .tyJCtd h1, .tyJCtd h2, .tyJCtd h3 {
-              font-family: 'Avenir Next', sans-serif !important;
+              font-family: 'Koko Heading', sans-serif !important; font-weight: 700 !important;
               color: #132A26 !important; text-align: left !important;
               line-height: 1.3 !important; margin: 24px 0 12px !important;
             }

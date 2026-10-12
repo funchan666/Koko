@@ -20,17 +20,31 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<!-- Placeholder only. Do not expose as a working contact or create a mailto link.
+         Replace with an owned, monitored mailbox before enabling support contact. -->
+	<key>KokoSafetySupportEmail</key>
+	<string>support@example.invalid</string>
+	<key>KokoSafetySupportContactEnabled</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Take a photo for your Koko profile or preview your camera in a call. Profile photos are saved on this device; call previews are not recorded or transmitted.</string>
+	<string>Use the camera to take your profile photo or check your video before a call. Photos stay on this device. Video checks are not recorded or sent.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Use your microphone to prepare voice calls, video calls and room connections. This version checks your input level on this device without saving or transmitting audio.</string>
+	<string>Check your microphone input before joining a room or preparing a call. This version does not record or send audio.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
 		<false/>
 	</dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Fonts/NunitoSans-Regular.ttf</string>
+		<string>Fonts/NunitoSans-Medium.ttf</string>
+		<string>Fonts/NunitoSans-SemiBold.ttf</string>
+		<string>Fonts/Outfit-Bold.ttf</string>
+		<string>Fonts/Caveat-Bold.ttf</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>KokoLaunchScreen</string>
 	<key>UISupportedInterfaceOrientations</key>

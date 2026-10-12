@@ -2,13 +2,42 @@ import SwiftUI
 import UserNotifications
 
 struct KokoSettingsView: View {
+    @EnvironmentObject private var language: KokoLanguagePreference
     @EnvironmentObject private var community: CommunityJournalStore
     @EnvironmentObject private var navigation: KokoSceneNavigation
-    @State private var confirmation: String?
+    @State private var confirmation: AccountConfirmation?
+
+    private enum AccountConfirmation {
+        case switchAccount, signOut, deleteAccount
+
+        var title: String {
+            switch self {
+            case .switchAccount: return "Switch accounts?"
+            case .signOut: return "Sign out?"
+            case .deleteAccount: return "Delete your account?"
+            }
+        }
+    }
     var body: some View {
         ZStack {
             KokoPage(title: "Comfort comes first", subtitle: "Make Koko feel right for you", back: navigation.back) {
                 KokoMenuRow(title: "Your profile", icon: 3) { navigation.open(.editProfile) }
+                Button { navigation.open(.language) } label: {
+                    HStack(spacing: 14) {
+                        Image("KokoLanguageConversation").resizable().scaledToFit()
+                            .frame(width: 42, height: 42).accessibilityHidden(true)
+                        VStack(alignment: .leading, spacing: 5) {
+                            Text("App language").font(KokoTypography.emphasis(size: 16, relativeTo: .body))
+                            Text(verbatim: language.selected.nativeName)
+                                .font(KokoTypography.medium(size: 13, relativeTo: .subheadline))
+                                .foregroundStyle(KokoInk.secondary)
+                        }
+                        Spacer(minLength: 8)
+                        Text("Change").font(KokoTypography.emphasis(size: 13, relativeTo: .subheadline))
+                    }
+                    .padding(18).frame(maxWidth: .infinity, minHeight: 76, alignment: .leading)
+                    .background(Image("KokoConversationPaper").resizable())
+                }.buttonStyle(KokoPressStyle())
                 KokoMenuRow(title: "Privacy & invitations", icon: 11) { navigation.open(.preferences("Privacy")) }
                 KokoMenuRow(title: "Notifications", icon: 10) { navigation.open(.preferences("Notifications")) }
                 KokoMenuRow(title: "Account & sign-in", icon: 3) { navigation.open(.preferences("Account")) }
@@ -18,20 +47,59 @@ struct KokoSettingsView: View {
                 KokoMenuRow(title: "Privacy notice", icon: 11) { navigation.open(.policy("Privacy")) }
                 KokoMenuRow(title: "Terms of Service", icon: 11) { navigation.open(.policy("Terms of Service")) }
                 KokoMenuRow(title: "About Koko", detail: "Version 1.0 · Preview", icon: 1) { navigation.open(.preferences("About Koko")) }
-                KokoAction(title: "Switch account", emphasis: false) { confirmation = "Switch accounts?" }
-                KokoAction(title: "Sign out", emphasis: false) { confirmation = "Sign out?" }
-                KokoAction(title: "Delete profile", emphasis: false) { confirmation = "Delete your profile?" }
+                KokoAction(title: "Switch account", emphasis: false) { confirmation = .switchAccount }
+                KokoAction(title: "Sign out", emphasis: false) { confirmation = .signOut }
+                KokoAction(title: "Delete account", emphasis: false) { confirmation = .deleteAccount }
             }
             if let confirmation {
-                KokoModal(title: confirmation, dismiss: { self.confirmation = nil }) {
-                    let deleting = confirmation == "Delete your profile?"
-                    Text(deleting ? "This permanently removes this account's profile, messages, album, rooms, remaining coins, purchase records and keepsakes. Completed consumable purchases cannot restore this deleted balance. Other accounts are kept." : "Your data stays here. Use the same email with any password of 8–128 characters, or the same Apple account, to return.")
-                    KokoAction(title: deleting ? "Delete this profile" : "Continue") {
+                KokoModal(title: confirmation.title, dismiss: { self.confirmation = nil }) {
+                    let deleting = confirmation == .deleteAccount
+                    Text(LocalizedStringKey(deleting ? "This permanently removes this account's profile, messages, album, rooms, remaining coins, purchase records and keepsakes. Completed consumable purchases cannot restore this deleted balance. Other accounts are kept." : "Your data stays here. Use the same email with any password of 8–128 characters, or the same Apple account, to return."))
+                    KokoAction(title: deleting ? "Delete account permanently" : "Continue") {
+                        self.confirmation = nil
                         if deleting { community.deleteLocalAccount() } else { community.signOut() }
                     }
                     KokoAction(title: "Keep me here", emphasis: false) { self.confirmation = nil }
                 }
             }
+        }
+    }
+}
+
+struct KokoLanguageSettingsView: View {
+    @EnvironmentObject private var language: KokoLanguagePreference
+    @EnvironmentObject private var navigation: KokoSceneNavigation
+
+    var body: some View {
+        KokoPage(title: "App language", subtitle: "Choose the language that feels like you.", back: navigation.back) {
+            ForEach(KokoLanguage.allCases) { choice in
+                Button { language.select(choice) } label: {
+                    HStack(spacing: 12) {
+                        VStack(alignment: .leading, spacing: 5) {
+                            Text(verbatim: choice.nativeName)
+                                .font(KokoTypography.emphasis(size: 18, relativeTo: .headline))
+                            Text(LocalizedStringKey(choice.englishName))
+                                .font(KokoTypography.medium(size: 12, relativeTo: .caption))
+                        }
+                        Spacer(minLength: 8)
+                        if choice == language.selected {
+                            Text("Selected").font(KokoTypography.emphasis(size: 12, relativeTo: .caption))
+                        }
+                    }
+                    .foregroundStyle(choice == language.selected ? KokoInk.onMint : KokoInk.primary)
+                    .padding(.horizontal, 20).padding(.vertical, 16)
+                    .frame(maxWidth: .infinity, minHeight: 74, alignment: .leading)
+                    .background {
+                        if choice == language.selected { Image("KokoVoiceTopicSelection").resizable() }
+                    }
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(KokoPressStyle())
+                .accessibilityAddTraits(choice == language.selected ? .isSelected : [])
+            }
+            Text("Changes apply immediately and are remembered on this device. Posts, messages and people's names stay in their original language.")
+                .font(KokoTypography.body(size: 13, relativeTo: .footnote))
+                .foregroundStyle(KokoInk.secondary).fixedSize(horizontal: false, vertical: true)
         }
     }
 }
@@ -63,15 +131,15 @@ struct KokoPreferencesView: View {
                             } else { community.update { $0.preferences[option] = value } }
                         }))
                     }
-                    Text(kind == "Privacy" ? "These choices are stored on this device. Remote profile visibility will be connected with the live service." : "Check-in reminders arrive at 8 p.m. Message and room preferences are saved for the future live service.")
-                        .font(.custom("AvenirNext-Regular", size: 13)).foregroundStyle(KokoInk.secondary)
+                    Text(LocalizedStringKey(kind == "Privacy" ? "These choices are stored on this device. Remote profile visibility will be connected with the live service." : "Check-in reminders arrive at 8 p.m. Message and room preferences are saved for the future live service."))
+                        .font(KokoTypography.body(size: 13)).foregroundStyle(KokoInk.secondary)
                 } else if kind == "Storage" {
                     Artwork(sheet: .navigation, tile: 9).frame(height: 140)
-                    KokoCard { VStack(alignment: .leading, spacing: 10) { Text("Saved on this device").font(.custom("AvenirNext-Bold", size: 22)); Text("\(community.conversations.count) conversations"); Text("\((community.journal?.albumTiles.count ?? 0) + (community.journal?.albumPhotoKeys?.count ?? 0)) album images"); Text("\(community.journal?.createdRooms.count ?? 0) rooms created") } }
+                    KokoCard { VStack(alignment: .leading, spacing: 10) { Text("Saved on this device").font(KokoTypography.heading(size: 22)); Text("\(community.conversations.count) conversations"); Text("\((community.journal?.albumTiles.count ?? 0) + (community.journal?.albumPhotoKeys?.count ?? 0)) album images"); Text("\(community.journal?.createdRooms.count ?? 0) rooms created") } }
                     KokoAction(title: "Clear media cache", emphasis: false) { community.clearTransientCache() }
                     KokoAction(title: "Clear conversations", emphasis: false) { clearingMessages = true }
                 } else if kind == "Account" {
-                    Text(community.currentMember?.publicName ?? "Your profile").font(.custom("AvenirNext-Bold", size: 27))
+                    Text(community.currentMember?.publicName ?? "Your profile").font(KokoTypography.heading(size: 27))
                     Text("Email entry checks a valid email format and an 8–128 character password only. The email selects your profile. It does not check a saved password or verify mailbox ownership.")
                     Text("Apple sign-in, when configured, uses genuine Apple authorization. Koko interactions stay on this device in this build.")
                     KokoAction(title: "Password help", emphasis: false) { community.notice = "Use the same email and any password of 8–128 characters. No password matching or reset is needed for this preview." }
@@ -80,8 +148,8 @@ struct KokoPreferencesView: View {
                         .frame(width: 30, height: 30)
                         .padding(20)
                         .background(KokoControlSurface())
-                    Text("koko").font(.custom("AvenirNext-Bold", size: 40))
-                    Text("Good company, at your pace.").font(.custom("AvenirNext-DemiBold", size: 21))
+                    Text("koko").font(KokoTypography.heading(size: 40))
+                    Text("Good company, at your pace.").font(KokoTypography.emphasis(size: 21))
                     Text("Version 1.0 · Original artwork · Native SwiftUI")
                     Text("This is an interactive preview with sample profiles and rooms. Optional coin packs use genuine Apple In-App Purchase, with the wallet currently stored on this device.").foregroundStyle(KokoInk.secondary)
                     KokoAction(title: "Leave feedback", icon: 2) { navigation.open(.feedback) }
@@ -98,14 +166,18 @@ enum KokoLocalReminders {
         let center = UNUserNotificationCenter.current()
         guard try await center.requestAuthorization(options: [.alert, .sound]) else { throw ReminderFailure.permissionDenied }
         let content = UNMutableNotificationContent()
-        content.title = "A little time for yourself"
-        content.body = "Your Koko check-in is here whenever you're ready."
+        content.title = KokoCopy.text("A little time for yourself")
+        content.body = KokoCopy.text("Your Koko check-in is here whenever you're ready.")
         content.sound = .default
         var date = DateComponents(); date.hour = 20; date.minute = 0
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: UNCalendarNotificationTrigger(dateMatching: date, repeats: true))
         try await center.add(request)
     }
-    static func disable() { UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [identifier]) }
+    static func disable() {
+        let center = UNUserNotificationCenter.current()
+        center.removePendingNotificationRequests(withIdentifiers: [identifier])
+        center.removeDeliveredNotifications(withIdentifiers: [identifier])
+    }
     enum ReminderFailure: Error { case permissionDenied }
 }
 
@@ -127,8 +199,8 @@ struct KokoFeedbackView: View {
                 guard !trimmed.isEmpty, trimmed.count <= 1000 else { community.notice = "Write a note from 1 to 1000 characters."; return }
                 if community.update({ $0.feedbackNotes.append(topic + ": " + trimmed) }) { message = ""; community.notice = "Your feedback is saved on this device. It has not been sent to a support team." }
             }
-            Text("Your saved notes").font(.custom("AvenirNext-Bold", size: 20))
-            ForEach(Array((community.journal?.feedbackNotes ?? []).enumerated()), id: \.offset) { _, note in KokoCard { Text(note).font(.custom("AvenirNext-Regular", size: 14)) } }
+            Text("Your saved notes").font(KokoTypography.heading(size: 20))
+            ForEach(Array((community.journal?.feedbackNotes ?? []).enumerated()), id: \.offset) { _, note in KokoCard { Text(note).font(KokoTypography.body(size: 14)) } }
         }
     }
 }
@@ -142,9 +214,9 @@ struct KokoBlacklistView: View {
             KokoPage(title: "Your boundaries matter", subtitle: "People hidden on this device", back: navigation.back) {
                 let blocked = KokoCommunity.members.filter { community.journal?.blockedMembers.contains($0.id) == true }
                 if blocked.isEmpty { KokoEmpty(title: "Nothing here, and that's okay", detail: "People you block will appear here. You can unblock them at any time.") }
-                ForEach(blocked) { member in KokoCard { HStack { KokoMemberPortrait(member: member).frame(width: 60, height: 60); Text(member.publicName).font(.custom("AvenirNext-DemiBold", size: 16)); Spacer(); Button("Unblock") { selectedID = member.id }.buttonStyle(.plain).font(.custom("AvenirNext-Medium", size: 12)) } } }
+                ForEach(blocked) { member in KokoCard { HStack { KokoProfileLink(memberID: member.id) { HStack { KokoMemberPortrait(member: member).frame(width: 60, height: 60); Text(member.publicName).font(KokoTypography.emphasis(size: 16)) } }; Spacer(); Button("Unblock") { selectedID = member.id }.buttonStyle(.plain).font(KokoTypography.medium(size: 12)) } } }
             }
-            if let memberID = selectedID { KokoModal(title: "Unblock this person?", dismiss: { selectedID = nil }) { Text("Their content can appear again. Your previous follow relationship will not be restored automatically."); KokoAction(title: "Unblock") { community.update { $0.blockedMembers.remove(memberID); $0.hiddenContentKeys.remove(memberID) }; selectedID = nil } } }
+            if let memberID = selectedID { KokoModal(title: "Unblock this person?", dismiss: { selectedID = nil }) { Text("Their content can appear again. Your previous follow relationship will not be restored automatically."); KokoAction(title: "Unblock") { if community.unblock(memberID) { selectedID = nil } } } }
         }
     }
 }

@@ -71,7 +71,7 @@ struct KokoSocialWelcome: View {
                         .accessibilityHidden(true)
                     (Text("Good company.\n").foregroundColor(KokoWelcomePalette.paper)
                      + Text("Starts here.").foregroundColor(KokoWelcomePalette.mint))
-                        .font(.custom("AvenirNext-Bold", size: min(headlineSize, 64)))
+                        .font(KokoTypography.heading(scaledSize: min(headlineSize, 64)))
                         .tracking(-1.3)
                         .lineSpacing(-2)
                         .multilineTextAlignment(.leading)
@@ -118,8 +118,8 @@ private struct KokoWelcomeEntryButton: View {
 
     var body: some View {
         Button(action: action) {
-            Text(title)
-                .font(.custom("AvenirNext-DemiBold", size: 16, relativeTo: .body))
+            Text(LocalizedStringKey(title))
+                .font(KokoTypography.emphasis(size: 16, relativeTo: .body))
                 .foregroundStyle(style == .registration ? KokoWelcomePalette.mint : KokoWelcomePalette.backdrop)
                 .fixedSize(horizontal: false, vertical: true)
                 .multilineTextAlignment(style == .apple ? .center : .leading)
@@ -147,7 +147,7 @@ struct KokoEntryAgreement: View {
                     .frame(width: 44, height: 44)
             }.buttonStyle(KokoPressStyle())
                 .accessibilityLabel("Agree to Terms of Service and Privacy Policy")
-                .accessibilityValue(agreed ? "Selected" : "Not selected")
+                .accessibilityValue(Text(LocalizedStringKey(agreed ? "Selected" : "Not selected")))
                 .accessibilityAddTraits(agreed ? .isSelected : [])
             ViewThatFits(in: .horizontal) {
                 HStack(spacing: 4) {
@@ -164,7 +164,7 @@ struct KokoEntryAgreement: View {
                         policyLink(.privacy, label: "Privacy")
                     }
                 }
-            }.font(.custom("AvenirNext-Regular", size: 12, relativeTo: .caption))
+            }.font(KokoTypography.body(size: 12, relativeTo: .caption))
         }.frame(maxWidth: .infinity)
     }
     private var agreementPrefix: some View {
@@ -172,10 +172,10 @@ struct KokoEntryAgreement: View {
     }
     private func policyLink(_ document: KokoLegalDocument, label: String) -> some View {
         Button { openPolicy(document) } label: {
-            Text(label).underline().font(.custom("AvenirNext-DemiBold", size: 12, relativeTo: .caption))
+            Text(LocalizedStringKey(label)).underline().font(KokoTypography.emphasis(size: 12, relativeTo: .caption))
                 .foregroundStyle(KokoWelcomePalette.mint).fixedSize()
                 .frame(minWidth: 44, minHeight: 44)
-        }.buttonStyle(KokoPressStyle()).accessibilityLabel(document.title)
+        }.buttonStyle(KokoPressStyle()).accessibilityLabel(Text(LocalizedStringKey(document.title)))
     }
 }
 
@@ -185,7 +185,7 @@ struct KokoWelcomeAction: View {
     let action: () -> Void
     var body: some View {
         Button(action: action) {
-            Text(title).font(.custom("AvenirNext-DemiBold", size: 16, relativeTo: .body))
+            Text(LocalizedStringKey(title)).font(KokoTypography.emphasis(size: 16, relativeTo: .body))
                 .foregroundStyle(primary ? KokoWelcomePalette.backdrop : KokoWelcomePalette.paper)
                 .padding(.horizontal, 20).padding(.vertical, primary ? 16 : 12)
                 .frame(maxWidth: .infinity, minHeight: primary ? 56 : 48)

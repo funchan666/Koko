@@ -1,0 +1,13 @@
+{
+  "mode": "Garden Host-Native",
+  "prompts": [
+    [
+      "KokoVoiceSessionCard",
+      "Create brand NEW original Koko voice social app room-card skin. Production mobile UI bitmap, full-bleed landscape 2:1 ratio. Entire canvas occupied by one smoothly rounded rectangle, only outer rounded corners transparent. Left 38 percent solid dark petrol blank reserved for actual host photograph. Right 62 percent sophisticated very deep green teal #103D39 matte satin plain information panel, no gradients or gloss, no border. Bottom 24 percent of RIGHT PANEL ONLY is a soft mint #ABE5CE action area, separated by a calm straight horizontal seam. Top 76 percent of right panel is empty deep teal for native voice-room status, room title and host name; bottom mint panel empty for native Join room button label. NO words, NO icons, NO people, NO ornaments, NO chamfered corners, NO double outlines, NO outer padding, NO inset card. Social audio room invitation rather than business card, purposeful compact composition. Precise left 38 / right 62 split and bottom-right action band. Full rounded outer corners."
+    ],
+    [
+      "KokoVoiceSessionWave",
+      "Original functional voice-room audio waveform emblem for Koko social app. One compact group of FIVE rounded vertical sound bars of different heights forming a pleasing voice rhythm, mint porcelain with one coral central bar. Equal simple widths, clean original sculptural form, satin finish, front view, no glow, no glass. Transparent background, no container, no tile, no outline, no text, no people, no other objects. Horizontal compact 1.4:1 composition fills 85 percent canvas. Designed to read clearly at 22 pixels as the voice-room type icon, simple strong silhouette."
+    ]
+  ]
+}

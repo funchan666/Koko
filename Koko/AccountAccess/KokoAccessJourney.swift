@@ -34,12 +34,14 @@ struct KokoLaunchLoading: View {
 
 struct KokoAccountLoading: View {
     @EnvironmentObject private var journey: KokoAccessJourney
+    var captionOverride: String? = nil
     @AccessibilityFocusState private var loadingFocused: Bool
+    private var caption: String { captionOverride ?? journey.transitionCaption }
 
     var body: some View {
-        KokoLoadingSurface(caption: journey.transitionCaption)
+        KokoLoadingSurface(caption: caption)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(journey.transitionCaption)
+        .accessibilityLabel(Text(LocalizedStringKey(caption)))
         .accessibilityAddTraits(.isModal)
         .accessibilityFocused($loadingFocused)
         .onAppear {

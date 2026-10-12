@@ -4,12 +4,15 @@ import SwiftUI
 struct KokoApp: App {
     @StateObject private var community = CommunityJournalStore()
     @StateObject private var coinPurchases = KokoAppleCoinPurchases()
+    @StateObject private var language = KokoLanguagePreference()
     @Environment(\.scenePhase) private var scenePhase
     var body: some Scene {
         WindowGroup {
             KokoScreenCanvas { KokoApplicationRoot() }
                 .environmentObject(community)
                 .environmentObject(coinPurchases)
+                .environmentObject(language)
+                .environment(\.locale, Locale(identifier: language.selected.rawValue))
                 .task {
                     coinPurchases.startObserving(community: community)
                     coinPurchases.recoverUnfinishedPurchases()
@@ -21,7 +24,7 @@ struct KokoApp: App {
                         community.refreshAppleCredentialState()
                     }
                 }
-                .font(.custom("AvenirNext-Regular", size: 16, relativeTo: .body))
+                .font(KokoTypography.body(size: 16, relativeTo: .body))
                 .foregroundStyle(KokoInk.primary)
                 .tint(KokoInk.accent)
         }

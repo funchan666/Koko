@@ -1,0 +1,12 @@
+[
+  {
+    "name": "KokoConversationStudioSurface",
+    "prompt": "Create a brand-new original production UI raster background for Koko, a thoughtful adult voice conversation app. Landscape 3:2 canvas, edge-to-edge opaque warm ivory handmade paper surface, continuous softly rounded outer corners against transparent surroundings. The UI card ITSELF is a crafted hosting folio: a single rounded warm ivory sheet, subtly warm apricot along lower right edge, one small embossed teal three-part conversation ribbon at far right bottom showing three linked speech spaces as refined abstract physical objects, not an illustration sticker. Minimal, premium tactile editorial stationery, delicate paper grain, no glossy plastic, no bevel frames, no double borders, no cut-off corners, no people, no stars, no icon grid. Upper 80 percent and left 85 percent intentionally flat and clean pale ivory for real app text and buttons laid over it, no text whatsoever, no letters or numbers, no logos. All four rounded corners and the entire card must be visible. Calm sophisticated social hospitality, deep ink teal, muted apricot and warm cream. Output a single isolated rounded card skin, fills 96 percent width and height; transparent outside corners. This is actual UI artwork, not a screenshot, no phone mockup.",
+    "transparent_background": true
+  },
+  {
+    "name": "KokoConversationMusicEdition",
+    "prompt": "Create original Koko app premium editorial conversation-edition artwork. Single landscape 3:2 rounded rectangular card surface, full complete round corners, transparent outside only. Muted mint-paper card with a small beautifully crafted deep teal vinyl record sleeve and coral record slipping out, connected to an ivory speech-shaped bookmark at bottom RIGHT quarter, a physical metaphor for memories carried by music. Objects integrated into paper composition, sophisticated soft tactile editorial product design. Upper 65 percent and LEFT 75 percent are quiet light mint blank area reserved for native app title, explanation and purchase button. No people, no faces, no text, no letters, no numbers, no logos, no fake buttons, no decorative outlines or double frames, no sparkles, no cut corners. This is a completely new production UI skin for a warm thoughtful social listening app, not template icon clipart. One complete card fills96percentcanvas, photographed straight-on, fine matte texture, restrained soft dimensional detail, transparent beyond rounded corners.",
+    "transparent_background": true
+  }
+]

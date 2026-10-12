@@ -4,7 +4,10 @@ import AuthenticationServices
 enum KokoDestination: Hashable {
     case search, room(String), createRoom(Bool), moment(String), profile(String), conversation(String), call(String, KokoConversationChannel), roomConnection(String, Int?)
     case wallet, shop, backpack, checkIn, level, settings, editProfile, album, friends(String), notices, ranking
-    case feedback, blacklist, preferences(String), policy(String), savedMoments, momentsCollection
+    case feedback, blacklist, preferences(String), policy(String), savedMoments, momentsCollection, language
+    case conversationStarters(String?), sharedInterests, personalAnswers(String?), roomFromStarter(String)
+    case conversationStudio(String?), conversationPlan(String, String?)
+    case composeMoment, pendingMoments
 }
 
 @MainActor
@@ -21,7 +24,8 @@ struct KokoApplicationRoot: View {
     @EnvironmentObject private var community: CommunityJournalStore
     @StateObject private var accessJourney = KokoAccessJourney()
     @State private var openingApp = true
-    private var showsFeedback: Bool { community.notice != nil || purchases.purchaseMessage != nil }
+    private var showsFeedback: Bool { community.notice != nil || purchases.purchaseMessage != nil || community.feedback != nil || community.safetyRequest != nil }
+    private var accountIsTransitioning: Bool { accessJourney.transitioning || community.accountDeparture != nil }
     var body: some View {
         ZStack {
             Group {
@@ -30,22 +34,38 @@ struct KokoApplicationRoot: View {
                     if !community.hasCurrentPolicyConsent { KokoConsentRenewalGate() }
                     else if community.hasCompletedAccountEntry { KokoMainShell().id(journal.member.id) }
                     else { KokoProfileEditor(isOnboarding: true) }
-                } else { KokoAccountEntry() }
+                } else if community.feedback != nil { ArtworkBackdrop() }
+                else { KokoAccountEntry(initialDestination: community.signedOutDestination) }
             }
-            .allowsHitTesting(!showsFeedback && !accessJourney.transitioning)
-            .accessibilityHidden(showsFeedback || accessJourney.transitioning)
-            if accessJourney.transitioning {
+            .allowsHitTesting(!showsFeedback && !accountIsTransitioning)
+            .accessibilityHidden(showsFeedback || accountIsTransitioning)
+            if let departure = community.accountDeparture {
+                KokoAccountLoading(captionOverride: departure.caption)
+                    .zIndex(101)
+            } else if accessJourney.transitioning {
                 KokoAccountLoading().accessibilityHidden(showsFeedback).zIndex(90)
             }
-            if let message = purchases.purchaseMessage {
+            if community.accountDeparture == nil, let message = purchases.purchaseMessage {
                 KokoNoticePanel(heading: "Purchase update", message: message,
                                 dismiss: { purchases.purchaseMessage = nil })
                     .id(message)
-                    .allowsHitTesting(community.notice == nil)
-                    .accessibilityHidden(community.notice != nil)
+                    .allowsHitTesting(community.notice == nil && community.feedback == nil)
+                    .accessibilityHidden(community.notice != nil || community.feedback != nil)
                     .zIndex(99)
             }
-            if let notice = community.notice {
+            if community.accountDeparture == nil, let target = community.safetyRequest {
+                KokoSafetyPanel(reportedContentID: target.contentID, memberID: target.memberID) { community.safetyRequest = nil }
+                    .allowsHitTesting(community.notice == nil && community.feedback == nil && purchases.purchaseMessage == nil)
+                    .accessibilityHidden(community.notice != nil || community.feedback != nil || purchases.purchaseMessage != nil)
+                    .zIndex(98)
+            }
+            if community.accountDeparture == nil, let feedback = community.feedback {
+                KokoActionFeedbackPanel(feedback: feedback) { community.feedback = nil }
+                    .allowsHitTesting(community.notice == nil)
+                    .accessibilityHidden(community.notice != nil)
+                    .zIndex(100)
+            }
+            if community.accountDeparture == nil, let notice = community.notice {
                 KokoNoticePanel(heading: "Please note", message: notice,
                                 dismiss: { community.notice = nil })
                     .id(notice).zIndex(100)
@@ -95,7 +115,7 @@ struct KokoMainShell: View {
                                 .background { if navigation.selectedTab == index { KokoTabSelectionSurface() } }
                         }
                         .buttonStyle(KokoPressStyle())
-                        .accessibilityLabel(["Discover live rooms", "Browse voice rooms", "Open messages", "Open my space"][index])
+                        .accessibilityLabel(Text(LocalizedStringKey(["Discover live rooms", "Browse voice rooms", "Open messages", "Open my space"][index])))
                         .accessibilityAddTraits(navigation.selectedTab == index ? .isSelected : [])
                     }
                 }
@@ -125,6 +145,10 @@ struct KokoMainShell: View {
     }
     @ViewBuilder private func destinationView(_ destination: KokoDestination) -> some View {
         switch destination {
+        case .conversationStudio(let roomID): KokoConversationStudio(roomID: roomID)
+        case .conversationPlan(let id, let roomID): KokoConversationPlanView(planID: id, suggestedRoomID: roomID)
+        case .composeMoment: KokoMomentComposer()
+        case .pendingMoments: KokoPendingMomentsView()
         case .search: KokoDiscoverySearch()
         case .momentsCollection: KokoMomentsCollection()
         case .room(let id): KokoListeningRoomView(roomID: id)
@@ -140,6 +164,7 @@ struct KokoMainShell: View {
         case .checkIn: KokoCheckInView()
         case .level: KokoLevelView()
         case .settings: KokoSettingsView()
+        case .language: KokoLanguageSettingsView()
         case .editProfile: KokoProfileEditor(isOnboarding: false, onFinish: navigation.back)
         case .album: KokoAlbumView()
         case .friends(let kind): KokoConnectionsView(kind: kind)
@@ -150,6 +175,10 @@ struct KokoMainShell: View {
         case .preferences(let kind): KokoPreferencesView(kind: kind)
         case .policy(let kind): KokoPolicyView(kind: kind, onBack: navigation.back)
         case .savedMoments: KokoSavedMomentsView()
+        case .conversationStarters(let recipientID): KokoConversationStartersView(recipientID: recipientID)
+        case .sharedInterests: KokoSharedInterestsView()
+        case .personalAnswers(let starterID): KokoPersonalAnswersView(initialStarterID: starterID)
+        case .roomFromStarter(let starterID): KokoRoomComposer(videoStage: false, starter: ConversationStarter.find(starterID))
         }
     }
 }

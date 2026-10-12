@@ -38,8 +38,8 @@ extension CommunityJournalStore {
         if let grantedAt = currentJournal.welcomeGiftGrantedAt {
             guard !currentJournal.notices.contains(where: { $0.id == messageID }) else { return }
             let originalAmount = currentJournal.walletHistory.first {
-                $0.detailLine == "Your first record · welcome gift" && $0.tokenChange > 0
-            }?.tokenChange
+                $0.entryDescription == "Your first record · welcome gift" && $0.coinDelta > 0
+            }?.coinDelta
             let message = welcomeCoinMessage(id: messageID, coins: originalAmount,
                                              recordedAt: grantedAt,
                                              alreadyRead: currentJournal.welcomeGiftAcknowledged == true)
@@ -61,7 +61,7 @@ extension CommunityJournalStore {
             $0.welcomeGiftGrantedAt = grantedAt
             $0.welcomeGiftEligible = false
             $0.welcomeGiftAcknowledged = true
-            $0.walletHistory.insert(.init(detailLine: "Your first record · welcome gift", tokenChange: gift, recordedAt: grantedAt), at: 0)
+            $0.walletHistory.insert(.init(entryDescription: "Your first record · welcome gift", coinDelta: gift, recordedAt: grantedAt), at: 0)
             if !$0.notices.contains(where: { $0.id == messageID }) { $0.notices.insert(message, at: 0) }
         }) { UserDefaults.standard.set(true, forKey: "koko.firstVisitGift." + myID) }
     }
@@ -85,7 +85,7 @@ extension CommunityJournalStore {
             $0.coinBalance = ($0.coinBalance ?? 0) + credit.creditedCoins
             if $0.verifiedCoinCredits == nil { $0.verifiedCoinCredits = [:] }
             $0.verifiedCoinCredits?[credit.appleTransactionID] = credit
-            $0.walletHistory.insert(.init(detailLine: "Apple coin pack · " + credit.storeEnvironment, tokenChange: credit.creditedCoins), at: 0)
+            $0.walletHistory.insert(.init(entryDescription: "Apple coin pack · " + credit.storeEnvironment, coinDelta: credit.creditedCoins), at: 0)
         }
     }
 
@@ -99,7 +99,7 @@ extension CommunityJournalStore {
             if let credit, credit.revokedAt == nil {
                 $0.coinBalance = ($0.coinBalance ?? 0) - credit.creditedCoins
                 $0.verifiedCoinCredits?[transactionID]?.revokedAt = revokedAt
-                $0.walletHistory.insert(.init(detailLine: "Apple refund adjustment", tokenChange: -credit.creditedCoins), at: 0)
+                $0.walletHistory.insert(.init(entryDescription: "Apple refund adjustment", coinDelta: -credit.creditedCoins), at: 0)
             }
         }
     }
@@ -111,7 +111,7 @@ extension CommunityJournalStore {
             notice = "This decoration is already yours. You can wear it from your backpack without another charge."; return
         }
         if let roomID, room(roomID) == nil { notice = "This room is no longer available."; return }
-        let total = item.tokenCost * quantity
+        let total = item.coinPrice * quantity
         guard coinBalance >= total else { coinShortfall = .init(requiredCoins: total, purpose: item.keepsakeName); return }
         coinSpendRequest = .init(ownerID: myID, keepsakeID: item.id, quantity: quantity, roomID: roomID)
     }
@@ -121,7 +121,7 @@ extension CommunityJournalStore {
         coinSpendRequest = nil
         guard myID == request.ownerID,
               let item = KokoCommunity.keepsakes.first(where: { $0.id == request.keepsakeID }) else { return }
-        let total = item.tokenCost * request.quantity
+        let total = item.coinPrice * request.quantity
         guard coinBalance >= total else { coinShortfall = .init(requiredCoins: total, purpose: item.keepsakeName); return }
         if item.wearable && request.roomID == nil && (journal?.ownedKeepsakes[item.id] ?? 0) > 0 { notice = "This decoration is already in your backpack."; return }
         let destinationRoom = request.roomID.flatMap { room($0) }
@@ -138,7 +138,7 @@ extension CommunityJournalStore {
                 journal.ownedKeepsakes[item.id, default: 0] += request.quantity
                 purpose = item.keepsakeName + " ×\(request.quantity) · backpack"
             }
-            journal.walletHistory.insert(.init(detailLine: purpose, tokenChange: -total), at: 0)
+            journal.walletHistory.insert(.init(entryDescription: purpose, coinDelta: -total), at: 0)
         }) { coinShortfall = nil; notice = "\(total) coins spent on \(item.keepsakeName). Balance: \(coinBalance) coins." }
     }
 }

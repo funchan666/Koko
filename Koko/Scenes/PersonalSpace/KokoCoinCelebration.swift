@@ -5,11 +5,11 @@ struct KokoCoinSpendConfirmation: View {
     let request: CoinSpendRequest
     var body: some View {
         if let item = KokoCommunity.keepsakes.first(where: { $0.id == request.keepsakeID }) {
-            let total = item.tokenCost * request.quantity
+            let total = item.coinPrice * request.quantity
             KokoModal(title: "A little gesture, on purpose", dismiss: { community.coinSpendRequest = nil }) {
                 Artwork(sheet: .collection, tile: item.artworkTile).frame(height: 150)
-                Text(item.keepsakeName + " ×\(request.quantity)").font(.custom("AvenirNext-Bold", size: 24))
-                Text(request.roomID == nil ? "This item goes into your backpack." : "This is an optional room gift. No message, call or conversation requires it.")
+                Text(item.keepsakeName + " ×\(request.quantity)").font(KokoTypography.heading(size: 24))
+                Text(LocalizedStringKey(request.roomID == nil ? "This item goes into your backpack." : "This is an optional room gift. No message, call or conversation requires it."))
                 KokoCard(tint: 3) {
                     VStack(spacing: 12) {
                         balanceLine("Available", community.coinBalance)
@@ -23,6 +23,6 @@ struct KokoCoinSpendConfirmation: View {
         }
     }
     private func balanceLine(_ label: String, _ amount: Int) -> some View {
-        HStack { Text(label).font(.custom("AvenirNext-Regular", size: 13)); Spacer(); Text(amount.formatted()).font(.custom("AvenirNext-Bold", size: 20)).monospacedDigit() }
+        HStack { Text(LocalizedStringKey(label)).font(KokoTypography.body(size: 13)); Spacer(); Text(amount.formatted()).font(KokoTypography.heading(size: 20)).monospacedDigit() }
     }
 }

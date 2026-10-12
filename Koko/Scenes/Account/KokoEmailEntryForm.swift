@@ -38,8 +38,8 @@ struct KokoEmailEntryForm: View {
                     }.buttonStyle(KokoPressStyle()).accessibilityLabel("Back to welcome")
 
                     HStack(alignment: .center, spacing: 12) {
-                        Text(registration ? "Create\naccount." : "Welcome\nback.")
-                            .font(.custom("AvenirNext-Bold", size: min(headlineSize, 58)))
+                        Text(LocalizedStringKey(registration ? "Create\naccount." : "Welcome\nback."))
+                            .font(KokoTypography.heading(scaledSize: min(headlineSize, 58)))
                             .tracking(-1.2)
                             .fixedSize(horizontal: false, vertical: true)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -74,9 +74,9 @@ struct KokoEmailEntryForm: View {
                         editing = nil
                         switchMode()
                     } label: {
-                        (Text(registration ? "Already here? " : "New here? ").foregroundColor(KokoWelcomePalette.quiet)
-                         + Text(registration ? "Log in" : "Sign up").foregroundColor(KokoWelcomePalette.mint))
-                            .font(.custom("AvenirNext-DemiBold", size: 14, relativeTo: .subheadline))
+                        (Text(LocalizedStringKey(registration ? "Already here? " : "New here? ")).foregroundColor(KokoWelcomePalette.quiet)
+                         + Text(LocalizedStringKey(registration ? "Log in" : "Sign up")).foregroundColor(KokoWelcomePalette.mint))
+                            .font(KokoTypography.emphasis(size: 14, relativeTo: .subheadline))
                             .multilineTextAlignment(.center)
                             .frame(maxWidth: .infinity, minHeight: 48)
                     }.buttonStyle(KokoPressStyle()).padding(.top, 8)
@@ -98,7 +98,7 @@ struct KokoEmailEntryForm: View {
                 HStack {
                     Spacer()
                     Button("Done") { editing = nil }
-                        .font(.custom("AvenirNext-DemiBold", size: 14, relativeTo: .body))
+                        .font(KokoTypography.emphasis(size: 14, relativeTo: .body))
                         .foregroundStyle(KokoWelcomePalette.mint)
                         .frame(minWidth: 60, minHeight: 44)
                         .buttonStyle(KokoPressStyle())
@@ -172,19 +172,19 @@ private struct KokoEmailFormField: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(title)
-                .font(.custom("AvenirNext-DemiBold", size: 12, relativeTo: .subheadline))
+            Text(LocalizedStringKey(title))
+                .font(KokoTypography.emphasis(size: 12, relativeTo: .subheadline))
                 .foregroundStyle(focusedField.wrappedValue == field ? KokoWelcomePalette.mint : KokoWelcomePalette.quiet)
             HStack(spacing: 8) {
                 Group {
                     if secure && !revealsPassword {
-                        SecureField(title, text: $value, prompt: Text(placeholder).foregroundColor(KokoWelcomePalette.quiet))
+                        SecureField(title, text: $value, prompt: Text(LocalizedStringKey(placeholder)).foregroundColor(KokoWelcomePalette.quiet))
                     } else {
-                        TextField(title, text: $value, prompt: Text(placeholder).foregroundColor(KokoWelcomePalette.quiet))
+                        TextField(title, text: $value, prompt: Text(LocalizedStringKey(placeholder)).foregroundColor(KokoWelcomePalette.quiet))
                     }
                 }
                 .textFieldStyle(.plain)
-                .font(.custom("AvenirNext-Medium", size: 15, relativeTo: .body))
+                .font(KokoTypography.medium(size: 15, relativeTo: .body))
                 .foregroundStyle(KokoWelcomePalette.paper)
                 .tint(KokoWelcomePalette.mint)
                 .keyboardType(field == .email ? .emailAddress : .asciiCapable)
@@ -194,7 +194,7 @@ private struct KokoEmailFormField: View {
                 .focused(focusedField, equals: field)
                 .submitLabel(finalField ? .go : .next)
                 .onSubmit(advance)
-                .accessibilityLabel(title)
+                .accessibilityLabel(Text(LocalizedStringKey(title)))
                 .accessibilityHint(issue ?? "")
                 .padding(.vertical, 16)
                 if secure {
@@ -202,12 +202,12 @@ private struct KokoEmailFormField: View {
                         revealsPassword.toggle()
                         focusedField.wrappedValue = field
                     } label: {
-                        Text(revealsPassword ? "Hide" : "Show")
-                            .font(.custom("AvenirNext-DemiBold", size: 12, relativeTo: .caption))
+                        Text(LocalizedStringKey(revealsPassword ? "Hide" : "Show"))
+                            .font(KokoTypography.emphasis(size: 12, relativeTo: .caption))
                             .foregroundStyle(KokoWelcomePalette.mint)
                             .frame(minWidth: 44, minHeight: 44)
                     }.buttonStyle(KokoPressStyle())
-                        .accessibilityLabel(revealsPassword ? "Hide \(title.lowercased())" : "Show \(title.lowercased())")
+                        .accessibilityLabel(Text(LocalizedStringKey(revealsPassword ? "Hide" : "Show")) + Text(" ") + Text(LocalizedStringKey(title)))
                 }
             }
             .padding(.horizontal, 16).frame(minHeight: 56)
@@ -219,8 +219,8 @@ private struct KokoEmailFormField: View {
                     }
             }
             if let issue {
-                Text(issue)
-                    .font(.custom("AvenirNext-Medium", size: 12, relativeTo: .caption))
+                Text(LocalizedStringKey(issue))
+                    .font(KokoTypography.medium(size: 12, relativeTo: .caption))
                     .foregroundStyle(Color(red: 0.97, green: 0.73, blue: 0.65))
                     .fixedSize(horizontal: false, vertical: true)
             }

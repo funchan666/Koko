@@ -1,0 +1,23 @@
+[
+  {
+    "asset": "KokoProfileStoryPaper",
+    "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-f9d9b00f-bc7b-481f-9797-54bd38412618.png",
+    "output": "Koko/Resources/KokoArtwork.xcassets/KokoProfileStoryPaper.imageset/KokoProfileStoryPaper.png",
+    "prompt": "design/member-profile/KokoProfileStoryPaper.txt",
+    "sha256": "2f4c38bb64af1f378b9b5b6ee7cc4364845e8bcf851748a0755b26e1d978cc6f"
+  },
+  {
+    "asset": "KokoProfileHelloSurface",
+    "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-f913b87e-7927-40b5-9e00-b6a864165007.png",
+    "output": "Koko/Resources/KokoArtwork.xcassets/KokoProfileHelloSurface.imageset/KokoProfileHelloSurface.png",
+    "prompt": "design/member-profile/KokoProfileHelloSurface.txt",
+    "sha256": "06f4fc0bb062b54e1b04dc47bbc2d82849bf47c93f625e0c5270331eedbde199"
+  },
+  {
+    "asset": "KokoProfileQuietSurface",
+    "source": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-e1a97ce1-93a2-40c0-af3b-09aa7a9847d7.png",
+    "output": "Koko/Resources/KokoArtwork.xcassets/KokoProfileQuietSurface.imageset/KokoProfileQuietSurface.png",
+    "prompt": "design/member-profile/KokoProfileQuietSurface.txt",
+    "sha256": "88ab606426057dc4abb1c3b73423ebc6505c2cf648f107f6a98c3a02346c1cfb"
+  }
+]

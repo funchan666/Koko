@@ -1,0 +1,78 @@
+[
+  {
+    "file": "NunitoSans-Regular.ttf",
+    "sourceURL": "https://raw.githubusercontent.com/googlefonts/NunitoSans/058bd7a2f33d6ad5ef1df985b3db403622016a8c/fonts/ttf/NunitoSans-Regular.ttf",
+    "upstreamCommit": "058bd7a2f33d6ad5ef1df985b3db403622016a8c",
+    "sha256": "cfc5795f8333c94332ec2d2634056a9a7637484f89fa0f6f7d1a4efcfdfb0efa",
+    "bytes": 141600,
+    "postScriptName": "NunitoSans-Regular",
+    "family": "Nunito Sans",
+    "weight": 400,
+    "latinCoverage": true
+  },
+  {
+    "file": "NunitoSans-Medium.ttf",
+    "sourceURL": "https://raw.githubusercontent.com/googlefonts/NunitoSans/058bd7a2f33d6ad5ef1df985b3db403622016a8c/fonts/ttf/NunitoSans-Medium.ttf",
+    "upstreamCommit": "058bd7a2f33d6ad5ef1df985b3db403622016a8c",
+    "sha256": "fcd1b63fe155f79ed604db024a02644969f64e39e26c38834ea810d53d978b53",
+    "bytes": 142292,
+    "postScriptName": "NunitoSans-Medium",
+    "family": "Nunito Sans Medium",
+    "weight": 500,
+    "latinCoverage": true
+  },
+  {
+    "file": "NunitoSans-SemiBold.ttf",
+    "sourceURL": "https://raw.githubusercontent.com/googlefonts/NunitoSans/058bd7a2f33d6ad5ef1df985b3db403622016a8c/fonts/ttf/NunitoSans-SemiBold.ttf",
+    "upstreamCommit": "058bd7a2f33d6ad5ef1df985b3db403622016a8c",
+    "sha256": "93caaab594719e9aa140f35ce44f89bfa4f55d382ea3b02487ff55fd123dbd0b",
+    "bytes": 142424,
+    "postScriptName": "NunitoSans-SemiBold",
+    "family": "Nunito Sans SemiBold",
+    "weight": 600,
+    "latinCoverage": true
+  },
+  {
+    "file": "NunitoSans-OFL.txt",
+    "sourceURL": "https://raw.githubusercontent.com/googlefonts/NunitoSans/058bd7a2f33d6ad5ef1df985b3db403622016a8c/OFL.txt",
+    "upstreamCommit": "058bd7a2f33d6ad5ef1df985b3db403622016a8c",
+    "sha256": "efbb0c9e864cef973982d9a17567e6be5c3d1759695574586f3f18c7ecca064b",
+    "bytes": 4393
+  },
+  {
+    "file": "Outfit-Bold.ttf",
+    "sourceURL": "https://raw.githubusercontent.com/Outfitio/Outfit-Fonts/902773808eb372f70fb34e8946dd1ffe604efc79/fonts/ttf/Outfit-Bold.ttf",
+    "upstreamCommit": "902773808eb372f70fb34e8946dd1ffe604efc79",
+    "sha256": "f620b69582e06d7e1b3bbde74ed8c5876eadabb038390780db2a3414a1490197",
+    "bytes": 75992,
+    "postScriptName": "Outfit-Bold",
+    "family": "Outfit",
+    "weight": 700,
+    "latinCoverage": true
+  },
+  {
+    "file": "Outfit-Fonts-OFL.txt",
+    "sourceURL": "https://raw.githubusercontent.com/Outfitio/Outfit-Fonts/902773808eb372f70fb34e8946dd1ffe604efc79/OFL.txt",
+    "upstreamCommit": "902773808eb372f70fb34e8946dd1ffe604efc79",
+    "sha256": "c676351bf8576b9aba743cd5eaa8c0e7ee0d51f805d720447b4df4ddb6a2e416",
+    "bytes": 4389
+  },
+  {
+    "file": "Caveat-Bold.ttf",
+    "sourceURL": "https://raw.githubusercontent.com/googlefonts/caveat/59745e818ef7973e11e70cb1358d0e902b56c5fc/fonts/ttf/Caveat-Bold.ttf",
+    "upstreamCommit": "59745e818ef7973e11e70cb1358d0e902b56c5fc",
+    "sha256": "29e5cf4177d79af56c256c24f687fd6a74c3d04c3c4660ccca87b0a6d1fa3452",
+    "bytes": 303088,
+    "postScriptName": "Caveat-Bold",
+    "family": "Caveat",
+    "weight": 700,
+    "latinCoverage": true
+  },
+  {
+    "file": "caveat-OFL.txt",
+    "sourceURL": "https://raw.githubusercontent.com/googlefonts/caveat/59745e818ef7973e11e70cb1358d0e902b56c5fc/OFL.txt",
+    "upstreamCommit": "59745e818ef7973e11e70cb1358d0e902b56c5fc",
+    "sha256": "1f9d81d094273d82f3898a1ee8b598a717d050ecbf5ff7bede105b704880157b",
+    "bytes": 4385
+  }
+]

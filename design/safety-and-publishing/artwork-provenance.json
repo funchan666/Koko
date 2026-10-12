@@ -1,0 +1,16 @@
+[
+  {
+    "asset": "KokoSafetyReceiptSurface",
+    "source": "assets/original-ui/feedback/KokoSafetyReceiptSurface.png",
+    "catalog": "Koko/Resources/KokoArtwork.xcassets/KokoSafetyReceiptSurface.imageset",
+    "sha256": "7e08e2a2c9d13dd157358d20c6a866108d6724582bf06df58bc000620a40a183",
+    "creation": "Host-native imagegen; original uncropped output; no programmatic artwork or slicing"
+  },
+  {
+    "asset": "KokoReviewReceiptSurface",
+    "source": "assets/original-ui/feedback/KokoReviewReceiptSurface.png",
+    "catalog": "Koko/Resources/KokoArtwork.xcassets/KokoReviewReceiptSurface.imageset",
+    "sha256": "817da6d9b9da69843a22c8d09f664e181d24c0074c3e44037b420c3681abf387",
+    "creation": "Host-native imagegen; original uncropped output; no programmatic artwork or slicing"
+  }
+]

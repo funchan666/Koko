@@ -34,8 +34,14 @@ targets:
           - Resources
           - Configuration
       - path: Koko/Resources
+        # Includes en/zh-Hans/es/fr/ja localization variants and original artwork.
+        # Fonts is a folder resource so UIAppFonts uses stable Fonts/*.ttf paths.
         excludes:
           - CommunityMedia
+          - Fonts
+        buildPhase: resources
+      - path: Koko/Resources/Fonts
+        type: folder
         buildPhase: resources
       - path: Koko/Resources/CommunityMedia
         type: folder

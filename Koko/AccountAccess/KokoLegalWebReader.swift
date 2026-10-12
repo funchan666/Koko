@@ -86,16 +86,16 @@ struct KokoLegalWebPage: View {
             VStack(spacing: 0) {
                 HStack(spacing: 12) {
                     headerAction("Back", action: close)
-                    Text(document == .terms ? "Terms" : "Privacy")
-                        .font(.custom("AvenirNext-DemiBold", size: 18, relativeTo: .headline))
+                    Text(LocalizedStringKey(document == .terms ? "Terms" : "Privacy"))
+                        .font(KokoTypography.emphasis(size: 18, relativeTo: .headline))
                         .foregroundStyle(KokoWelcomePalette.paper)
                         .frame(maxWidth: .infinity)
-                        .accessibilityLabel(document.title).accessibilityAddTraits(.isHeader)
+                        .accessibilityLabel(Text(LocalizedStringKey(document.title))).accessibilityAddTraits(.isHeader)
                     headerAction("Reload") { reader.reload() }
                 }
                 HStack {
-                    Text(reader.readingMode ? "Reading view" : "Original webpage")
-                        .font(.custom("AvenirNext-Regular", size: 11, relativeTo: .caption))
+                    Text(LocalizedStringKey(reader.readingMode ? "Reading view" : "Original webpage"))
+                        .font(KokoTypography.body(size: 11, relativeTo: .caption))
                         .foregroundStyle(KokoWelcomePalette.quiet)
                     Spacer(minLength: 8)
                     headerAction(reader.readingMode ? "View original" : "Reading view") {
@@ -120,7 +120,7 @@ struct KokoLegalWebPage: View {
     }
     private func headerAction(_ title: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            Text(title).font(.custom("AvenirNext-DemiBold", size: 12, relativeTo: .subheadline))
+            Text(LocalizedStringKey(title)).font(KokoTypography.emphasis(size: 12, relativeTo: .subheadline))
                 .foregroundStyle(KokoWelcomePalette.mint)
                 .fixedSize(horizontal: false, vertical: true)
                 .frame(minWidth: 44, minHeight: 44)
@@ -128,9 +128,9 @@ struct KokoLegalWebPage: View {
     }
     private func readerState(title: String, detail: String, retry: Bool) -> some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text(title).font(.custom("AvenirNext-Bold", size: 24, relativeTo: .title2))
+            Text(LocalizedStringKey(title)).font(KokoTypography.heading(size: 24, relativeTo: .title2))
             if !detail.isEmpty {
-                Text(detail).font(.custom("AvenirNext-Regular", size: 14, relativeTo: .body))
+                Text(LocalizedStringKey(detail)).font(KokoTypography.body(size: 14, relativeTo: .body))
                     .foregroundStyle(KokoInk.secondary)
             }
             if retry { KokoWelcomeAction(title: "Try again", primary: true) { reader.reload() } }
@@ -148,17 +148,17 @@ struct KokoConsentFooter: View {
         VStack(alignment: .leading, spacing: 4) {
             Button { agreed.toggle() } label: {
                 HStack(alignment: .center, spacing: 12) {
-                    Text(agreed ? "YES" : "").font(.custom("AvenirNext-Bold", size: 10))
+                    Text(LocalizedStringKey(agreed ? "YES" : "")).font(KokoTypography.heading(size: 10))
                         .frame(width: 36, height: 36).background(ArtworkSurface(tile: agreed ? 3 : 5))
-                    Text("I have read and agree to both policies below.").font(.custom("AvenirNext-Medium", size: 12)).multilineTextAlignment(.leading)
+                    Text("I have read and agree to both policies below.").font(KokoTypography.medium(size: 12)).multilineTextAlignment(.leading)
                     Spacer(minLength: 0)
                 }.frame(minHeight: 48)
-            }.buttonStyle(KokoPressStyle()).accessibilityLabel("Agree to Terms of Service and Privacy Policy").accessibilityValue(agreed ? "Selected" : "Not selected")
+            }.buttonStyle(KokoPressStyle()).accessibilityLabel("Agree to Terms of Service and Privacy Policy").accessibilityValue(Text(LocalizedStringKey(agreed ? "Selected" : "Not selected")))
             HStack(spacing: 12) {
                 Button("Terms of Service") { open(.terms) }
                 Text("&")
                 Button("Privacy Policy") { open(.privacy) }
-            }.font(.custom("AvenirNext-DemiBold", size: 12)).buttonStyle(.plain).frame(minHeight: 44).padding(.leading, 4)
+            }.font(KokoTypography.emphasis(size: 12)).buttonStyle(.plain).frame(minHeight: 44).padding(.leading, 4)
         }
     }
 }
@@ -177,14 +177,14 @@ struct KokoConsentRequiredPanel: View {
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 0) {
                         Text("One quick step.")
-                            .font(.custom("AvenirNext-Bold", size: 27, relativeTo: .title2))
+                            .font(KokoTypography.heading(size: 27, relativeTo: .title2))
                             .tracking(-0.7)
                             .foregroundStyle(KokoWelcomePalette.paper)
                             .fixedSize(horizontal: false, vertical: true)
                             .accessibilityAddTraits(.isHeader)
                             .accessibilityFocused($reminderFocused)
                         Text("Read and agree to both policies before continuing.")
-                            .font(.custom("AvenirNext-Regular", size: 14, relativeTo: .body))
+                            .font(KokoTypography.body(size: 14, relativeTo: .body))
                             .foregroundStyle(KokoWelcomePalette.quiet)
                             .fixedSize(horizontal: false, vertical: true)
                             .lineSpacing(3)
@@ -227,9 +227,9 @@ struct KokoConsentRequiredPanel: View {
             dismiss()
             open(document)
         } label: {
-            Text(document.title)
+            Text(LocalizedStringKey(document.title))
                 .underline()
-                .font(.custom("AvenirNext-DemiBold", size: 13, relativeTo: .subheadline))
+                .font(KokoTypography.emphasis(size: 13, relativeTo: .subheadline))
                 .foregroundStyle(KokoWelcomePalette.mint)
                 .fixedSize(horizontal: false, vertical: true)
                 .frame(minHeight: 44, alignment: .leading)
@@ -249,7 +249,7 @@ struct KokoConsentRenewalGate: View {
                     .frame(width: 30, height: 30)
                     .padding(24)
                     .background(KokoControlSurface())
-                Text("Make yourself comfortable.").font(.custom("AvenirNext-Bold", size: 28))
+                Text("Make yourself comfortable.").font(KokoTypography.heading(size: 28))
                 KokoConsentFooter(agreed: $agreed) { document = $0 }
                 KokoAction(title: "Continue") {
                     guard agreed else { requiresConsent = true; return }

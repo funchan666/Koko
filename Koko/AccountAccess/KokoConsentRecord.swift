@@ -47,6 +47,7 @@ enum KokoAccountValidation {
         return (8...128).contains(password.count) ? nil : "Use a password between 8 and 128 characters."
     }
     static func profileIssue(_ member: CommunityMember) -> String? {
+        guard CommunityTextPolicy.allows(member.publicName + " " + member.introductionLine) else { return CommunityTextPolicy.revisionMessage }
         let name = member.publicName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard (2...40).contains(name.count) else { return "Choose a display name between 2 and 40 characters." }
         guard ["Woman", "Man", "Non-binary", "Prefer not to say"].contains(member.genderLabel) else { return "Choose how you describe yourself, or select Prefer not to say." }

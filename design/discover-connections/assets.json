@@ -1,0 +1,29 @@
+{
+  "workflow": "Garden Host-Native / built-in imagegen",
+  "assets": [
+    {
+      "name": "KokoDiscoverFeedObject",
+      "original": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-5e083e4b-1e84-4800-9dba-555d09e6a2e2.png",
+      "asset": "Koko/Resources/KokoArtwork.xcassets/KokoDiscoverFeedObject.imageset/KokoDiscoverFeedObject.png",
+      "prompt": "design/discover-connections/KokoDiscoverFeedObject.txt"
+    },
+    {
+      "name": "KokoDiscoverPeopleObject",
+      "original": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-d82bf14e-bf3a-466b-9e54-d63e254ccf8b.png",
+      "asset": "Koko/Resources/KokoArtwork.xcassets/KokoDiscoverPeopleObject.imageset/KokoDiscoverPeopleObject.png",
+      "prompt": "design/discover-connections/KokoDiscoverPeopleObject.txt"
+    },
+    {
+      "name": "KokoDiscoverRoomObject",
+      "original": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-6fe95259-59c6-45c5-a3c8-e5157f886565.png",
+      "asset": "Koko/Resources/KokoArtwork.xcassets/KokoDiscoverRoomObject.imageset/KokoDiscoverRoomObject.png",
+      "prompt": "design/discover-connections/KokoDiscoverRoomObject.txt"
+    },
+    {
+      "name": "KokoDiscoverInvitationPaper",
+      "original": "/Users/chengdupengyuyan/.codex/generated_images/01a11f8a-1856-74f3-931c-ec2b49f144fa/exec-03c310b1-d94c-4859-a9ee-2523b755113f.png",
+      "asset": "Koko/Resources/KokoArtwork.xcassets/KokoDiscoverInvitationPaper.imageset/KokoDiscoverInvitationPaper.png",
+      "prompt": "design/discover-connections/KokoDiscoverInvitationPaper.txt"
+    }
+  ]
+}

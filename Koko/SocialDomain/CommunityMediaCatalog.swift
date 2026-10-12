@@ -48,7 +48,9 @@ enum KokoMediaLibrary {
         "morning-window": "clip-438292181426a4ec",
         "studio-open": "clip-0101e556a214b526",
         "night-signal": "clip-6f8458f557ac70eb",
-        "tiny-dancefloor": "clip-9b7cdfe144e740de"
+        "tiny-dancefloor": "clip-9b7cdfe144e740de",
+        "table-talk": "clip-2f455f147f7afd77",
+        "trail-stories": "clip-3c0d55dae21cc5ab"
     ]
     static var liveRoomPreviewAssetIDs: Set<String> { Set(roomVideoKeys.values) }
     static func asset(_ key: String?) -> CommunityMediaAsset? {

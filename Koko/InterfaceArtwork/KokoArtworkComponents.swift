@@ -158,8 +158,8 @@ struct KokoSocialTag: View {
     let title: String
     var highlighted = false
     var body: some View {
-        Text(title)
-            .font(.custom("AvenirNext-DemiBold", size: 12, relativeTo: .caption))
+        Text(LocalizedStringKey(title))
+            .font(KokoTypography.emphasis(size: 12, relativeTo: .caption))
             .foregroundStyle(highlighted ? KokoInk.onMint : KokoInk.primary)
             .padding(.horizontal, 14)
             .padding(.vertical, 9)
@@ -178,7 +178,7 @@ struct KokoAction: View {
         Button(action: action) {
             HStack(spacing: 8) {
                 if let icon { Artwork(sheet: .navigation, tile: icon, ink: emphasis ? KokoInk.onMint : KokoInk.accent).frame(width: 23, height: 23) }
-                Text(title).font(.custom("AvenirNext-DemiBold", size: 14, relativeTo: .body))
+                Text(LocalizedStringKey(title)).font(KokoTypography.emphasis(size: 14, relativeTo: .body))
                     .multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
             }
             .foregroundStyle(emphasis ? KokoInk.onMint : KokoInk.primary)
@@ -206,7 +206,7 @@ struct KokoIconAction: View {
             Artwork(sheet: .navigation, tile: icon).frame(width: 27, height: 27)
                 .foregroundStyle(KokoInk.accent).frame(width: 52, height: 52)
                 .background(ArtworkSurface())
-        }.buttonStyle(KokoPressStyle()).accessibilityLabel(label)
+        }.buttonStyle(KokoPressStyle()).accessibilityLabel(Text(LocalizedStringKey(label)))
     }
 }
 
@@ -229,13 +229,13 @@ struct KokoField: View {
     var multiline = false
     var body: some View {
         VStack(alignment: .leading, spacing: 9) {
-            Text(label).font(.custom("AvenirNext-DemiBold", size: 12, relativeTo: .caption)).foregroundStyle(KokoInk.secondary)
+            Text(LocalizedStringKey(label)).font(KokoTypography.emphasis(size: 12, relativeTo: .caption)).foregroundStyle(KokoInk.secondary)
             Group {
-                if secure { SecureField(label, text: $value, prompt: Text(label).foregroundColor(KokoInk.secondary)) }
-                else { TextField(label, text: $value, prompt: Text(label).foregroundColor(KokoInk.secondary), axis: multiline ? .vertical : .horizontal) }
+                if secure { SecureField(label, text: $value, prompt: Text(LocalizedStringKey(label)).foregroundColor(KokoInk.secondary)) }
+                else { TextField(label, text: $value, prompt: Text(LocalizedStringKey(label)).foregroundColor(KokoInk.secondary), axis: multiline ? .vertical : .horizontal) }
             }
             .textFieldStyle(.plain).keyboardType(keyboard).textInputAutocapitalization(.never).autocorrectionDisabled()
-            .font(.custom("AvenirNext-Medium", size: 15, relativeTo: .body)).foregroundStyle(KokoInk.primary).tint(KokoInk.accent)
+            .font(KokoTypography.medium(size: 15, relativeTo: .body)).foregroundStyle(KokoInk.primary).tint(KokoInk.accent)
             .padding(.horizontal, 16).padding(.vertical, 15).frame(minHeight: 52)
             .background(KokoControlSurface())
         }
@@ -248,10 +248,10 @@ struct KokoSearchField: View {
     var body: some View {
         HStack(spacing: 10) {
             Artwork(sheet: .navigation, tile: 4).frame(width: 23, height: 23).foregroundStyle(KokoInk.accent)
-            TextField(prompt, text: $query, prompt: Text(prompt).foregroundColor(KokoInk.secondary))
-                .textFieldStyle(.plain).font(.custom("AvenirNext-Medium", size: 14, relativeTo: .body))
+            TextField(prompt, text: $query, prompt: Text(LocalizedStringKey(prompt)).foregroundColor(KokoInk.secondary))
+                .textFieldStyle(.plain).font(KokoTypography.medium(size: 14, relativeTo: .body))
                 .textInputAutocapitalization(.never).autocorrectionDisabled().submitLabel(.search)
-                .accessibilityLabel(prompt)
+                .accessibilityLabel(Text(LocalizedStringKey(prompt)))
         }.padding(.horizontal, 16).padding(.vertical, 14).frame(minHeight: 52)
             .background(KokoControlSurface())
     }
@@ -265,7 +265,7 @@ struct KokoChoiceRail: View {
             HStack(spacing: 8) {
                 ForEach(choices, id: \.self) { choice in
                     Button { selection = choice } label: {
-                        Text(choice).font(.custom("AvenirNext-DemiBold", size: 12, relativeTo: .subheadline))
+                        Text(LocalizedStringKey(choice)).font(KokoTypography.emphasis(size: 12, relativeTo: .subheadline))
                             .foregroundStyle(selection == choice ? KokoInk.onMint : KokoInk.secondary)
                             .fixedSize(horizontal: true, vertical: false)
                             .padding(.horizontal, 16).padding(.vertical, 11).frame(minHeight: 44)
@@ -279,7 +279,7 @@ struct KokoChoiceRail: View {
 
 struct LocalPreviewNote: View {
     var text = "ROOM PREVIEW · SAVED ON THIS DEVICE"
-    var body: some View { Text(text).font(.custom("AvenirNext-Medium", size: 10, relativeTo: .caption2)).tracking(0.7).foregroundStyle(KokoInk.secondary).fixedSize(horizontal: false, vertical: true) }
+    var body: some View { Text(LocalizedStringKey(text)).font(KokoTypography.medium(size: 10, relativeTo: .caption2)).tracking(0.7).foregroundStyle(KokoInk.secondary).fixedSize(horizontal: false, vertical: true) }
 }
 
 struct KokoPage<Content: View>: View {
@@ -295,8 +295,8 @@ struct KokoPage<Content: View>: View {
                 HStack(spacing: 12) {
                     if let back { KokoIconAction(icon: 5, label: "Back", action: back) }
                     VStack(alignment: .leading, spacing: 4) {
-                        if let title { Text(title).font(.custom("AvenirNext-Bold", size: 26, relativeTo: .title)).foregroundStyle(KokoInk.primary) }
-                        if let subtitle { Text(subtitle).font(.custom("AvenirNext-Regular", size: 12, relativeTo: .subheadline)).foregroundStyle(KokoInk.secondary) }
+                        if let title { Text(LocalizedStringKey(title)).font(KokoTypography.heading(size: 26, relativeTo: .title)).foregroundStyle(KokoInk.primary) }
+                        if let subtitle { Text(LocalizedStringKey(subtitle)).font(KokoTypography.body(size: 12, relativeTo: .subheadline)).foregroundStyle(KokoInk.secondary) }
                     }.fixedSize(horizontal: false, vertical: true)
                     Spacer(minLength: 0)
                 }.padding(.horizontal, 22).padding(.top, screenInsets.top + 8).padding(.bottom, 18)
@@ -325,15 +325,15 @@ struct KokoSocialHero: View {
     var artwork = 0
     var body: some View {
         VStack(alignment: .leading, spacing: 7) {
-                Text(eyebrow.uppercased())
-                    .font(.custom("AvenirNext-Bold", size: 10, relativeTo: .caption2))
+                Text(LocalizedStringKey(eyebrow))
+                    .font(KokoTypography.heading(size: 10, relativeTo: .caption2))
                     .tracking(1.5)
                     .foregroundStyle(KokoInk.coral)
-                Text(title)
-                    .font(.custom("AvenirNext-Bold", size: 23, relativeTo: .title2))
+                Text(LocalizedStringKey(title))
+                    .font(KokoTypography.heading(size: 23, relativeTo: .title2))
                     .fixedSize(horizontal: false, vertical: true)
-                Text(detail)
-                    .font(.custom("AvenirNext-Regular", size: 12, relativeTo: .body))
+                Text(LocalizedStringKey(detail))
+                    .font(KokoTypography.body(size: 12, relativeTo: .body))
                     .foregroundStyle(KokoInk.secondary)
                     .fixedSize(horizontal: false, vertical: true)
         }
@@ -351,8 +351,8 @@ struct KokoEmpty: View {
             Artwork(sheet: .navigation, tile: 4).frame(width: 30, height: 30)
                 .padding(16)
                 .background(KokoControlSurface())
-            Text(title).font(.custom("AvenirNext-DemiBold", size: 18, relativeTo: .headline))
-            Text(detail).font(.custom("AvenirNext-Regular", size: 13, relativeTo: .body)).foregroundStyle(KokoInk.secondary)
+            Text(LocalizedStringKey(title)).font(KokoTypography.emphasis(size: 18, relativeTo: .headline))
+            Text(LocalizedStringKey(detail)).font(KokoTypography.body(size: 13, relativeTo: .body)).foregroundStyle(KokoInk.secondary)
         }.multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
             .frame(maxWidth: .infinity).padding(22).background(ArtworkSurface())
     }
@@ -363,9 +363,9 @@ struct KokoSectionTitle: View {
     var detail: String? = nil
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 12) {
-            Text(title).font(.custom("AvenirNext-Bold", size: 20, relativeTo: .title3))
+            Text(LocalizedStringKey(title)).font(KokoTypography.heading(size: 20, relativeTo: .title3))
             Spacer(minLength: 0)
-            if let detail { Text(detail).font(.custom("AvenirNext-Medium", size: 11, relativeTo: .caption)).foregroundStyle(KokoInk.secondary) }
+            if let detail { Text(LocalizedStringKey(detail)).font(KokoTypography.medium(size: 11, relativeTo: .caption)).foregroundStyle(KokoInk.secondary) }
         }.fixedSize(horizontal: false, vertical: true)
     }
 }
@@ -374,6 +374,7 @@ struct KokoMenuRow: View {
     let title: String
     var detail: String = ""
     var icon = 3
+    var verbatim = false
     var action: () -> Void
     var body: some View {
         Button(action: action) {
@@ -384,8 +385,12 @@ struct KokoMenuRow: View {
                     .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
                     .overlay { RoundedRectangle(cornerRadius: 15, style: .continuous).stroke(KokoInk.line, lineWidth: 1) }
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(title).font(.custom("AvenirNext-DemiBold", size: 15, relativeTo: .body))
-                    if !detail.isEmpty { Text(detail).font(.custom("AvenirNext-Regular", size: 12, relativeTo: .caption)).foregroundStyle(KokoInk.secondary).lineLimit(2) }
+                    (verbatim ? Text(verbatim: title) : Text(LocalizedStringKey(title)))
+                        .font(KokoTypography.emphasis(size: 15, relativeTo: .body))
+                    if !detail.isEmpty {
+                        (verbatim ? Text(verbatim: detail) : Text(LocalizedStringKey(detail)))
+                            .font(KokoTypography.body(size: 12, relativeTo: .caption)).foregroundStyle(KokoInk.secondary).lineLimit(2)
+                    }
                 }.fixedSize(horizontal: false, vertical: true)
                 Spacer(minLength: 4)
                 Artwork(sheet: .navigation, tile: 5).rotationEffect(.degrees(180)).frame(width: 17, height: 17).foregroundStyle(KokoInk.coral)
@@ -400,9 +405,9 @@ struct KokoToggleRow: View {
     var body: some View {
         Button { enabled.toggle() } label: {
             HStack(spacing: 12) {
-                Text(title).font(.custom("AvenirNext-Medium", size: 15, relativeTo: .body)).multilineTextAlignment(.leading)
+                Text(LocalizedStringKey(title)).font(KokoTypography.medium(size: 15, relativeTo: .body)).multilineTextAlignment(.leading)
                 Spacer(minLength: 8)
-                Text(enabled ? "ON" : "OFF").font(.custom("AvenirNext-Bold", size: 11))
+                Text(LocalizedStringKey(enabled ? "ON" : "OFF")).font(KokoTypography.heading(size: 11))
                     .foregroundStyle(enabled ? KokoInk.onMint : KokoInk.secondary)
                     .frame(width: 52, height: 38).background(KokoControlSurface(highlighted: enabled))
             }.foregroundStyle(KokoInk.primary).padding(14).background(ArtworkSurface())
@@ -422,7 +427,7 @@ struct KokoModal<Content: View>: View {
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 18) {
                         HStack(spacing: 12) {
-                            Text(title).font(.custom("AvenirNext-Bold", size: 22, relativeTo: .title2)).fixedSize(horizontal: false, vertical: true)
+                            Text(LocalizedStringKey(title)).font(KokoTypography.heading(size: 22, relativeTo: .title2)).fixedSize(horizontal: false, vertical: true)
                             Spacer(minLength: 0)
                             KokoIconAction(icon: 6, label: "Close", action: dismiss)
                         }

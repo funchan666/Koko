@@ -65,7 +65,7 @@ final class KokoConversationAudioPipeline: @unchecked Sendable {
 final class KokoConversationAudio: ObservableObject {
     @Published private(set) var listening = false
     @Published private(set) var requesting = false
-    @Published private(set) var permissionDenied = false
+    @Published private(set) var offersMicrophoneSettings = false
     @Published private(set) var speakerEnabled = false
     @Published private(set) var inputLevel: Float = 0
     @Published private(set) var explanation = "Microphone is off. Start a device check when you're ready."
@@ -77,17 +77,20 @@ final class KokoConversationAudio: ObservableObject {
         guard !requesting else { return false }
         if listening { return true }
         let attempt = UUID(); revision = attempt; requesting = true
-        let granted: Bool
-        if #available(iOS 17.0, *) { granted = await AVAudioApplication.requestRecordPermission() }
-        else {
-            granted = await withCheckedContinuation { continuation in
-                AVAudioSession.sharedInstance().requestRecordPermission { continuation.resume(returning: $0) }
-            }
-        }
+        offersMicrophoneSettings = false
+        let decision = await KokoCapturePermission.microphoneDecision()
         guard revision == attempt else { return false }
-        permissionDenied = !granted
-        guard granted else {
-            requesting = false; explanation = "Microphone access is off. Allow it in iOS Settings to use voice or video calling."
+        switch decision {
+        case .allowed: break
+        case .declinedNow:
+            requesting = false; explanation = "Microphone is off."
+            return false
+        case .deniedPreviously:
+            requesting = false; offersMicrophoneSettings = true
+            explanation = "Microphone access is unavailable. You can keep browsing or review access in Settings."
+            return false
+        case .restricted:
+            requesting = false; explanation = "Microphone access is restricted on this device."
             return false
         }
         let ready = await withCheckedContinuation { continuation in
@@ -105,7 +108,7 @@ final class KokoConversationAudio: ObservableObject {
         return ready
     }
     func mute(reason: String = "Microphone is off.") {
-        revision = UUID(); requesting = false; listening = false; inputLevel = 0
+        revision = UUID(); requesting = false; listening = false; inputLevel = 0; offersMicrophoneSettings = false
         pipeline.stop(); explanation = reason
     }
     func switchSpeaker() {
@@ -133,19 +136,19 @@ struct KokoMicrophoneControls: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Artwork(sheet: .navigation, tile: 13).frame(width: 32, height: 32)
-                Text(audio.listening ? "Your microphone" : "Microphone off").font(.custom("AvenirNext-DemiBold", size: 16))
+                Text(LocalizedStringKey(audio.listening ? "Your microphone" : "Microphone off")).font(KokoTypography.emphasis(size: 16))
                 Spacer()
-                Text(audio.listening ? "\(Int(audio.inputLevel * 100))%" : "—").monospacedDigit().font(.custom("AvenirNext-Bold", size: 20))
+                Text(audio.listening ? "\(Int(audio.inputLevel * 100))%" : "—").monospacedDigit().font(KokoTypography.heading(size: 20))
             }
-            Text(audio.explanation).font(.custom("AvenirNext-Regular", size: 12)).foregroundStyle(KokoInk.secondary)
+            Text(LocalizedStringKey(audio.explanation)).font(KokoTypography.body(size: 12)).foregroundStyle(KokoInk.secondary)
             HStack {
                 KokoAction(title: audio.requesting ? "Checking permission…" : (audio.listening ? "Mute microphone" : "Enable microphone"), icon: 13) {
                     if audio.listening { mute() } else { activate() }
                 }.disabled(audio.requesting)
                 KokoAction(title: audio.speakerEnabled ? "Use system audio" : "Use speaker", emphasis: false) { audio.switchSpeaker() }.disabled(!audio.listening)
             }
-            Text("Audio route · " + audio.routeName).font(.custom("AvenirNext-Regular", size: 11)).foregroundStyle(KokoInk.secondary)
-            if audio.permissionDenied { KokoDeviceSettingsAction() }
+            Text("Audio route · " + audio.routeName).font(KokoTypography.body(size: 11)).foregroundStyle(KokoInk.secondary)
+            if audio.offersMicrophoneSettings { KokoDeviceSettingsAction() }
         }.padding(18).background(ArtworkSurface())
     }
 }

@@ -10,7 +10,7 @@ struct KokoDiscoverView: View {
     @State private var roomSearch = ""
     @State private var choosingTopic = false
 
-    private var visibleRooms: [ListeningRoom] {
+    private var visibleRooms: [HostedConversationRoom] {
         let query = roomSearch.trimmingCharacters(in: .whitespacesAndNewlines)
         return community.rooms.filter { room in
             room.isVideoStage
@@ -55,7 +55,7 @@ struct KokoDiscoverView: View {
         GeometryReader { viewport in
             ZStack {
             KokoPage {
-                KokoLiveDirectoryHero(roomCount: visibleRooms.count) {
+                KokoLiveDirectoryHero {
                     navigation.open(.createRoom(true))
                 }
                 KokoSearchField(prompt: "Search the live floor", query: $roomSearch)
@@ -72,16 +72,17 @@ struct KokoDiscoverView: View {
                     KokoEmpty(title: "No rooms here yet", detail: "Try another topic or create your own live room.", art: 1)
                     KokoAction(title: "Create a live room", icon: 0) { navigation.open(.createRoom(true)) }
                 }
+                KokoConversationDiscoveryInvitation()
                 KokoUpdatesSectionHeading()
                 LazyVGrid(columns: roomColumns, spacing: 14) {
                     ForEach(featuredMoments) { moment in
                         KokoMomentCard(moment: moment)
                     }
                 }
-                KokoUpdatesBrowseCard(moments: featuredMoments) {
+                KokoUpdatesBrowseCard() {
                     navigation.open(.momentsCollection)
                 }
-                KokoHostsStrip()
+                KokoHostsStrip(cardWidth: min(292, max(228, (viewport.size.width - 40) * 0.84)))
                 KokoDiscoverActionCards()
             }
             .allowsHitTesting(!choosingTopic)
@@ -106,109 +107,151 @@ struct KokoDiscoverView: View {
 }
 
 private struct KokoUpdatesBrowseCard: View {
-    @EnvironmentObject private var community: CommunityJournalStore
-    let moments: [SharedMoment]
+    @Environment(\.dynamicTypeSize) private var textSize
     let action: () -> Void
     var body: some View {
         Button(action: action) {
-            ZStack(alignment: .leading) {
-                Image("KokoSocialWidePanelShell")
-                    .resizable()
-                    .scaledToFill()
-                    .accessibilityHidden(true)
-                HStack(spacing: 14) {
-                    HStack(spacing: -10) {
-                        ForEach(Array(moments.prefix(3)), id: \.id) { moment in
-                            if let asset = moment.mediaAsset {
-                                KokoContentImage(asset: asset)
-                                    .frame(width: 52, height: 58)
-                                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                            }
-                        }
-                    }
-                    .frame(width: 108, height: 62, alignment: .leading)
-                    VStack(alignment: .leading, spacing: 5) {
-                        Text("See all updates")
-                            .font(.custom("AvenirNext-Bold", size: 16))
-                        Text("Videos, photos and little moments from the community")
-                            .font(.custom("AvenirNext-Medium", size: 11))
-                            .foregroundStyle(KokoInk.secondary)
-                            .lineLimit(2)
-                        Text("Open the feed →")
-                            .font(.custom("AvenirNext-Bold", size: 10))
-                            .foregroundStyle(KokoInk.coral)
-                    }
-                    Spacer(minLength: 0)
-                }
-                .padding(.horizontal, 15)
+            let layout = textSize.isAccessibilitySize
+                ? AnyLayout(VStackLayout(alignment: .leading, spacing: 12))
+                : AnyLayout(HStackLayout(alignment: .center, spacing: 16))
+            layout {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Little moments, real connections")
+                        .font(KokoTypography.heading(size: 19, relativeTo: .headline))
+                    Text("Find a story worth saying hello to.")
+                        .font(KokoTypography.medium(size: 12, relativeTo: .subheadline))
+                        .foregroundStyle(KokoInk.canvas.opacity(0.72))
+                    Text("Open the feed →")
+                        .font(KokoTypography.emphasis(size: 12, relativeTo: .subheadline))
+                        .padding(.top, 5)
+                }.fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                Image("KokoDiscoverFeedObject").resizable().scaledToFit()
+                    .frame(width: 76, height: 82).accessibilityHidden(true)
             }
-            .frame(maxWidth: .infinity, minHeight: 112)
-            .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
-        }.buttonStyle(KokoPressStyle()).accessibilityLabel("See all community updates")
+            .foregroundStyle(KokoInk.canvas)
+            .padding(20)
+            .frame(maxWidth: .infinity, minHeight: 132, alignment: .leading)
+            .background { Image("KokoCollectionMintSurface").resizable().accessibilityHidden(true) }
+            .contentShape(Rectangle())
+        }.buttonStyle(KokoPressStyle())
     }
 }
 
 private struct KokoHostsStrip: View {
     @EnvironmentObject private var community: CommunityJournalStore
-    @EnvironmentObject private var navigation: KokoSceneNavigation
+    @Environment(\.dynamicTypeSize) private var textSize
+    let cardWidth: CGFloat
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Meet the hosts").font(.custom("AvenirNext-Bold", size: 20))
-                    Text("Find a room that feels like you").font(.custom("AvenirNext-Medium", size: 10)).foregroundStyle(KokoInk.secondary)
+        VStack(alignment: .leading, spacing: 14) {
+            VStack(alignment: .leading, spacing: 5) {
+                Text("A shared interest. A first hello.")
+                    .font(KokoTypography.heading(size: 21, relativeTo: .title2))
+                    .accessibilityAddTraits(.isHeader)
+                Text("Meet the people behind the rooms.")
+                    .font(KokoTypography.medium(size: 12, relativeTo: .subheadline))
+                    .foregroundStyle(KokoInk.secondary)
+            }.fixedSize(horizontal: false, vertical: true)
+            if textSize.isAccessibilitySize {
+                VStack(spacing: 12) {
+                    ForEach(community.members) { KokoDiscoverHostInvitation(member: $0) }
                 }
-            }
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 10) {
-                    ForEach(community.members) { member in
-                        Button { navigation.open(.profile(member.id)) } label: {
-                            VStack(alignment: .leading, spacing: 7) {
-                                KokoMemberPortrait(member: member)
-                                    .frame(width: 112, height: 100)
-                                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-                                Text(member.publicName.components(separatedBy: " ").first ?? member.publicName).font(.custom("AvenirNext-Bold", size: 13)).lineLimit(1)
-                                Text("Open to chat →").font(.custom("AvenirNext-Medium", size: 10)).foregroundStyle(KokoInk.coral)
-                            }.frame(width: 112, alignment: .leading)
-                        }.buttonStyle(KokoPressStyle()).accessibilityLabel("Meet \(member.publicName)")
+            } else {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(alignment: .top, spacing: 12) {
+                        ForEach(community.members) { member in
+                            KokoDiscoverHostInvitation(member: member).frame(width: cardWidth)
+                        }
                     }
                 }
             }
-        }.frame(maxWidth: .infinity, alignment: .leading)
+        }.padding(.vertical, 6).frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+private struct KokoDiscoverHostInvitation: View {
+    @EnvironmentObject private var community: CommunityJournalStore
+    @EnvironmentObject private var navigation: KokoSceneNavigation
+    let member: CommunityMember
+    private var following: Bool { community.following.contains(member.id) }
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Button { navigation.open(.profile(member.id)) } label: {
+                HStack(alignment: .center, spacing: 12) {
+                    KokoMemberPortrait(member: member)
+                        .frame(width: 66, height: 74)
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text(verbatim: member.publicName)
+                            .font(KokoTypography.heading(size: 17, relativeTo: .headline))
+                        if let topic = member.interests.first {
+                            Text(LocalizedStringKey(topic))
+                                .font(KokoTypography.emphasis(size: 12, relativeTo: .caption))
+                                .foregroundStyle(KokoInk.canvas.opacity(0.72))
+                        }
+                        Text("View profile →")
+                            .font(KokoTypography.medium(size: 11, relativeTo: .caption))
+                    }.fixedSize(horizontal: false, vertical: true)
+                    Spacer(minLength: 0)
+                }.frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
+            }.buttonStyle(KokoPressStyle())
+            Text(verbatim: member.introductionLine)
+                .font(KokoTypography.medium(size: 12, relativeTo: .subheadline))
+                .foregroundStyle(KokoInk.canvas.opacity(0.8))
+                .lineLimit(2, reservesSpace: true)
+            HStack(spacing: 10) {
+                Button { community.toggleFollow(member.id) } label: {
+                    Text(LocalizedStringKey(following ? "Followed" : "Follow"))
+                        .font(KokoTypography.emphasis(size: 12, relativeTo: .subheadline))
+                        .multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
+                        .padding(.horizontal, 8).padding(.vertical, 10)
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                        .background { Image("KokoCollectionMintSurface").resizable().accessibilityHidden(true) }
+                }.buttonStyle(KokoPressStyle())
+                    .accessibilityAddTraits(following ? .isSelected : [])
+                Button { navigation.open(.conversation(member.id)) } label: {
+                    Text("Say hello →")
+                        .font(KokoTypography.heading(size: 12, relativeTo: .subheadline))
+                        .multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
+                        .frame(maxWidth: .infinity, minHeight: 44).contentShape(Rectangle())
+                }.buttonStyle(KokoPressStyle())
+            }
+        }
+        .foregroundStyle(KokoInk.canvas)
+        .padding(18).frame(maxWidth: .infinity, alignment: .leading)
+        .background { Image("KokoDiscoverInvitationPaper").resizable().accessibilityHidden(true) }
     }
 }
 
 private struct KokoDiscoverActionCards: View {
     @EnvironmentObject private var navigation: KokoSceneNavigation
+    @Environment(\.dynamicTypeSize) private var textSize
     var body: some View {
-        HStack(spacing: 12) {
-            actionCard(title: "Photos & videos", detail: "Keep the good bits") { navigation.open(.momentsCollection) }
-            actionCard(title: "Find your people", detail: "Search the community") { navigation.open(.search) }
+        let layout = textSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(spacing: 12)) : AnyLayout(HStackLayout(alignment: .top, spacing: 12))
+        layout {
+            actionCard(title: "Find your people", detail: "Start with a shared interest", image: "KokoDiscoverPeopleObject") {
+                navigation.open(.search)
+            }
+            actionCard(title: "Start a voice room", detail: "Make room for a good conversation", image: "KokoDiscoverRoomObject") {
+                navigation.open(.createRoom(false))
+            }
         }
     }
-    private func actionCard(title: String, detail: String, action: @escaping () -> Void) -> some View {
+    private func actionCard(title: String, detail: String, image: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            ZStack(alignment: .leading) {
-                Image("KokoSocialWidePanelShell")
-                    .resizable()
-                    .scaledToFill()
-                    .accessibilityHidden(true)
-                VStack(alignment: .leading, spacing: 9) {
-                    Text(title)
-                        .font(.custom("AvenirNext-Bold", size: 14))
-                        .lineLimit(2)
-                    Text(detail)
-                        .font(.custom("AvenirNext-Medium", size: 10))
-                        .foregroundStyle(KokoInk.secondary)
-                        .lineLimit(2)
-                    Text("Explore →")
-                        .font(.custom("AvenirNext-Bold", size: 10))
-                        .foregroundStyle(KokoInk.coral)
-                }
-                .padding(16)
-            }
-            .frame(maxWidth: .infinity, minHeight: 132)
-            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+            VStack(alignment: .leading, spacing: 8) {
+                Image(image).resizable().scaledToFit()
+                    .frame(width: 58, height: 58).accessibilityHidden(true)
+                Text(LocalizedStringKey(title))
+                    .font(KokoTypography.heading(size: 15, relativeTo: .headline))
+                    .lineLimit(2, reservesSpace: true)
+                Text(LocalizedStringKey(detail))
+                    .font(KokoTypography.medium(size: 11, relativeTo: .subheadline))
+                    .foregroundStyle(KokoInk.secondary)
+                    .lineLimit(2, reservesSpace: true)
+            }.frame(maxWidth: .infinity, minHeight: 150, alignment: .topLeading)
+                .padding(.horizontal, 8).padding(.vertical, 6)
+                .contentShape(Rectangle())
         }.buttonStyle(KokoPressStyle())
     }
 }
@@ -216,7 +259,7 @@ private struct KokoDiscoverActionCards: View {
 /// Uses the host's supplied photograph, never a film thumbnail presented as a live stream.
 struct KokoRoomHostCover: View {
     @EnvironmentObject private var community: CommunityJournalStore
-    let room: ListeningRoom
+    let room: HostedConversationRoom
     var body: some View {
         Group {
             if let host = community.member(room.hostMemberID) {
@@ -228,102 +271,117 @@ struct KokoRoomHostCover: View {
         .overlay(alignment: .topLeading) {
             HStack(spacing: 6) {
                 Artwork(sheet: .navigation, tile: room.isVideoStage ? 0 : 1, ink: KokoInk.accent).frame(width: 20, height: 20)
-                Text(room.isVideoStage ? "LIVE ROOM" : "VOICE ROOM").tracking(1)
+                Text(LocalizedStringKey(room.isVideoStage ? "LIVE ROOM" : "VOICE ROOM")).tracking(1)
                 Text("/ PREVIEW").foregroundStyle(KokoInk.secondary)
             }
-            .font(.custom("AvenirNext-Bold", size: 10))
+            .font(KokoTypography.heading(size: 10))
             .foregroundStyle(KokoInk.primary)
             .padding(.horizontal, 12).padding(.vertical, 10)
             .background(KokoControlSurface()).padding(14)
         }
         .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-        .accessibilityLabel(room.isVideoStage ? "Live room preview cover. No broadcast is connected." : "Voice room preview cover. No audio is broadcast.")
+        .accessibilityLabel(Text(LocalizedStringKey(room.isVideoStage ? "Live room preview cover. No broadcast is connected." : "Voice room preview cover. No audio is broadcast.")))
     }
 }
 
 private struct KokoLiveDirectoryHero: View {
-    let roomCount: Int
+    @ScaledMetric(relativeTo: .body) private var bannerHeight: CGFloat = 190
     let create: () -> Void
     var body: some View {
-        ZStack(alignment: .leading) {
-            Image("KokoHomeHeroArtwork")
-                .resizable()
-                .scaledToFill()
-                .frame(maxWidth: .infinity, minHeight: 154, maxHeight: 154)
-                .clipped()
-            HStack {
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack(spacing: 8) {
-                        Text("ON AIR")
-                            .font(.custom("AvenirNext-Bold", size: 11))
-                            .tracking(1.2)
-                            .foregroundStyle(KokoInk.coral)
-                        Text("\(roomCount) rooms open")
-                            .font(.custom("AvenirNext-Medium", size: 10))
-                            .foregroundStyle(KokoInk.secondary)
-                    }
-                    Text("Find your people in the moment")
-                        .font(.custom("AvenirNext-Bold", size: 21, relativeTo: .title2))
-                        .fixedSize(horizontal: false, vertical: true)
-                    Text("Watch, react, and join the room that fits your mood.")
-                        .font(.custom("AvenirNext-Medium", size: 11))
-                        .foregroundStyle(KokoInk.secondary)
-                        .lineLimit(2)
-                    Button(action: create) {
-                        Text("Go live")
-                        .font(.custom("AvenirNext-Bold", size: 11))
-                        .foregroundStyle(KokoInk.onMint)
-                        .padding(.horizontal, 16)
-                        .frame(height: 34)
+        GeometryReader { bounds in
+            // Native copy occupies only the blank left side of the original artwork.
+            let copyWidth = max(0, bounds.size.width * 0.56 - 36)
+            VStack(alignment: .leading, spacing: 8) {
+                Text("GOOD COMPANY")
+                    .font(KokoTypography.emphasis(size: 9.5, relativeTo: .caption2))
+                    .tracking(1.1)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.85)
+                Text("Come say\nhello.")
+                    .font(KokoTypography.heading(size: 26, relativeTo: .title2))
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.85)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityAddTraits(.isHeader)
+                Button(action: create) {
+                    Text("Start a room →")
+                        .font(KokoTypography.heading(size: 12, relativeTo: .caption))
+                        .foregroundStyle(KokoInk.paper)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                        .padding(.horizontal, 10)
+                        .frame(width: min(132, copyWidth), height: 44)
                         .background {
-                            Image("KokoHomeHeroButton")
-                                .resizable()
-                                .scaledToFill()
+                            Image("KokoLiveHelloAction").resizable().accessibilityHidden(true)
                         }
-                    }
-                    .buttonStyle(.plain)
+                        .contentShape(Rectangle())
                 }
-                Spacer(minLength: 0)
+                .buttonStyle(KokoPressStyle())
+                .accessibilityLabel("Create a video room")
             }
+            .foregroundStyle(KokoInk.onMint)
+            .frame(width: copyWidth, height: bounds.size.height - 36, alignment: .leading)
+            .padding(18)
         }
-        .padding(18)
-        .frame(maxWidth: .infinity, minHeight: 154, maxHeight: 154, alignment: .leading)
-        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("On air now. \(roomCount) live rooms.")
+        .frame(height: bannerHeight)
+        .background {
+            Image("KokoLiveHelloBanner").resizable().accessibilityHidden(true)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
     }
 }
 
 private struct KokoDiscoverCategoryRail: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Binding var selection: String
     let select: (String) -> Void
-    private let categories: [(String, Int)] = [
-        ("For you", 0), ("Following", 1), ("Conversation", 2), ("Music", 3), ("Creative", 4), ("After hours", 5)
+    private let categories: [(value: String, label: String, artwork: String)] = [
+        ("For you", "For you", "KokoDiscoverForYou"),
+        ("Following", "Following", "KokoDiscoverFollowing"),
+        ("Conversation", "Chat", "KokoDiscoverConversation"),
+        ("Music", "Music", "KokoDiscoverMusic"),
+        ("Creative", "Creative", "KokoDiscoverCreative"),
+        ("After hours", "After hours", "KokoDiscoverAfterHours")
     ]
+    private var columns: [GridItem] {
+        Array(repeating: GridItem(.flexible(minimum: 0), spacing: 8),
+              count: dynamicTypeSize.isAccessibilitySize ? 2 : 3)
+    }
     var body: some View {
-        ZStack {
-            Image("KokoHomeCategoryRail")
-                .resizable()
-                .scaledToFit()
-                .accessibilityHidden(true)
-            HStack(spacing: 4) {
-                ForEach(categories, id: \.0) { category, _ in
-                    Button { select(category) } label: {
-                        Text(category)
-                            .font(.custom("AvenirNext-DemiBold", size: 10, relativeTo: .caption))
-                            .minimumScaleFactor(0.72)
-                            .lineLimit(1)
-                            .frame(maxWidth: .infinity, minHeight: 56)
-                            .foregroundStyle(selection == category ? KokoInk.onMint : KokoInk.primary)
+        LazyVGrid(columns: columns, spacing: 8) {
+            ForEach(categories, id: \.value) { category in
+                Button { select(category.value) } label: {
+                    HStack(spacing: 6) {
+                        Image(category.artwork)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 24, height: 24)
+                            .accessibilityHidden(true)
+                        Text(LocalizedStringKey(category.label))
+                            .font(KokoTypography.emphasis(size: 12, relativeTo: .caption))
+                            .lineLimit(dynamicTypeSize.isAccessibilitySize ? 2 : 1)
+                            .minimumScaleFactor(0.9)
+                            .foregroundStyle(selection == category.value ? KokoInk.onMint : KokoInk.primary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    .buttonStyle(KokoPressStyle())
-                    .accessibilityAddTraits(selection == category ? .isSelected : [])
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 10)
+                    .frame(maxWidth: .infinity, minHeight: 46)
+                    .background {
+                        if selection == category.value {
+                            Image("KokoVoiceTopicSelection")
+                                .resizable()
+                                .accessibilityHidden(true)
+                        }
+                    }
+                    .contentShape(Rectangle())
                 }
+                .buttonStyle(KokoPressStyle())
+                .accessibilityLabel(Text(LocalizedStringKey(category.value)))
+                .accessibilityAddTraits(selection == category.value ? .isSelected : [])
             }
-            .padding(.horizontal, 7)
         }
         .frame(maxWidth: .infinity)
-        .aspectRatio(3, contentMode: .fit)
     }
 }
 
@@ -332,9 +390,9 @@ private struct KokoLiveSectionHeading: View {
     var body: some View {
         HStack(spacing: 11) {
             VStack(alignment: .leading, spacing: 2) {
-                Text("Live rooms").font(.custom("AvenirNext-Bold", size: 20, relativeTo: .title3))
-                Text(category == "For you" ? "A room for your mood" : "\(category) rooms")
-                    .font(.custom("AvenirNext-Medium", size: 10)).foregroundStyle(KokoInk.secondary)
+                Text("Live rooms").font(KokoTypography.heading(size: 20, relativeTo: .title3))
+                Text(LocalizedStringKey(category == "For you" ? "A room for your mood" : category))
+                    .font(KokoTypography.medium(size: 10)).foregroundStyle(KokoInk.secondary)
             }
         }.frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -343,95 +401,76 @@ private struct KokoLiveSectionHeading: View {
 struct KokoLiveRoomCard: View {
     @EnvironmentObject private var community: CommunityJournalStore
     @EnvironmentObject private var navigation: KokoSceneNavigation
-    let room: ListeningRoom
+    let room: HostedConversationRoom
     private var host: CommunityMember? { community.member(room.hostMemberID) }
+
     var body: some View {
-        Button { navigation.open(.room(room.id)) } label: {
-            ZStack(alignment: .topLeading) {
-                Image("KokoHomeLiveCardShell")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .accessibilityHidden(true)
-                VStack(alignment: .leading, spacing: 0) {
-                    ZStack(alignment: .bottomLeading) {
-                        if let preview = KokoMediaLibrary.liveRoomPreview(for: room.id) {
-                            KokoContentImage(asset: preview)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 116)
-                                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                        } else if let host {
-                            KokoMemberCoverPhoto(member: host)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 116)
-                                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                        } else {
-                            KokoPhotoPlaceholder()
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 116)
-                        }
-                        HStack(spacing: 8) {
-                            ZStack {
-                                Image("KokoLiveNowBadge")
-                                    .resizable()
-                                    .scaledToFit()
-                                Text("LIVE NOW")
-                                    .font(.custom("AvenirNext-Bold", size: 7))
-                                    .tracking(0.8)
-                                    .foregroundStyle(KokoInk.primary)
-                                    .padding(.leading, 19)
-                            }
-                            .frame(width: 92, height: 26)
-                            Spacer(minLength: 0)
-                            Text("\(room.seatAssignments.count) here")
-                                .font(.custom("AvenirNext-Bold", size: 9))
-                        }
-                        .foregroundStyle(KokoInk.primary)
-                        .padding(10)
+        Group {
+            KokoRoomEditorialLayout(title: room.roomTitle, topic: room.conversationTopic,
+                                    hostName: host?.publicName ?? "Koko", invitation: "Enter room →",
+                                    openContent: { navigation.open(.room(room.id)) },
+                                    openProfile: { navigation.open(.profile(room.hostMemberID)) }) {
+                ZStack(alignment: .topLeading) {
+                    if let preview = KokoMediaLibrary.liveRoomPreview(for: room.id) {
+                        KokoContentImage(asset: preview)
+                    } else if let host {
+                        KokoMemberCoverPhoto(member: host)
+                    } else {
+                        KokoPhotoPlaceholder()
                     }
-                    .padding(.horizontal, 10)
-                    .padding(.top, 10)
-                    VStack(alignment: .leading, spacing: 7) {
-                        Text(room.roomTitle)
-                            .font(.custom("AvenirNext-Bold", size: 15))
-                            .foregroundStyle(KokoInk.canvas)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.82)
-                        Text(room.conversationPrompt)
-                            .font(.custom("AvenirNext-Regular", size: 10))
-                            .foregroundStyle(KokoInk.canvas.opacity(0.72))
-                            .lineLimit(1)
-                        if let host {
-                            Text("Hosted by \(host.publicName) · talking now")
-                                .font(.custom("AvenirNext-DemiBold", size: 9))
-                                .foregroundStyle(KokoInk.canvas.opacity(0.78))
-                                .lineLimit(1)
-                        }
-                        HStack(spacing: 7) {
-                            Text(room.conversationTopic)
-                                .font(.custom("AvenirNext-Bold", size: 8))
-                                .tracking(0.8)
-                                .foregroundStyle(KokoInk.coral)
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.7)
-                            Spacer(minLength: 0)
-                            Text("Join chat →")
-                                .font(.custom("AvenirNext-Bold", size: 9))
-                                .foregroundStyle(KokoInk.coral)
-                        }
-                    }
-                    .padding(.horizontal, 13)
-                    .padding(.top, 12)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             }
-            .frame(maxWidth: .infinity)
-            .aspectRatio(0.67, contentMode: .fit)
-            .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
-            .shadow(color: .black.opacity(0.18), radius: 14, y: 8)
-        }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-            .buttonStyle(KokoPressStyle())
-            .accessibilityLabel("Join live room hosted by \(host?.publicName ?? "Koko")")
+        }
+        .buttonStyle(KokoPressStyle())
+        .accessibilityLabel("Open video room preview: \(room.roomTitle), hosted by \(host?.publicName ?? "Koko")")
+    }
+}
+
+/// Artwork is a full original bitmap. Explicit geometry keeps media and text from
+/// proposing a wider size to the two-column directory.
+struct KokoRoomEditorialLayout<Cover: View>: View {
+    let title: String
+    let topic: String
+    let hostName: String
+    let invitation: String
+    let openContent: () -> Void
+    let openProfile: () -> Void
+    @ViewBuilder var cover: Cover
+
+    var body: some View {
+        GeometryReader { geometry in
+            VStack(alignment: .leading, spacing: 0) {
+                Button(action: openContent) { cover }.buttonStyle(KokoPressStyle())
+                    .frame(width: geometry.size.width, height: geometry.size.height * 0.554)
+                    .clipped()
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(LocalizedStringKey(topic))
+                        .font(KokoTypography.emphasis(size: 10))
+                        .foregroundStyle(KokoInk.canvas.opacity(0.7))
+                        .lineLimit(1)
+                    Button(action: openContent) { Text(verbatim: title) }.buttonStyle(KokoPressStyle())
+                        .font(KokoTypography.heading(size: 16))
+                        .lineLimit(2)
+                        .frame(height: 43, alignment: .topLeading)
+                    Button(action: openProfile) { Text(verbatim: hostName).frame(minHeight: 44, alignment: .leading) }.buttonStyle(KokoPressStyle())
+                        .font(KokoTypography.medium(size: 11))
+                        .lineLimit(1)
+                    Spacer(minLength: 3)
+                    Button(action: openContent) { Text(LocalizedStringKey(invitation)) }.buttonStyle(KokoPressStyle())
+                        .font(KokoTypography.heading(size: 11))
+                        .lineLimit(1)
+                }
+                .foregroundStyle(KokoInk.canvas)
+                .padding(.horizontal, 12)
+                .padding(.top, 10)
+                .padding(.bottom, 15)
+                .frame(width: geometry.size.width, height: geometry.size.height * 0.446, alignment: .topLeading)
+            }
+            .background { Image("KokoRoomEditorialCard").resizable().accessibilityHidden(true) }
+            .clipShape(RoundedRectangle(cornerRadius: 21, style: .continuous))
+        }
+        .frame(height: 380)
+        .frame(minWidth: 0, maxWidth: .infinity)
     }
 }
 
@@ -453,6 +492,10 @@ struct KokoMomentsCollection: View {
     var body: some View {
         ZStack {
             KokoPage(title: "Photos & videos", back: navigation.back) {
+                HStack {
+                    KokoAction(title: "Create a post") { navigation.open(.composeMoment) }
+                    KokoAction(title: "My submissions", emphasis: false) { navigation.open(.pendingMoments) }
+                }
                 HStack(spacing: 10) {
                     KokoChoiceRail(choices: ["All", "Photos", "Videos"], selection: $mediaFormat)
                     KokoIconAction(icon: 11, label: "Filter the collection") { choosingFilters = true }
@@ -491,8 +534,8 @@ private struct KokoUpdatesSectionHeading: View {
     var body: some View {
         HStack(spacing: 11) {
             VStack(alignment: .leading, spacing: 2) {
-                Text("Community updates").font(.custom("AvenirNext-Bold", size: 20, relativeTo: .title3))
-                Text("\(videoCount) videos · photos from your people").font(.custom("AvenirNext-Medium", size: 10)).foregroundStyle(KokoInk.secondary)
+                Text("Community updates").font(KokoTypography.heading(size: 20, relativeTo: .title3))
+                Text("\(videoCount) videos · photos from your people").font(KokoTypography.medium(size: 10)).foregroundStyle(KokoInk.secondary)
             }
         }.frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -503,85 +546,43 @@ struct KokoMomentCard: View {
     @EnvironmentObject private var navigation: KokoSceneNavigation
     let moment: SharedMoment
     var body: some View {
-        Button { navigation.open(.moment(moment.id)) } label: {
-            ZStack(alignment: .topLeading) {
-                Image("KokoHomeMomentCardShell")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .accessibilityHidden(true)
-                VStack(alignment: .leading, spacing: 0) {
-                    Group {
-                        if let asset = moment.mediaAsset {
-                            KokoContentImage(asset: asset)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 122)
-                                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                        } else {
-                            Artwork(sheet: .collection, tile: moment.coverTile)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 122)
-                                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                        }
-                    }
-                    .padding(.horizontal, 10)
-                    .padding(.top, 10)
-                    if let asset = moment.mediaAsset {
-                        Text(asset.isVideo ? "VIDEO · \(asset.durationLabel)" : "PHOTO")
-                            .font(.custom("AvenirNext-Bold", size: 8))
-                            .tracking(1)
-                            .foregroundStyle(KokoInk.coral)
-                            .padding(.horizontal, 13)
-                            .padding(.top, 10)
-                    }
-                    VStack(alignment: .leading, spacing: 7) {
-                        Text(moment.topicLabel.uppercased())
-                            .font(.custom("AvenirNext-Bold", size: 8))
-                            .tracking(1)
-                            .foregroundStyle(KokoInk.coral)
-                        Text(moment.captionLine)
-                            .font(.custom("AvenirNext-Bold", size: 14, relativeTo: .body))
-                            .foregroundStyle(KokoInk.primary)
-                            .lineLimit(2)
-                        HStack(spacing: 5) {
-                            Text(community.member(moment.creatorMemberID)?.publicName ?? "Koko")
-                                .font(.custom("AvenirNext-DemiBold", size: 10))
-                                .lineLimit(1)
-                            Spacer(minLength: 0)
-                            Text("Open moment →")
-                                .font(.custom("AvenirNext-Bold", size: 9))
-                                .foregroundStyle(KokoInk.coral)
-                        }
-                    }
-                    .padding(.horizontal, 13)
-                    .padding(.top, 8)
+        Group {
+            KokoRoomEditorialLayout(
+                title: moment.captionLine,
+                topic: moment.mediaAsset.map { $0.isVideo ? "Video · \($0.durationLabel)" : "Photo" } ?? moment.topicLabel,
+                hostName: community.member(moment.creatorMemberID)?.publicName ?? "Koko",
+                invitation: "View moment →",
+                openContent: { navigation.open(.moment(moment.id)) },
+                openProfile: { navigation.open(.profile(moment.creatorMemberID)) }
+            ) {
+                if let asset = moment.mediaAsset {
+                    KokoContentImage(asset: asset)
+                } else {
+                    KokoPhotoPlaceholder()
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             }
-            .foregroundStyle(KokoInk.primary)
-            .frame(maxWidth: .infinity)
-            .aspectRatio(0.67, contentMode: .fit)
-            .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
-        }.buttonStyle(KokoPressStyle()).accessibilityLabel(moment.mediaAsset?.isVideo == true ? "Open video update" : "Open photo update")
+        }.buttonStyle(KokoPressStyle())
+            .accessibilityLabel(moment.mediaAsset?.isVideo == true ? "Open video update: " + moment.captionLine : "Open photo update: " + moment.captionLine)
     }
 }
 
 struct KokoRoomCard: View {
     @EnvironmentObject private var community: CommunityJournalStore
     @EnvironmentObject private var navigation: KokoSceneNavigation
-    let room: ListeningRoom
+    let room: HostedConversationRoom
     var body: some View {
-        Button { navigation.open(.room(room.id)) } label: {
+        Group {
             HStack(alignment: .center, spacing: 15) {
                 if let host = community.member(room.hostMemberID) {
-                    KokoMemberPortrait(member: host).frame(width: 88, height: 104)
+                    KokoProfileLink(memberID: host.id) { KokoMemberPortrait(member: host).frame(width: 88, height: 104) }
                 } else { KokoPhotoPlaceholder().frame(width: 88, height: 104) }
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(room.conversationTopic.uppercased()).font(.custom("AvenirNext-DemiBold", size: 10)).tracking(1).foregroundStyle(KokoInk.accent)
-                    Text(room.roomTitle).font(.custom("AvenirNext-Bold", size: 17, relativeTo: .headline)).fixedSize(horizontal: false, vertical: true)
-                    Text(room.conversationPrompt).font(.custom("AvenirNext-Regular", size: 12)).foregroundStyle(KokoInk.secondary).lineLimit(2)
-                    Text("\(room.seatAssignments.count)/\(room.seatLimit) seats · \(room.isVideoStage ? "Video" : "Voice") preview").font(.custom("AvenirNext-Medium", size: 10))
+                Button { navigation.open(.room(room.id)) } label: { VStack(alignment: .leading, spacing: 6) {
+                    Text(LocalizedStringKey(room.conversationTopic)).font(KokoTypography.emphasis(size: 10)).tracking(1).foregroundStyle(KokoInk.accent)
+                    Text(room.roomTitle).font(KokoTypography.heading(size: 17, relativeTo: .headline)).fixedSize(horizontal: false, vertical: true)
+                    Text(room.conversationPrompt).font(KokoTypography.body(size: 12)).foregroundStyle(KokoInk.secondary).lineLimit(2)
+                    Text("\(room.seatAssignments.count)/\(room.seatLimit) seats · \(room.isVideoStage ? "Video" : "Voice") preview").font(KokoTypography.medium(size: 10))
                 }
+                }.buttonStyle(KokoPressStyle())
                 Spacer(minLength: 0)
             }.foregroundStyle(KokoInk.primary).padding(14).frame(maxWidth: .infinity, alignment: .leading).background(ArtworkSurface())
         }.buttonStyle(KokoPressStyle())
@@ -608,7 +609,7 @@ struct KokoDiscoverySearch: View {
         && (gender == "Any gender" || member.genderLabel == gender)
     }
     private var people: [CommunityMember] { community.members.filter { matches($0.publicName + " " + $0.introductionLine) && accepts($0) && (topic == "All" || $0.interests.contains(topic)) } }
-    private var rooms: [ListeningRoom] { community.rooms.filter { room in matches(room.roomTitle + " " + room.conversationPrompt) && (topic == "All" || room.conversationTopic == topic) && community.member(room.hostMemberID).map(accepts) == true } }
+    private var rooms: [HostedConversationRoom] { community.rooms.filter { room in matches(room.roomTitle + " " + room.conversationPrompt) && (topic == "All" || room.conversationTopic == topic) && community.member(room.hostMemberID).map(accepts) == true } }
     private var moments: [SharedMoment] { community.moments.filter { moment in matches(moment.captionLine) && (topic == "All" || moment.topicLabel == topic) && community.member(moment.creatorMemberID).map(accepts) == true } }
     var body: some View {
         ZStack {
@@ -617,15 +618,15 @@ struct KokoDiscoverySearch: View {
                 KokoChoiceRail(choices: ["All", "People", "Rooms", "Moments"], selection: $resultKind)
                 KokoChoiceRail(choices: KokoCommunity.topics, selection: $topic)
                 if resultKind == "All" || resultKind == "People" {
-                    Text("People · \(people.count)").font(.custom("AvenirNext-Bold", size: 19))
+                    Text("People · \(people.count)").font(KokoTypography.heading(size: 19))
                     ForEach(people) { member in KokoMemberRow(member: member) }
                 }
                 if resultKind == "All" || resultKind == "Rooms" {
-                    Text("Rooms · \(rooms.count)").font(.custom("AvenirNext-Bold", size: 19))
+                    Text("Rooms · \(rooms.count)").font(KokoTypography.heading(size: 19))
                     ForEach(rooms) { room in KokoRoomCard(room: room) }
                 }
                 if resultKind == "All" || resultKind == "Moments" {
-                    Text("Moments · \(moments.count)").font(.custom("AvenirNext-Bold", size: 19))
+                    Text("Moments · \(moments.count)").font(KokoTypography.heading(size: 19))
                     ForEach(moments) { moment in KokoMomentCard(moment: moment) }
                 }
                 if (resultKind == "People" && people.isEmpty) || (resultKind == "Rooms" && rooms.isEmpty) || (resultKind == "Moments" && moments.isEmpty) || (people.isEmpty && rooms.isEmpty && moments.isEmpty) {
@@ -656,7 +657,7 @@ struct KokoMemberRow: View {
         Button { navigation.open(.profile(member.id)) } label: {
             HStack(spacing: 14) {
                 KokoMemberPortrait(member: member).frame(width: 58, height: 64)
-                VStack(alignment: .leading, spacing: 5) { Text(member.publicName).font(.custom("AvenirNext-DemiBold", size: 17)); Text("\(member.hometownLabel) · \(member.spokenLanguage)").font(.custom("AvenirNext-Regular", size: 12)).foregroundStyle(KokoInk.secondary) }
+                VStack(alignment: .leading, spacing: 5) { Text(member.publicName).font(KokoTypography.emphasis(size: 17)); Text("\(member.hometownLabel) · \(member.spokenLanguage)").font(KokoTypography.body(size: 12)).foregroundStyle(KokoInk.secondary) }
                 Spacer()
             }.padding(14).background(ArtworkSurface())
         }.buttonStyle(KokoPressStyle())
@@ -665,22 +666,22 @@ struct KokoMemberRow: View {
 
 struct KokoSafetyPanel: View {
     @EnvironmentObject private var community: CommunityJournalStore
-    let subjectKey: String
+    let reportedContentID: String
     let memberID: String
     let dismiss: () -> Void
-    @State private var reason = "Harassment"
+    @State private var reason = ""
     @State private var confirmBlock = false
     var body: some View {
         KokoModal(title: confirmBlock ? "Block this person?" : "Keep your space comfortable", dismiss: dismiss) {
             if confirmBlock {
                 Text("Their rooms, moments and conversations will be hidden on this device. You can undo this in your blocked list.")
-                KokoAction(title: "Block person") { community.block(memberID); dismiss() }
+                KokoAction(title: "Block person") { if community.block(memberID) { dismiss() } }
                 KokoAction(title: "Go back", emphasis: false) { confirmBlock = false }
             } else {
-                ForEach(["Harassment", "Hateful content", "Sexual content", "Violence", "Spam or scam", "Privacy concern", "Other"], id: \.self) { option in
+                ForEach(KokoSafetyReason.all, id: \.self) { option in
                     KokoToggleRow(title: option, enabled: Binding(get: { reason == option }, set: { _ in reason = option }))
                 }
-                KokoAction(title: "Save report & hide") { community.report(subjectKey, reason: reason); dismiss() }
+                KokoAction(title: "Save report & hide") { if community.report(reportedContentID, reason: reason) { dismiss() } }.disabled(reason.isEmpty)
                 if memberID != community.myID { KokoAction(title: "Block this person", emphasis: false) { confirmBlock = true } }
             }
         }

@@ -1,0 +1,13 @@
+{
+  "mode": "Garden Host-Native / built-in image generation",
+  "prompts": [
+    [
+      "KokoLiveHelloBanner",
+      "Create a completely NEW original production mobile social app banner skin for Koko. Landscape exactly 2:1, straight-on full-bleed rounded rectangle, transparency ONLY outside its smooth rounded outer corners. Warm soft ivory #F5EADA matte background, subtle delicate paper grain. LEFT 62 PERCENT completely plain empty ivory, reserved for large dark native headline and a button, no marks or decoration there. RIGHT 35 PERCENT contains a beautiful compact playful sculpture: one coral video camera with a large simple lens, leaning beside a mint conversation bubble with three ivory dots; two meaningful objects only. Contemporary editorial social invitation, warm, sophisticated, tactile ceramic, gentle realistic shadows only under objects. Entire objects contained within the right portion, no overlap into text area. Objects medium size, airy space above and below, not overflowing. NO people, NO words, NO letters, NO numbers, NO drawn button, NO logos, NO stars, NO rooms, NO architecture, NO plants, NO neon or glass, NO busy scenery, NO outer frame, NO border, NO beveled edges, NO inset panel, NO mockup. Actual usable banner asset edge to edge, no external margins. Make the large plain left space the primary compositional feature."
+    ],
+    [
+      "KokoLiveHelloAction",
+      "Draw ONE blank dark petrol green mobile button, production UI bitmap. Canvas 3:1 landscape. CRITICAL: the button body MUST touch the TOP edge at the middle, BOTTOM edge at the middle, LEFT edge at middle and RIGHT edge at middle. FULL BLEED. Zero outside padding. Only the four corner cutouts are transparent. Full rounded rectangle with radius equal to HALF its height, not a thin bar. Single clean matte deep green #063A35 solid material with barely visible fine paper texture. No text, no symbols, no lighting effects, no stroke, no outline, no bevel, no shadows. The entire top-to-bottom height IS the button body. Original Koko social app CTA skin."
+    ]
+  ]
+}

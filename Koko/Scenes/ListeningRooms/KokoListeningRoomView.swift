@@ -15,7 +15,7 @@ struct KokoListeningRoomView: View {
     @State private var selectedSeat: Int?
     @State private var showSafety = false
     @State private var roomNote = ""
-    private var room: ListeningRoom? { community.room(roomID) }
+    private var room: HostedConversationRoom? { community.room(roomID) }
     private var isHost: Bool { room?.hostMemberID == community.myID }
     var body: some View {
         ZStack {
@@ -33,30 +33,28 @@ struct KokoListeningRoomView: View {
                     voiceStage(room)
                 }
                 if let panel { roomPanel(panel, room: room) }
-                if showSafety { KokoSafetyPanel(subjectKey: room.id, memberID: room.hostMemberID) { showSafety = false; navigation.back() } }
+                if showSafety { KokoSafetyPanel(reportedContentID: room.id, memberID: room.hostMemberID) { showSafety = false; navigation.back() } }
             } else { KokoPage(title: "Room unavailable", back: navigation.back) { KokoEmpty(title: "This door is closed", detail: "It may have been removed or hidden on this device.") } }
         }.onDisappear { music.stop() }
             .onChange(of: scenePhase) { phase in if phase != .active { music.stop() } }
     }
     private var liveVideoAsset: CommunityMediaAsset? {
-        let videos = KokoMediaLibrary.assets.filter(\.isVideo)
-        guard !videos.isEmpty else { return nil }
-        let stableIndex = roomID.utf8.reduce(0) { ($0 + Int($1)) % videos.count }
-        return videos[stableIndex]
+        // The stage must play the same recording whose first frame is on the room card.
+        KokoMediaLibrary.liveRoomPreview(for: roomID)
     }
     private func roomTool(_ icon: Int, _ label: String, _ destination: String) -> some View {
         Button { panel = destination } label: {
-            VStack(spacing: 5) { Artwork(sheet: .navigation, tile: icon).frame(width: 30, height: 30); Text(label).font(.custom("AvenirNext-DemiBold", size: 11)) }.frame(maxWidth: .infinity).padding(.vertical, 12).background(ArtworkSurface())
+            VStack(spacing: 5) { Artwork(sheet: .navigation, tile: icon).frame(width: 30, height: 30); Text(LocalizedStringKey(label)).font(KokoTypography.emphasis(size: 11)) }.frame(maxWidth: .infinity).padding(.vertical, 12).background(ArtworkSurface())
         }.buttonStyle(KokoPressStyle())
     }
-    private func voiceStage(_ room: ListeningRoom) -> some View {
+    private func voiceStage(_ room: HostedConversationRoom) -> some View {
         VStack(spacing: 0) {
             HStack(spacing: 12) {
                 KokoIconAction(icon: 5, label: "Leave room") { panel = "Leave this room?" }
                 VStack(alignment: .leading, spacing: 3) {
                     Text("VOICE ROOM · " + room.conversationTopic.uppercased())
-                        .font(.custom("AvenirNext-Bold", size: 10)).tracking(1.3).foregroundStyle(KokoInk.accent)
-                    Text(room.roomTitle).font(.custom("AvenirNext-Bold", size: 21)).lineLimit(2)
+                        .font(KokoTypography.heading(size: 10)).tracking(1.3).foregroundStyle(KokoInk.accent)
+                    Text(room.roomTitle).font(KokoTypography.heading(size: 21)).lineLimit(2)
                 }
                 Spacer(minLength: 0)
                 KokoIconAction(icon: 11, label: "Room options") { panel = "Around this room" }
@@ -64,14 +62,25 @@ struct KokoListeningRoomView: View {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 18) {
                     KokoVoiceRoomHeroCard(room: room)
+                    if isHost {
+                        if let plan = community.activeConversationPlan(in: room.id) {
+                            KokoStudioPaper {
+                                Text("Hosting cues").font(KokoTypography.emphasis(size: 13))
+                                Text(verbatim: plan.orderedPrompts[plan.activePromptIndex]).font(KokoTypography.heading(size: 21))
+                                KokoStudioAction(title: "Open cue board") { navigation.open(.conversationPlan(plan.id, room.id)) }
+                            }
+                        } else {
+                            KokoStudioAction(title: "Arrange this conversation") { navigation.open(.conversationStudio(room.id)) }
+                        }
+                    }
                     HStack(spacing: 10) {
                         if let host = community.member(room.hostMemberID) {
                             Button { navigation.open(.profile(host.id)) } label: {
                                 HStack(spacing: 9) {
                                     KokoMemberPortrait(member: host).frame(width: 36, height: 36).clipShape(Circle())
                                     VStack(alignment: .leading, spacing: 2) {
-                                        Text(host.publicName).font(.custom("AvenirNext-DemiBold", size: 13))
-                                        Text("Room host").font(.custom("AvenirNext-Regular", size: 10)).foregroundStyle(KokoInk.secondary)
+                                        Text(host.publicName).font(KokoTypography.emphasis(size: 13))
+                                        Text("Room host").font(KokoTypography.body(size: 10)).foregroundStyle(KokoInk.secondary)
                                     }
                                 }
                             }.buttonStyle(.plain)
@@ -79,13 +88,13 @@ struct KokoListeningRoomView: View {
                         Spacer()
                         if !isHost {
                             Button(community.following.contains(room.hostMemberID) ? "Following" : "+ Follow") { community.toggleFollow(room.hostMemberID) }
-                                .font(.custom("AvenirNext-Bold", size: 12)).padding(.horizontal, 18).padding(.vertical, 10)
+                                .font(KokoTypography.heading(size: 12)).padding(.horizontal, 18).padding(.vertical, 10)
                                 .background(ArtworkSurface(tile: 3)).foregroundStyle(KokoInk.onMint).buttonStyle(.plain)
                         }
                     }
                     HStack {
                         Artwork(sheet: .tabs, tile: 1).frame(width: 34, height: 34)
-                        Text(room.conversationPrompt).font(.custom("AvenirNext-Medium", size: 13))
+                        Text(room.conversationPrompt).font(KokoTypography.medium(size: 13))
                         Spacer(minLength: 0)
                     }
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3), spacing: 20) {
@@ -93,15 +102,15 @@ struct KokoListeningRoomView: View {
                     }.padding(.vertical, 8)
                     HStack {
                         Text("ROOM PREVIEW · MICROPHONE OFF")
-                            .font(.custom("AvenirNext-DemiBold", size: 9)).tracking(0.6).foregroundStyle(KokoInk.secondary)
+                            .font(KokoTypography.emphasis(size: 9)).tracking(0.6).foregroundStyle(KokoInk.secondary)
                         Spacer()
-                        Button("People") { panel = "Room audience" }.font(.custom("AvenirNext-DemiBold", size: 12)).buttonStyle(.plain)
+                        Button("People") { panel = "Room audience" }.font(KokoTypography.emphasis(size: 12)).buttonStyle(.plain)
                     }
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("ROOM NOTE").font(.custom("AvenirNext-Bold", size: 9)).tracking(1.5).foregroundStyle(KokoInk.accent)
-                        Text(room.hostNote).font(.custom("AvenirNext-Regular", size: 12))
+                        Text("ROOM NOTE").font(KokoTypography.heading(size: 9)).tracking(1.5).foregroundStyle(KokoInk.accent)
+                        Text(room.hostNote).font(KokoTypography.body(size: 12))
                     }.frame(maxWidth: .infinity, alignment: .leading).padding(14).background(ArtworkSurface())
-                    HStack { Text("Room chat").font(.custom("AvenirNext-Bold", size: 18)); Spacer(); Button("Quick hello") { panel = "Quick hellos" }.font(.custom("AvenirNext-DemiBold", size: 12)).buttonStyle(.plain) }
+                    HStack { Text("Room chat").font(KokoTypography.heading(size: 18)); Spacer(); Button("Quick hello") { panel = "Quick hellos" }.font(KokoTypography.emphasis(size: 12)).buttonStyle(.plain) }
                     KokoRoomChatLog(entries: room.roomConversation)
                 }.padding(.horizontal, 22).padding(.bottom, 20)
             }.scrollDismissesKeyboard(.interactively)
@@ -119,24 +128,34 @@ struct KokoListeningRoomView: View {
         .background(LinearGradient(colors: [KokoInk.panelRaised, KokoInk.canvas, Color(red: 0.08, green: 0.08, blue: 0.18)], startPoint: .topLeading, endPoint: .bottomTrailing))
     }
 
-    private func seatView(_ position: Int, room: ListeningRoom) -> some View {
-        Button {
-            selectedSeat = position
-            panel = room.seatAssignments[position] == nil ? (isHost ? "Invite a sample guest" : "Take this seat?") : "At this seat"
-        } label: {
-            VStack(spacing: 6) {
-                if let memberID = room.seatAssignments[position], let member = community.member(memberID) {
-                    KokoMemberPortrait(member: member).frame(width: 66, height: 66).clipShape(Circle())
-                    Text(member.publicName).lineLimit(1)
-                    Text(room.mutedSeatNumbers.contains(position) ? "Muted" : (position == 0 ? "Host · preview" : "Guest · preview"))
-                        .font(.custom("AvenirNext-Regular", size: 9)).foregroundStyle(KokoInk.accent)
+    private func seatView(_ position: Int, room: HostedConversationRoom) -> some View {
+        VStack(spacing: 4) {
+            Button {
+                if let memberID = room.seatAssignments[position] {
+                    navigation.open(.profile(memberID))
                 } else {
-                    Artwork(sheet: .tabs, tile: 1).frame(width: 58, height: 58).opacity(0.55).frame(height: 66)
-                    Text("Open mic \(position + 1)")
-                    Text("Tap to join").font(.custom("AvenirNext-Regular", size: 9)).foregroundStyle(KokoInk.secondary)
+                    selectedSeat = position
+                    panel = isHost ? "Invite a sample guest" : "Take this seat?"
                 }
-            }.font(.custom("AvenirNext-DemiBold", size: 11)).frame(maxWidth: .infinity).contentShape(Rectangle())
-        }.buttonStyle(KokoPressStyle())
+            } label: {
+                VStack(spacing: 6) {
+                    if let memberID = room.seatAssignments[position], let member = community.member(memberID) {
+                        KokoMemberPortrait(member: member).frame(width: 66, height: 66).clipShape(Circle())
+                        Text(member.publicName).lineLimit(1)
+                        Text(LocalizedStringKey(room.mutedSeatNumbers.contains(position) ? "Muted" : (position == 0 ? "Host · preview" : "Guest · preview")))
+                            .font(KokoTypography.body(size: 9)).foregroundStyle(KokoInk.accent)
+                    } else {
+                        Artwork(sheet: .tabs, tile: 1).frame(width: 58, height: 58).opacity(0.55).frame(height: 66)
+                        Text("Open mic \(position + 1)")
+                        Text("Tap to join").font(KokoTypography.body(size: 9)).foregroundStyle(KokoInk.secondary)
+                    }
+                }.font(KokoTypography.emphasis(size: 11)).frame(maxWidth: .infinity).contentShape(Rectangle())
+            }.buttonStyle(KokoPressStyle())
+            if let memberID = room.seatAssignments[position], memberID == community.myID || isHost || room.moderatorMemberIDs.contains(community.myID) {
+                Button("At this seat") { selectedSeat = position; panel = "At this seat" }
+                    .font(KokoTypography.medium(size: 10)).frame(minHeight: 44).buttonStyle(KokoPressStyle())
+            }
+        }
     }
     @discardableResult
     private func sendRoomMessage(_ message: String) -> Bool {
@@ -145,24 +164,24 @@ struct KokoListeningRoomView: View {
         room.roomConversation.append(.init(authorMemberID: community.myID, messageText: String(trimmed.prefix(500))))
         return community.saveRoom(room)
     }
-    @ViewBuilder private func roomPanel(_ title: String, room: ListeningRoom) -> some View {
+    @ViewBuilder private func roomPanel(_ title: String, room: HostedConversationRoom) -> some View {
         KokoModal(title: title, dismiss: { panel = nil }) {
             switch title {
             case "Send a little something":
-                Text("\(community.coinBalance) coins available").font(.custom("AvenirNext-Medium", size: 13))
+                Text("\(community.coinBalance) coins available").font(KokoTypography.medium(size: 13))
                 Text("Eight room gifts · paid with Koko coins from the Apple wallet")
-                    .font(.custom("AvenirNext-Regular", size: 12))
+                    .font(KokoTypography.body(size: 12))
                     .foregroundStyle(KokoInk.secondary)
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())]) {
                     ForEach(KokoCommunity.keepsakes) { gift in
                         Button { selectedGift = gift.id } label: {
-                            VStack { Artwork(sheet: .collection, tile: gift.artworkTile).frame(height: 72); Text(gift.keepsakeName).font(.custom("AvenirNext-DemiBold", size: 12)); Text("\(gift.tokenCost) coins").font(.custom("AvenirNext-Regular", size: 11)) }.padding(10).frame(maxWidth: .infinity).background(ArtworkSurface(tile: selectedGift == gift.id ? 3 : 2))
+                            VStack { Artwork(sheet: .collection, tile: gift.artworkTile).frame(height: 72); Text(LocalizedStringKey(gift.keepsakeName)).font(KokoTypography.emphasis(size: 12)); Text("\(gift.coinPrice) coins").font(KokoTypography.body(size: 11)) }.padding(10).frame(maxWidth: .infinity).background(ArtworkSurface(tile: selectedGift == gift.id ? 3 : 2))
                         }.buttonStyle(.plain)
                     }
                 }
                 KokoChoiceRail(choices: ["1", "3", "5", "10"], selection: $giftQuantity)
                 if let gift = KokoCommunity.keepsakes.first(where: { $0.id == selectedGift }) {
-                    KokoAction(title: "Review gift · \(gift.tokenCost * (Int(giftQuantity) ?? 1)) coins", icon: 8) {
+                    KokoAction(title: "Review gift · \(gift.coinPrice * (Int(giftQuantity) ?? 1)) coins", icon: 8) {
                         community.requestKeepsake(gift, quantity: Int(giftQuantity) ?? 1, roomID: room.id); panel = nil
                     }
                 }
@@ -171,10 +190,13 @@ struct KokoListeningRoomView: View {
                 Text("Choose a sample participant for this seat. This is room setup; no invitation is sent.")
                 let candidates = community.members.filter { !room.seatAssignments.values.contains($0.id) }
                 ForEach(candidates) { member in
-                    KokoAction(title: "Seat " + member.publicName, emphasis: false) {
-                        guard let seat = selectedSeat, room.seatAssignments[seat] == nil else { return }
-                        var updated = room; updated.seatAssignments[seat] = member.id
-                        _ = community.saveRoom(updated); panel = nil
+                    VStack(spacing: 8) {
+                        KokoMemberRow(member: member)
+                        KokoAction(title: "Choose", emphasis: false) {
+                            guard let seat = selectedSeat, room.seatAssignments[seat] == nil else { return }
+                            var updated = room; updated.seatAssignments[seat] = member.id
+                            _ = community.saveRoom(updated); panel = nil
+                        }
                     }
                 }
                 if candidates.isEmpty { Text("Every available sample guest already has a seat.") }
@@ -219,7 +241,7 @@ struct KokoListeningRoomView: View {
                 KokoAction(title: "Open connection panel", icon: 13) { panel = nil; music.stop(); navigation.open(.roomConnection(roomID, nil)) }
                 if room.seatAssignments.values.contains(community.myID), !isHost { KokoAction(title: "Leave my seat", emphasis: false) { community.leaveSeat(in: roomID); panel = nil } }
             case "Room music":
-                Text("Music plays on this device only. Audio files can be added later.").font(.custom("AvenirNext-Regular", size: 13))
+                Text("Music plays on this device only. Audio files can be added later.").font(KokoTypography.body(size: 13))
                 ForEach(KokoRoomMusicPlayer.tracks, id: \.self) { track in
                     KokoMenuRow(title: track, detail: music.currentTrack == track ? "Playing on this device" : "Audio placeholder", icon: 14) { music.play(track) { community.notice = $0 } }
                 }
@@ -238,8 +260,8 @@ struct KokoListeningRoomView: View {
                 KokoField(label: "A note for everyone", value: $roomNote, multiline: true)
                 KokoAction(title: "Save room note") { var updated = room; updated.hostNote = String(roomNote.prefix(200)); _ = community.saveRoom(updated); panel = nil }
             case "Room ranking":
-                Text("Your contributions").font(.custom("AvenirNext-Bold", size: 18))
-                let spent = (community.journal?.walletHistory ?? []).filter { $0.detailLine.contains(room.roomTitle) && $0.tokenChange < 0 }.reduce(0) { $0 - $1.tokenChange }
+                Text("Your contributions").font(KokoTypography.heading(size: 18))
+                let spent = (community.journal?.walletHistory ?? []).filter { $0.entryDescription.contains(room.roomTitle) && $0.coinDelta < 0 }.reduce(0) { $0 - $1.coinDelta }
                 Text("Your gifts in this room: \(spent) coins")
                 Text("Other members have no recorded contributions on this device.").foregroundStyle(KokoInk.secondary)
             case "More rooms":
@@ -255,7 +277,7 @@ struct KokoListeningRoomView: View {
 
 
 private struct KokoVoiceRoomHeroCard: View {
-    let room: ListeningRoom
+    let room: HostedConversationRoom
     var body: some View {
         ZStack(alignment: .bottomLeading) {
             Image("KokoVoiceRoomHero")
@@ -267,12 +289,12 @@ private struct KokoVoiceRoomHeroCard: View {
             VStack(alignment: .leading, spacing: 5) {
                 HStack(spacing: 7) {
                     Artwork(sheet: .tabs, tile: 1).frame(width: 23, height: 23)
-                    Text("VOICE ROOM · LIVE CHAT").font(.custom("AvenirNext-Bold", size: 10)).tracking(1.2)
+                    Text("VOICE ROOM").font(KokoTypography.heading(size: 10)).tracking(1.2)
                 }.foregroundStyle(KokoInk.accent)
                 Text("Pull up a chair")
-                    .font(.custom("AvenirNext-Bold", size: 24))
+                    .font(KokoTypography.heading(size: 24))
                 Text("Talk, listen, and leave a little room for someone new.")
-                    .font(.custom("AvenirNext-Medium", size: 12)).foregroundStyle(.white.opacity(0.8))
+                    .font(KokoTypography.medium(size: 12)).foregroundStyle(.white.opacity(0.8))
             }.padding(16)
         }
         .frame(maxWidth: .infinity)

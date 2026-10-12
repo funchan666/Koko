@@ -18,25 +18,25 @@ struct KokoPrivateCallView: View {
     @State private var prepared = false
     @State private var gateVisible = true
     @State private var visible = false
-    private var permitted: Bool { community.friends.contains(memberID) && community.member(memberID) != nil }
+    private var permitted: Bool { community.friends.contains(memberID) && community.isMemberVisible(memberID) && !community.isContentHidden("conversation-" + memberID) }
     var body: some View {
         ZStack {
             KokoPage(title: channel.title, subtitle: "YOUR CONVERSATION, AT YOUR PACE", back: end) {
-                if let member = community.member(memberID) {
-                    HStack(alignment: .center, spacing: 20) {
+                if let member = community.member(memberID), community.isMemberVisible(memberID) {
+                    KokoProfileLink(memberID: memberID) { HStack(alignment: .center, spacing: 20) {
                         KokoMemberPortrait(member: member).frame(width: 98, height: 122)
                         VStack(alignment: .leading, spacing: 8) {
-                            Text(member.publicName).font(.custom("AvenirNext-Bold", size: 26))
-                            Text(permitted ? "Mutual connection" : "Follow each other first").font(.custom("AvenirNext-Medium", size: 12)).foregroundStyle(KokoInk.secondary)
-                            Text("Voice and video are free.").font(.custom("AvenirNext-DemiBold", size: 12)).foregroundStyle(KokoInk.accent)
+                            Text(member.publicName).font(KokoTypography.heading(size: 26))
+                            Text(LocalizedStringKey(permitted ? "Mutual connection" : "Follow each other first")).font(KokoTypography.medium(size: 12)).foregroundStyle(KokoInk.secondary)
+                            Text("Voice and video are free.").font(KokoTypography.emphasis(size: 12)).foregroundStyle(KokoInk.accent)
                         }
                     }
-                }
+                } }
                 if permitted {
                     if channel == .video {
                         if camera.active {
                             KokoCameraSurface(session: camera.pipeline.captureSession).frame(height: 290).clipped()
-                            Text("Only you can see this camera preview.").font(.custom("AvenirNext-Medium", size: 12))
+                            Text("Only you can see this camera preview.").font(KokoTypography.medium(size: 12))
                         } else {
                             Artwork(sheet: .navigation, tile: 0)
                                 .frame(width: 30, height: 30)
@@ -51,8 +51,8 @@ struct KokoPrivateCallView: View {
                     }
                     KokoCard(tint: 3) {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text(prepared ? "Your setup is ready." : "A moment before hello.").font(.custom("AvenirNext-Bold", size: 22))
-                            Text("Check your microphone\(channel == .video ? " and camera" : "") here. A calling service isn't connected yet, so nobody is being called.").font(.custom("AvenirNext-Regular", size: 14))
+                            Text(LocalizedStringKey(prepared ? "Your setup is ready." : "A moment before hello.")).font(KokoTypography.heading(size: 22))
+                            Text(LocalizedStringKey(channel == .video ? "Check your microphone and camera here. A calling service isn't connected yet, so nobody is being called." : "Check your microphone here. A calling service isn't connected yet, so nobody is being called.")).font(KokoTypography.body(size: 14))
                         }
                     }
                     if !prepared {
@@ -61,15 +61,15 @@ struct KokoPrivateCallView: View {
                     }
                     KokoMicrophoneControls(audio: audio, activate: prepareMicrophone, mute: { audio.mute() })
                     if channel == .video {
-                        Text(camera.explanation).font(.custom("AvenirNext-Regular", size: 12)).foregroundStyle(KokoInk.secondary)
+                        Text(LocalizedStringKey(camera.explanation)).font(KokoTypography.body(size: 12)).foregroundStyle(KokoInk.secondary)
                         HStack {
                             KokoAction(title: camera.requesting ? "Opening camera…" : (camera.active ? "Camera off" : "Camera on"), icon: 0) {
                                 guard permitted else { return }
-                                if camera.active { camera.stop() } else { camera.start() }
+                                if camera.active { camera.stop() } else { prepareCamera() }
                             }.disabled(camera.requesting)
                             KokoAction(title: "Flip camera", emphasis: false) { camera.flip() }.disabled(!camera.active || camera.requesting)
                         }
-                        if camera.permissionDenied { KokoDeviceSettingsAction() }
+                        if camera.offersCameraSettings { KokoDeviceSettingsAction() }
                     }
                     KokoAction(title: "End and return", emphasis: false, action: end)
                 } else {
@@ -80,7 +80,7 @@ struct KokoPrivateCallView: View {
                     Text("Calls are available between mutual followers. No permissions are requested until you're eligible and choose to check your devices.").foregroundStyle(KokoInk.secondary)
                     KokoAction(title: "View profile", emphasis: false) { navigation.open(.profile(memberID)) }
                 }
-            }.accessibilityHidden(!permitted && gateVisible)
+            }.allowsHitTesting(permitted || !gateVisible).accessibilityHidden(!permitted && gateVisible)
             if !permitted && gateVisible {
                 KokoModal(title: "A hello goes both ways.", dismiss: { gateVisible = false }) {
                     Artwork(sheet: .navigation, tile: 3)
@@ -113,15 +113,28 @@ struct KokoPrivateCallView: View {
     }
     private func prepareMicrophone() {
         guard permitted else { return }
-        Task { guard await audio.enable() else { return }; guard visible, permitted else { audio.mute(); return }; prepared = true }
+        Task { guard visible, permitted else { return }; guard await audio.enable() else { return }; guard visible, permitted else { audio.mute(); return }; prepared = true }
     }
     private func prepare() {
         guard permitted else { return }
         Task {
+            guard visible, permitted else { return }
             guard await audio.enable() else { return }
             guard visible, permitted else { audio.mute(); return }
+            if channel == .video {
+                guard await camera.start() else { audio.mute(); prepared = false; return }
+                guard visible, permitted else { suspend(); return }
+            }
             prepared = true
-            if channel == .video { camera.start() }
+        }
+    }
+    private func prepareCamera() {
+        guard permitted, visible else { return }
+        Task {
+            guard visible, permitted else { return }
+            let ready = await camera.start()
+            guard visible, permitted else { camera.stop(); return }
+            if ready { prepared = true }
         }
     }
     private func suspend() { audio.mute(reason: "Device check paused. Enable your devices again when ready."); camera.stop(); prepared = false }

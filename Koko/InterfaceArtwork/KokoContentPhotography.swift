@@ -49,7 +49,7 @@ struct KokoContentImage: View {
                         .frame(width: geometry.size.width, height: geometry.size.height)
                 } else {
                     Artwork(sheet: .collection, tile: 4)
-                    if unavailable { Text("Image unavailable").font(.custom("AvenirNext-Medium", size: 12)).padding(8).background(ArtworkSurface()) }
+                    if unavailable { Text("Image unavailable").font(KokoTypography.medium(size: 12)).padding(8).background(ArtworkSurface()) }
                 }
             }.frame(width: geometry.size.width, height: geometry.size.height).clipped()
         }
@@ -67,15 +67,15 @@ struct KokoContentImage: View {
 struct KokoCollectionPhotoPicker: View {
     @Binding var selectedPhotoKey: String?
     var body: some View {
-        Text("\(KokoMediaLibrary.photos.count) photos in the collection").font(.custom("AvenirNext-Regular", size: 12)).foregroundStyle(KokoInk.secondary)
+        Text("\(KokoMediaLibrary.photos.count) photos in the collection").font(KokoTypography.body(size: 12)).foregroundStyle(KokoInk.secondary)
         ScrollView {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
                 ForEach(KokoMediaLibrary.photos) { photo in
                     Button { selectedPhotoKey = photo.id } label: {
                         VStack(spacing: 4) {
                             KokoContentImage(asset: photo).frame(height: 105)
-                            Text(selectedPhotoKey == photo.id ? "Selected" : photo.captionLine)
-                                .font(.custom("AvenirNext-Medium", size: 10)).lineLimit(1)
+                            Text(LocalizedStringKey(selectedPhotoKey == photo.id ? "Selected" : photo.captionLine))
+                                .font(KokoTypography.medium(size: 10)).lineLimit(1)
                         }.padding(6).background(ArtworkSurface(tile: selectedPhotoKey == photo.id ? 3 : 2))
                     }.buttonStyle(KokoPressStyle()).accessibilityAddTraits(selectedPhotoKey == photo.id ? .isSelected : [])
                 }

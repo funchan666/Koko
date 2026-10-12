@@ -1,0 +1,417 @@
+[
+  {
+    "path": "Koko/AccountAccess/KokoAccessJourney.swift",
+    "lines": 80,
+    "sha256": "7507c9425db282517eab3430f504362153cf6e2066421d0c41d040dc0cb4a6c4",
+    "imports": [
+      "SwiftUI"
+    ]
+  },
+  {
+    "path": "Koko/AccountAccess/KokoConsentRecord.swift",
+    "lines": 62,
+    "sha256": "6556daf7fca790c8b51cbc1a71244f9827f7daa7d0be6b026a47ccfeb258d362",
+    "imports": [
+      "Foundation"
+    ]
+  },
+  {
+    "path": "Koko/AccountAccess/KokoLegalWebReader.swift",
+    "lines": 264,
+    "sha256": "b8f30fc1b8df2cbd3d89565d7128776dd2230f870c301290f0a597aa083fc71a",
+    "imports": [
+      "SwiftUI",
+      "WebKit",
+      "UIKit"
+    ]
+  },
+  {
+    "path": "Koko/AccountAccess/KokoLocalCredentials.swift",
+    "lines": 80,
+    "sha256": "6b7b9b32dcd5fdb87ddca5d772793862cec83f2b2b86b594ccc66c0985866af3",
+    "imports": [
+      "Foundation",
+      "CryptoKit",
+      "CommonCrypto",
+      "Security"
+    ]
+  },
+  {
+    "path": "Koko/AccountAccess/KokoPolicyReadingStyle.swift",
+    "lines": 91,
+    "sha256": "cc35d23a805b11572db6bb646fdb0974163ebe5cc468e1c34725a86e96c3dcbd",
+    "imports": [
+      "Foundation"
+    ]
+  },
+  {
+    "path": "Koko/AccountAccess/KokoPortraitCamera.swift",
+    "lines": 139,
+    "sha256": "2ad1a4c035f1bef7cc3ac68242afe1ea9cd7ea38828b60e37abbe627fc71d878",
+    "imports": [
+      "SwiftUI",
+      "AVFoundation"
+    ]
+  },
+  {
+    "path": "Koko/AccountAccess/KokoPortraitFiles.swift",
+    "lines": 114,
+    "sha256": "30a80acaf9a22b68922d28f4d77426ae4de8df94921f79454040d2234290a8ea",
+    "imports": [
+      "SwiftUI",
+      "ImageIO",
+      "UniformTypeIdentifiers"
+    ]
+  },
+  {
+    "path": "Koko/Application/KokoApp.swift",
+    "lines": 32,
+    "sha256": "cb15fab67db308c0c9fa0874bb0b0948b49308f24c1c3f24ebb2f6d8d2c33911",
+    "imports": [
+      "SwiftUI"
+    ]
+  },
+  {
+    "path": "Koko/Application/KokoSceneNavigation.swift",
+    "lines": 184,
+    "sha256": "9d0f0dffe8c0524d858a2e302d994f63f1f241648abb4cac0a2fc81cc298ee44",
+    "imports": [
+      "SwiftUI",
+      "AuthenticationServices"
+    ]
+  },
+  {
+    "path": "Koko/Application/KokoScreenCanvas.swift",
+    "lines": 29,
+    "sha256": "d54c8fdc502b6bf26d85ff68fef4fbf81dfb6035d10c9695e61fac384f4ffb44",
+    "imports": [
+      "SwiftUI"
+    ]
+  },
+  {
+    "path": "Koko/CoinCommerce/CommunityCoinAccounting.swift",
+    "lines": 144,
+    "sha256": "b03d97eb0e13e671b7b212d31b6cd20b3acd7491a66df5a37f1a411e864dfb9e",
+    "imports": [
+      "Foundation",
+      "CryptoKit"
+    ]
+  },
+  {
+    "path": "Koko/CoinCommerce/KokoAppleCoinPurchases.swift",
+    "lines": 156,
+    "sha256": "dc41ddda95b2204a33a6f4e15a15f4391a3bc45dc78cf37d5b7df85b7f62af8e",
+    "imports": [
+      "Foundation",
+      "StoreKit",
+      "Combine"
+    ]
+  },
+  {
+    "path": "Koko/CoinCommerce/KokoCoinCatalog.swift",
+    "lines": 50,
+    "sha256": "71e26b04580a5c093dc7455ce8e8b0f7d4a11fa205576064f940ffe60cb8c5e4",
+    "imports": [
+      "Foundation"
+    ]
+  },
+  {
+    "path": "Koko/InterfaceArtwork/KokoArtworkComponents.swift",
+    "lines": 445,
+    "sha256": "8fd46316b7717eb462f7a7189379facce43530fc8a48ba731c143d2fb6034d51",
+    "imports": [
+      "SwiftUI",
+      "UIKit"
+    ]
+  },
+  {
+    "path": "Koko/InterfaceArtwork/KokoBrandMark.swift",
+    "lines": 43,
+    "sha256": "1d79177145608c20daf663e8a8fa5ebd83f72a8f74c771a16c95923a4aed9f81",
+    "imports": [
+      "SwiftUI"
+    ]
+  },
+  {
+    "path": "Koko/InterfaceArtwork/KokoContentPhotography.swift",
+    "lines": 85,
+    "sha256": "dddb1384fa2324957d018ec8269138a41fac4bca8a5e8478cf4acd5167964bd0",
+    "imports": [
+      "SwiftUI",
+      "ImageIO"
+    ]
+  },
+  {
+    "path": "Koko/InterfaceArtwork/KokoNoticePanel.swift",
+    "lines": 93,
+    "sha256": "b9c5c3df5986fe3564a6436ca514f70903f9fb0ef5c76d1b0b265b02d08a0a3e",
+    "imports": [
+      "SwiftUI"
+    ]
+  },
+  {
+    "path": "Koko/InterfaceArtwork/KokoTypography.swift",
+    "lines": 27,
+    "sha256": "0bf2b7146e9ca593c1131b6c5755602db7bc56aab65bbef1c38f62a1873918d8",
+    "imports": [
+      "SwiftUI"
+    ]
+  },
+  {
+    "path": "Koko/KokoLocalization/KokoLanguagePreference.swift",
+    "lines": 59,
+    "sha256": "c0c781d68b10203232b1825378e4dbcc76ff583c0db2100120b3e6354039d5c9",
+    "imports": [
+      "SwiftUI"
+    ]
+  },
+  {
+    "path": "Koko/LocalJournal/CommunityConversationStudio.swift",
+    "lines": 133,
+    "sha256": "4032e7208f1d28918ed046e40b91c71b08713e37f83b0357182bfa233b04b37f",
+    "imports": [
+      "Foundation"
+    ]
+  },
+  {
+    "path": "Koko/LocalJournal/CommunityJournalStore.swift",
+    "lines": 436,
+    "sha256": "99470a58e2b5df8f58a46002b0bbfee203c5032ebef88aa1a013d3597ae70235",
+    "imports": [
+      "Foundation",
+      "CryptoKit",
+      "Combine",
+      "AuthenticationServices"
+    ]
+  },
+  {
+    "path": "Koko/LocalJournal/CommunitySafetyAndPublishing.swift",
+    "lines": 98,
+    "sha256": "7ebe5932fb2192878d3f81787107a62196a5e4ed87c3ffb4cbe04181ecdeda86",
+    "imports": [
+      "Foundation"
+    ]
+  },
+  {
+    "path": "Koko/Scenes/Account/KokoAccountEntry.swift",
+    "lines": 150,
+    "sha256": "28592c2df2614f96f4f48bfb782b4ab99815e6f8653053ba6e2a4c8b1070a435",
+    "imports": [
+      "SwiftUI",
+      "AuthenticationServices",
+      "CryptoKit",
+      "UIKit"
+    ]
+  },
+  {
+    "path": "Koko/Scenes/Account/KokoEmailEntryForm.swift",
+    "lines": 229,
+    "sha256": "3468bf2bf04c217f4989fd636a489acf1c30f429f8e7ddd595bd158c4cd0934b",
+    "imports": [
+      "SwiftUI",
+      "UIKit"
+    ]
+  },
+  {
+    "path": "Koko/Scenes/Account/KokoProfileEditor.swift",
+    "lines": 365,
+    "sha256": "97a44b5c5afdb1632e3d08f2c546a7a6dc62b62dcd9f0f693a2fe098d9caa514",
+    "imports": [
+      "SwiftUI",
+      "PhotosUI"
+    ]
+  },
+  {
+    "path": "Koko/Scenes/Account/KokoSocialWelcome.swift",
+    "lines": 201,
+    "sha256": "ddf5f696f390c302d9621d29088a0e9ee1818477b527ae97397b4a1a7c3e7038",
+    "imports": [
+      "SwiftUI",
+      "UIKit"
+    ]
+  },
+  {
+    "path": "Koko/Scenes/ConversationStudio/KokoConversationStudio.swift",
+    "lines": 265,
+    "sha256": "dfd62266e3e6a5d7bb9753af8cfe4997acc2733ed347b3a92792ec3c5779c758",
+    "imports": [
+      "SwiftUI"
+    ]
+  },
+  {
+    "path": "Koko/Scenes/Conversations/KokoConversationAudio.swift",
+    "lines": 159,
+    "sha256": "7e4662dd02c8e384b851b4c1db8054f5f9dc3d304962e5af09d87b36561625ba",
+    "imports": [
+      "SwiftUI",
+      "AVFoundation"
+    ]
+  },
+  {
+    "path": "Koko/Scenes/Conversations/KokoConversationsView.swift",
+    "lines": 331,
+    "sha256": "5c315cb978b6ad45fa5d371f92029c9e4c5efb7459553b77240ad30b827560ab",
+    "imports": [
+      "SwiftUI"
+    ]
+  },
+  {
+    "path": "Koko/Scenes/Conversations/KokoLocalCamera.swift",
+    "lines": 78,
+    "sha256": "ab99f2fc168189a07e389a0c4f496b2d68c38378984fb02f339a337beee903c9",
+    "imports": [
+      "SwiftUI",
+      "AVFoundation"
+    ]
+  },
+  {
+    "path": "Koko/Scenes/Conversations/KokoPrivateCallView.swift",
+    "lines": 129,
+    "sha256": "e924fd87173dfc652f70b882c45af1f6a322efe19159c5d59cc6495c978cf7e2",
+    "imports": [
+      "SwiftUI",
+      "AVFoundation"
+    ]
+  },
+  {
+    "path": "Koko/Scenes/Discover/KokoConversationStarters.swift",
+    "lines": 380,
+    "sha256": "02f0b5948d9a172d1362c0a740e544c2c0e8489fbc162182a975f2ed00082cc0",
+    "imports": [
+      "SwiftUI"
+    ]
+  },
+  {
+    "path": "Koko/Scenes/Discover/KokoDiscoverView.swift",
+    "lines": 689,
+    "sha256": "8f764534eee3d7c0687131ee57b7652b0f08c687ba71568d9bc15b44d64dc849",
+    "imports": [
+      "SwiftUI"
+    ]
+  },
+  {
+    "path": "Koko/Scenes/Discover/KokoMomentComposer.swift",
+    "lines": 77,
+    "sha256": "0699f13d644f652c192fc9e0303d437bcaae2b442d97f5b2e7b89984f082582d",
+    "imports": [
+      "SwiftUI"
+    ]
+  },
+  {
+    "path": "Koko/Scenes/Discover/KokoMomentDetail.swift",
+    "lines": 188,
+    "sha256": "1863e68243223e130cdb06a7ae0593dfce4c0ca63dfdc808f87901cdb31246ec",
+    "imports": [
+      "SwiftUI",
+      "AVFoundation"
+    ]
+  },
+  {
+    "path": "Koko/Scenes/ListeningRooms/KokoListeningRoomView.swift",
+    "lines": 328,
+    "sha256": "b9a454196e1f3a827f1d622237a34c98c1edad08d7715c17bc0e63faca507c31",
+    "imports": [
+      "SwiftUI",
+      "AVFoundation"
+    ]
+  },
+  {
+    "path": "Koko/Scenes/ListeningRooms/KokoLiveRoomStage.swift",
+    "lines": 283,
+    "sha256": "f55f0ac859bbaa878beb106864bb71f29e56157d825e3595ee277dcb6c10d857",
+    "imports": [
+      "SwiftUI",
+      "AVFoundation"
+    ]
+  },
+  {
+    "path": "Koko/Scenes/ListeningRooms/KokoRoomConnectionView.swift",
+    "lines": 133,
+    "sha256": "06bbb3441d496d61bb4e1fb55de1347a8fafd1d4570032f79cf6c73c08763b74",
+    "imports": [
+      "SwiftUI",
+      "AVFoundation"
+    ]
+  },
+  {
+    "path": "Koko/Scenes/ListeningRooms/KokoRoomDirectory.swift",
+    "lines": 222,
+    "sha256": "e743810a2a5711fff0ca8284a8e18753628e0ac7fd1e2cb79978c288753b4b3f",
+    "imports": [
+      "SwiftUI"
+    ]
+  },
+  {
+    "path": "Koko/Scenes/PersonalSpace/KokoCoinCelebration.swift",
+    "lines": 28,
+    "sha256": "8dce6350085090f27f5f652e37b3deab173786c39bd3c5cf9eafbaa01cb57084",
+    "imports": [
+      "SwiftUI"
+    ]
+  },
+  {
+    "path": "Koko/Scenes/PersonalSpace/KokoCoinWalletView.swift",
+    "lines": 229,
+    "sha256": "31a04d7ad14380cb7801739b230487842f3b0710ae1451d7e79f0fb815accc66",
+    "imports": [
+      "SwiftUI"
+    ]
+  },
+  {
+    "path": "Koko/Scenes/PersonalSpace/KokoPersonalSpace.swift",
+    "lines": 575,
+    "sha256": "c77500b17fb97e3b1d91c7f8b0d90ab226d90e92b85920c66376cd07aaa33de3",
+    "imports": [
+      "SwiftUI"
+    ]
+  },
+  {
+    "path": "Koko/Scenes/PersonalSpace/KokoSettingsAndSafety.swift",
+    "lines": 222,
+    "sha256": "58254bd2c4802b0d7b695cfafdbc4643bbd410eaf8baccd03522573f2268109f",
+    "imports": [
+      "SwiftUI",
+      "UserNotifications"
+    ]
+  },
+  {
+    "path": "Koko/Scenes/PersonalSpace/KokoWalletAndKeepsakes.swift",
+    "lines": 117,
+    "sha256": "aae132d176b5b200efc7246d95367ae312731b4e415f281107d03e07bb0fe50e",
+    "imports": [
+      "SwiftUI"
+    ]
+  },
+  {
+    "path": "Koko/SocialDomain/CommunityMediaCatalog.swift",
+    "lines": 68,
+    "sha256": "11a838ef778fd657d6fedd8ede11861e7914858837823651d3ac68e373caed9f",
+    "imports": [
+      "Foundation"
+    ]
+  },
+  {
+    "path": "Koko/SocialDomain/ConversationStarters.swift",
+    "lines": 92,
+    "sha256": "39cc0119b4020cd5aea3dd92299ba266f9100e04467d4bf3948ba83b15d8f0ff",
+    "imports": [
+      "Foundation"
+    ]
+  },
+  {
+    "path": "Koko/SocialDomain/ConversationStudio.swift",
+    "lines": 36,
+    "sha256": "e68eab3897f6c1ada6e4432076200bcafd98d8559fef4acc7ee3c1ecbf864fc7",
+    "imports": [
+      "Foundation"
+    ]
+  },
+  {
+    "path": "Koko/SocialDomain/ListeningCommunity.swift",
+    "lines": 194,
+    "sha256": "1b099b783d4d1ceec75e95615921fa774005efe6d0f66814dc7563950da2a97d",
+    "imports": [
+      "Foundation"
+    ]
+  }
+]

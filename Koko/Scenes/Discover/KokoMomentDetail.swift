@@ -29,9 +29,9 @@ struct KokoMomentDetail: View {
                                 KokoAction(title: "Back 10s", emphasis: false) { playback.seek(-10) }
                                 KokoAction(title: "Forward 10s", emphasis: false) { playback.seek(10) }
                             }
-                            Text("FILM · " + asset.durationLabel).font(.custom("AvenirNext-Medium", size: 11)).foregroundStyle(KokoInk.secondary)
+                            Text("FILM · " + asset.durationLabel).font(KokoTypography.medium(size: 11)).foregroundStyle(KokoInk.secondary)
                             if let playbackIssue = playback.playbackIssue {
-                                Text(playbackIssue).font(.custom("AvenirNext-Regular", size: 13))
+                                Text(LocalizedStringKey(playbackIssue)).font(KokoTypography.body(size: 13))
                                 KokoAction(title: "Reload film", emphasis: false) { playback.load(asset) }
                             }
                         } else {
@@ -41,27 +41,34 @@ struct KokoMomentDetail: View {
                         Artwork(sheet: .collection, tile: moment.coverTile).frame(height: 290)
                         Text("This item is not available in the bundled collection.")
                     }
-                    Text(moment.captionLine).font(.custom("AvenirNext-Bold", size: 27))
+                    Text(moment.captionLine).font(KokoTypography.heading(size: 27))
                     if let member = community.member(moment.creatorMemberID) { KokoMemberRow(member: member) }
                     HStack {
                         KokoAction(title: community.journal?.likedMomentKeys.contains(moment.id) == true ? "Liked" : "Like", emphasis: false) { community.update { if $0.likedMomentKeys.contains(moment.id) { $0.likedMomentKeys.remove(moment.id) } else { $0.likedMomentKeys.insert(moment.id) } } }
                         KokoAction(title: community.journal?.savedMomentKeys.contains(moment.id) == true ? "Saved" : "Save", emphasis: false) { community.update { if $0.savedMomentKeys.contains(moment.id) { $0.savedMomentKeys.remove(moment.id) } else { $0.savedMomentKeys.insert(moment.id) } } }
                         KokoIconAction(icon: 11, label: "Report or block") { safetyMember = moment.creatorMemberID; safetyTarget = moment.id }
                     }
-                    Text("What did it bring to mind?").font(.custom("AvenirNext-Bold", size: 20))
-                    let comments = (community.journal?.momentComments[moment.id] ?? []).filter { !(community.journal?.hiddenContentKeys.contains($0.id) ?? false) }
-                    if comments.isEmpty { Text("Your words can be the first. Comments stay with this moment.").font(.custom("AvenirNext-Regular", size: 14)).foregroundStyle(KokoInk.secondary) }
+                    Text("What did it bring to mind?").font(KokoTypography.heading(size: 20))
+                    let comments = community.comments(for: moment.id)
+                    if comments.isEmpty { Text("Your words can be the first. Comments stay with this moment.").font(KokoTypography.body(size: 14)).foregroundStyle(KokoInk.secondary) }
                     ForEach(comments) { comment in
                         KokoCard {
                             VStack(alignment: .leading, spacing: 8) {
-                                Text(community.member(comment.authorMemberID)?.publicName ?? "Guest").font(.custom("AvenirNext-DemiBold", size: 13))
+                                if let author = community.member(comment.authorMemberID) {
+                                    KokoProfileLink(memberID: author.id) {
+                                        HStack(spacing: 8) {
+                                            KokoMemberPortrait(member: author).frame(width: 32, height: 32)
+                                            Text(author.publicName).font(KokoTypography.emphasis(size: 13))
+                                        }.frame(minHeight: 44)
+                                    }
+                                }
                                 Text(comment.messageText)
                                 HStack {
-                                    Text(comment.postedAt, style: .date).font(.custom("AvenirNext-Regular", size: 11)).foregroundStyle(KokoInk.secondary)
+                                    Text(comment.postedAt, style: .date).font(KokoTypography.body(size: 11)).foregroundStyle(KokoInk.secondary)
                                     Spacer()
                                     if comment.authorMemberID == community.myID {
                                         Button("Remove comment") { community.update { $0.momentComments[moment.id]?.removeAll { $0.id == comment.id } } }
-                                            .font(.custom("AvenirNext-Medium", size: 11)).buttonStyle(.plain)
+                                            .font(KokoTypography.medium(size: 11)).buttonStyle(.plain)
                                     } else { Button("Report") { safetyMember = comment.authorMemberID; safetyTarget = comment.id }.buttonStyle(.plain) }
                                 }
                             }
@@ -71,12 +78,13 @@ struct KokoMomentDetail: View {
                     KokoAction(title: "Add comment", icon: 12) {
                         let text = commentDraft.trimmingCharacters(in: .whitespacesAndNewlines)
                         guard !text.isEmpty, text.count <= 500 else { community.notice = "Write a comment from 1 to 500 characters."; return }
+                        guard community.acceptsCommunityText(text) else { return }
                         let comment = ConversationEntry(authorMemberID: community.myID, messageText: text)
                         if community.update({ $0.momentComments[moment.id, default: []].append(comment) }) { commentDraft = "" }
                     }
                 } else { KokoEmpty(title: "This moment is hidden", detail: "Choose another story from Discover.") }
-            }
-            if let target = safetyTarget { KokoSafetyPanel(subjectKey: target, memberID: safetyMember) { safetyTarget = nil } }
+            }.allowsHitTesting(safetyTarget == nil).accessibilityHidden(safetyTarget != nil)
+            if let target = safetyTarget { KokoSafetyPanel(reportedContentID: target, memberID: safetyMember) { safetyTarget = nil } }
         }.onAppear { if let asset = moment?.mediaAsset, asset.isVideo { playback.load(asset) } }
             .onDisappear { playback.stop() }
             .onChange(of: moment?.id) { identifier in if identifier == nil { playback.stop() } }

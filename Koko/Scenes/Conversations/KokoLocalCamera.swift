@@ -33,34 +33,49 @@ final class KokoLocalCamera: ObservableObject {
     let pipeline = KokoCapturePipeline()
     @Published private(set) var active = false
     @Published private(set) var requesting = false
-    @Published private(set) var permissionDenied = false
+    @Published private(set) var offersCameraSettings = false
     @Published private(set) var front = true
     @Published private(set) var explanation = "Camera is off. Preview stays on this device."
     private var requestRevision = UUID()
-    func start() {
-        guard !requesting else { return }
+    @discardableResult
+    func start() async -> Bool {
+        guard !requesting else { return false }
         let revision = UUID(); requestRevision = revision; requesting = true
-        Task { [weak self] in
-            let granted: Bool
-            switch AVCaptureDevice.authorizationStatus(for: .video) {
-            case .authorized: granted = true
-            case .notDetermined: granted = await AVCaptureDevice.requestAccess(for: .video)
-            default: granted = false
-            }
-            guard let self, self.requestRevision == revision else { return }
-            self.permissionDenied = !granted
-            guard granted else { self.requesting = false; self.explanation = "Camera permission is off. You can enable it in iOS Settings."; return }
-            self.pipeline.start(front: self.front) { [weak self] ready in
-                Task { @MainActor in
-                    guard let self, self.requestRevision == revision else { return }
-                    self.requesting = false; self.active = ready
-                    self.explanation = ready ? "Only you can see this. Nothing is recorded or sent." : "A camera isn't available on this device. The call layout can still be previewed."
-                }
-            }
+        offersCameraSettings = false
+        let decision = await KokoCapturePermission.cameraDecision()
+        guard requestRevision == revision else { return false }
+        switch decision {
+        case .allowed: break
+        case .declinedNow:
+            requesting = false; explanation = "Camera is off."
+            return false
+        case .deniedPreviously:
+            requesting = false; offersCameraSettings = true
+            explanation = "Camera access is unavailable. You can continue without video or review access in Settings."
+            return false
+        case .restricted:
+            requesting = false; explanation = "Camera access is restricted on this device."
+            return false
         }
+        let ready = await withCheckedContinuation { continuation in
+            pipeline.start(front: front) { continuation.resume(returning: $0) }
+        }
+        guard requestRevision == revision else { return false }
+        requesting = false; active = ready
+        explanation = ready ? "Only you can see this. Nothing is recorded or sent." : "A camera isn't available on this device. The call layout can still be previewed."
+        return ready
     }
-    func flip() { guard !requesting else { return }; front.toggle(); if active { start() } }
-    func stop() { requestRevision = UUID(); requesting = false; active = false; pipeline.stop(); explanation = "Camera is off. Preview stays on this device." }
+    func flip() {
+        guard active, !requesting else { return }
+        front.toggle()
+        let revision = requestRevision
+        Task { guard active, requestRevision == revision else { return }; await start() }
+    }
+    func stop() {
+        requestRevision = UUID(); requesting = false; active = false; offersCameraSettings = false
+        pipeline.stop(); explanation = "Camera is off. Preview stays on this device."
+    }
+
 }
 
 struct KokoCameraSurface: UIViewRepresentable {

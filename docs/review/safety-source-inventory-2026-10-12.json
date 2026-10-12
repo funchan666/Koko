@@ -1,0 +1,276 @@
+{
+  "scope": "Source/resource inventory only; not compilation, execution, binary comparison or visual content classification.",
+  "swift_file_count": 61,
+  "swift_line_count": 8834,
+  "source_media_count": 54,
+  "artwork_image_count": 96,
+  "missing_catalog_files": [],
+  "identical_artwork_groups": [
+    [
+      "Koko/Resources/KokoArtwork.xcassets/KokoLiveRoomTile1.imageset/KokoLiveRoomTile1.png",
+      "Koko/Resources/KokoArtwork.xcassets/KokoLiveRoomTiles.imageset/live-tile-1.png"
+    ],
+    [
+      "Koko/Resources/KokoArtwork.xcassets/KokoBrandMark.imageset/KokoBrandMark.png",
+      "Koko/Resources/KokoArtwork.xcassets/AppIcon.appiconset/KokoAppIcon.png"
+    ],
+    [
+      "Koko/Resources/KokoArtwork.xcassets/KokoLiveRoomTiles.imageset/live-tile-4.png",
+      "Koko/Resources/KokoArtwork.xcassets/KokoLiveRoomTile4.imageset/KokoLiveRoomTile4.png"
+    ],
+    [
+      "Koko/Resources/KokoArtwork.xcassets/KokoLiveRoomTiles.imageset/live-tile-3.png",
+      "Koko/Resources/KokoArtwork.xcassets/KokoLiveRoomTile3.imageset/KokoLiveRoomTile3.png"
+    ],
+    [
+      "Koko/Resources/KokoArtwork.xcassets/KokoLiveRoomTiles.imageset/live-tile-2.png",
+      "Koko/Resources/KokoArtwork.xcassets/KokoLiveRoomTile2.imageset/KokoLiveRoomTile2.png"
+    ]
+  ],
+  "swift_files": [
+    {
+      "path": "Koko/AccountAccess/KokoAccessJourney.swift",
+      "sha256": "7507c9425db282517eab3430f504362153cf6e2066421d0c41d040dc0cb4a6c4"
+    },
+    {
+      "path": "Koko/AccountAccess/KokoCapturePermission.swift",
+      "sha256": "c0f1b1340082fbd915409ecc5928233e16ccfc7cdc68a24ffb327a7ba596874a"
+    },
+    {
+      "path": "Koko/AccountAccess/KokoConsentRecord.swift",
+      "sha256": "ac06001f6690b78afe58fdb74afb9548dc02452cc5645007644dd5b6c8651694"
+    },
+    {
+      "path": "Koko/AccountAccess/KokoLegalWebReader.swift",
+      "sha256": "b8f30fc1b8df2cbd3d89565d7128776dd2230f870c301290f0a597aa083fc71a"
+    },
+    {
+      "path": "Koko/AccountAccess/KokoLocalCredentials.swift",
+      "sha256": "6b7b9b32dcd5fdb87ddca5d772793862cec83f2b2b86b594ccc66c0985866af3"
+    },
+    {
+      "path": "Koko/AccountAccess/KokoPolicyReadingStyle.swift",
+      "sha256": "cc35d23a805b11572db6bb646fdb0974163ebe5cc468e1c34725a86e96c3dcbd"
+    },
+    {
+      "path": "Koko/AccountAccess/KokoPortraitCamera.swift",
+      "sha256": "b3af1d707ef70d9eae62547dc5920829ba298133b1860735cd69126339f96973"
+    },
+    {
+      "path": "Koko/AccountAccess/KokoPortraitFiles.swift",
+      "sha256": "30a80acaf9a22b68922d28f4d77426ae4de8df94921f79454040d2234290a8ea"
+    },
+    {
+      "path": "Koko/AccountStorage/CommunityConversationStudio.swift",
+      "sha256": "62b7ae966d34323f3a1eda39c534bc772096c424606367ae42300f4d3964df71"
+    },
+    {
+      "path": "Koko/AccountStorage/CommunityJournalStore.swift",
+      "sha256": "7dc076703439605443b93f083c2c708e54fcbb13bd665c60c6e8de902d92ee1e"
+    },
+    {
+      "path": "Koko/AccountStorage/CommunitySafetyAndPublishing.swift",
+      "sha256": "8d429de07b555f7b010d5cb2241a0b895241e15925bc18887cfc6bd04b719545"
+    },
+    {
+      "path": "Koko/Application/KokoApp.swift",
+      "sha256": "cb15fab67db308c0c9fa0874bb0b0948b49308f24c1c3f24ebb2f6d8d2c33911"
+    },
+    {
+      "path": "Koko/Application/KokoSceneNavigation.swift",
+      "sha256": "618ac561c4d8cb76c20275f976a7e97fa039f7a3239bbdb75a423c899a1b0e83"
+    },
+    {
+      "path": "Koko/Application/KokoScreenCanvas.swift",
+      "sha256": "d54c8fdc502b6bf26d85ff68fef4fbf81dfb6035d10c9695e61fac384f4ffb44"
+    },
+    {
+      "path": "Koko/CoinCommerce/CommunityCoinAccounting.swift",
+      "sha256": "ca079e8cc51a63aea2d4f3635821822bd5916c7d5d0d86d4ae477680b577642f"
+    },
+    {
+      "path": "Koko/CoinCommerce/KokoAppleCoinPurchases.swift",
+      "sha256": "dc41ddda95b2204a33a6f4e15a15f4391a3bc45dc78cf37d5b7df85b7f62af8e"
+    },
+    {
+      "path": "Koko/CoinCommerce/KokoCoinCatalog.swift",
+      "sha256": "71e26b04580a5c093dc7455ce8e8b0f7d4a11fa205576064f940ffe60cb8c5e4"
+    },
+    {
+      "path": "Koko/InterfaceArtwork/KokoArtworkComponents.swift",
+      "sha256": "8fd46316b7717eb462f7a7189379facce43530fc8a48ba731c143d2fb6034d51"
+    },
+    {
+      "path": "Koko/InterfaceArtwork/KokoBrandMark.swift",
+      "sha256": "1d79177145608c20daf663e8a8fa5ebd83f72a8f74c771a16c95923a4aed9f81"
+    },
+    {
+      "path": "Koko/InterfaceArtwork/KokoContentPhotography.swift",
+      "sha256": "dddb1384fa2324957d018ec8269138a41fac4bca8a5e8478cf4acd5167964bd0"
+    },
+    {
+      "path": "Koko/InterfaceArtwork/KokoNoticePanel.swift",
+      "sha256": "b9c5c3df5986fe3564a6436ca514f70903f9fb0ef5c76d1b0b265b02d08a0a3e"
+    },
+    {
+      "path": "Koko/InterfaceArtwork/KokoTypography.swift",
+      "sha256": "0bf2b7146e9ca593c1131b6c5755602db7bc56aab65bbef1c38f62a1873918d8"
+    },
+    {
+      "path": "Koko/Localization/KokoLanguagePreference.swift",
+      "sha256": "c0c781d68b10203232b1825378e4dbcc76ff583c0db2100120b3e6354039d5c9"
+    },
+    {
+      "path": "Koko/Scenes/Account/KokoAccountEntry.swift",
+      "sha256": "28592c2df2614f96f4f48bfb782b4ab99815e6f8653053ba6e2a4c8b1070a435"
+    },
+    {
+      "path": "Koko/Scenes/Account/KokoEmailEntryForm.swift",
+      "sha256": "3468bf2bf04c217f4989fd636a489acf1c30f429f8e7ddd595bd158c4cd0934b"
+    },
+    {
+      "path": "Koko/Scenes/Account/KokoProfileEditor.swift",
+      "sha256": "859ea8182626691e744840b4a2146a210d1fbd14dbb6d7c0978b92893e75f4fc"
+    },
+    {
+      "path": "Koko/Scenes/Account/KokoSocialWelcome.swift",
+      "sha256": "ddf5f696f390c302d9621d29088a0e9ee1818477b527ae97397b4a1a7c3e7038"
+    },
+    {
+      "path": "Koko/Scenes/ConversationStudio/KokoConversationStudio.swift",
+      "sha256": "d03b4b99e9049f69289a57721eab4f228515e86bd800c0f74958dbc62d7a3d94"
+    },
+    {
+      "path": "Koko/Scenes/Conversations/KokoConversationAudio.swift",
+      "sha256": "5eea25536538ee7a9c17e8344e8e8a801b3a1f14ed7718ee215466c3c96856ae"
+    },
+    {
+      "path": "Koko/Scenes/Conversations/KokoConversationsView.swift",
+      "sha256": "06462b0b0365ad71b41909ee75bb77c683c26c4dc43e1213a6da5075076d69fc"
+    },
+    {
+      "path": "Koko/Scenes/Conversations/KokoLocalCamera.swift",
+      "sha256": "c8ec6ad51bf862a60896e0bf16fa099f21d05b1a33651b166b81a4e34ce660bc"
+    },
+    {
+      "path": "Koko/Scenes/Conversations/KokoPrivateCallView.swift",
+      "sha256": "2dd2cfdc33c83e19065b208d84160256a0b01467163b6b78b8750f995adbafa7"
+    },
+    {
+      "path": "Koko/Scenes/Discover/KokoConversationStarters.swift",
+      "sha256": "02f0b5948d9a172d1362c0a740e544c2c0e8489fbc162182a975f2ed00082cc0"
+    },
+    {
+      "path": "Koko/Scenes/Discover/KokoDiscoverView.swift",
+      "sha256": "5982a403e98eb38a0f3eb145de818c5d76d7cead86eb08a8ae4144e3debcd0a4"
+    },
+    {
+      "path": "Koko/Scenes/Discover/KokoMomentComposer.swift",
+      "sha256": "0699f13d644f652c192fc9e0303d437bcaae2b442d97f5b2e7b89984f082582d"
+    },
+    {
+      "path": "Koko/Scenes/Discover/KokoMomentDetail.swift",
+      "sha256": "00cadaddcf0bd48a897b7ad64b4c92a3c945447e7e9e2150c202c13f08318b8b"
+    },
+    {
+      "path": "Koko/Scenes/ListeningRooms/KokoListeningRoomView.swift",
+      "sha256": "067565dc2ab29e95dd04d236e1750a6e885815b723121b4b9650d6e1431a4204"
+    },
+    {
+      "path": "Koko/Scenes/ListeningRooms/KokoLiveRoomStage.swift",
+      "sha256": "478155d428438654f2c33a7e3dfe47c87a9e2dc830e076a91881375906efd940"
+    },
+    {
+      "path": "Koko/Scenes/ListeningRooms/KokoRoomConnectionView.swift",
+      "sha256": "1c3818d18d696f56c8c0f846dd02861783b68377d72fe6c80c078ff63b3a39c8"
+    },
+    {
+      "path": "Koko/Scenes/ListeningRooms/KokoRoomDirectory.swift",
+      "sha256": "0fa453e96c65c739d2506dacc74844f3ff0dc40603d4c7721e9bef651e866d11"
+    },
+    {
+      "path": "Koko/Scenes/PersonalSpace/KokoCoinCelebration.swift",
+      "sha256": "d405d72df8d778eed0b565a3e688b97e70ac30ae229b57bbffe07f398b074fd7"
+    },
+    {
+      "path": "Koko/Scenes/PersonalSpace/KokoCoinWalletView.swift",
+      "sha256": "2841e27aa3de3a0a7e4b9481f73299547f052f8acc3ead7cae6ddaf513d3f867"
+    },
+    {
+      "path": "Koko/Scenes/PersonalSpace/KokoPersonalSpace.swift",
+      "sha256": "caad3fd80c3dfccd42f89fc58147549e4d4fad89cbc35d5debc641cd03387d93"
+    },
+    {
+      "path": "Koko/Scenes/PersonalSpace/KokoSettingsAndSafety.swift",
+      "sha256": "58254bd2c4802b0d7b695cfafdbc4643bbd410eaf8baccd03522573f2268109f"
+    },
+    {
+      "path": "Koko/Scenes/PersonalSpace/KokoWalletAndKeepsakes.swift",
+      "sha256": "940e3b488c2ae800c3a058a323620b931ded25aefe0de0dcd41a3f7901329639"
+    },
+    {
+      "path": "Koko/SocialDomain/CoinLedgerEntry.swift",
+      "sha256": "a14ef43c99c79068643e125643aecdd1734246e6875b1f1a01dc901475f7b5f8"
+    },
+    {
+      "path": "Koko/SocialDomain/CommunityContentCatalog.swift",
+      "sha256": "b4808ac942951d4c42342cb2354bd8c6a63dc902b41335e226e9369ee2946591"
+    },
+    {
+      "path": "Koko/SocialDomain/CommunityMediaCatalog.swift",
+      "sha256": "11a838ef778fd657d6fedd8ede11861e7914858837823651d3ac68e373caed9f"
+    },
+    {
+      "path": "Koko/SocialDomain/CommunityMember.swift",
+      "sha256": "64151b8ef0cca6ef4913df6bfd52b8f3be3e0796b9e56713899366bc9504770a"
+    },
+    {
+      "path": "Koko/SocialDomain/CommunityNotice.swift",
+      "sha256": "6969d48b16c77d0b486d9f90105251fc69831a836d0824a89a4e032527d4b07f"
+    },
+    {
+      "path": "Koko/SocialDomain/CommunityTextPolicy.swift",
+      "sha256": "c05c96112e799479739569e8f6ca4b76ddce22bdce5f2cf785e32806116038ee"
+    },
+    {
+      "path": "Koko/SocialDomain/ContentReportReceipt.swift",
+      "sha256": "8aaae5ca1224044aff1646ed98f648f1f420e32148d6c7073d0dd2ec0bcf6b2c"
+    },
+    {
+      "path": "Koko/SocialDomain/ConversationEntry.swift",
+      "sha256": "ce905079a2969154fb7c237b11501f62e24a9fd61161f3099534f354368e2351"
+    },
+    {
+      "path": "Koko/SocialDomain/ConversationRunSheet.swift",
+      "sha256": "8cd415b019c227076009f56972395e5981879c8f2f6c48c76375320cb57ad112"
+    },
+    {
+      "path": "Koko/SocialDomain/ConversationStarters.swift",
+      "sha256": "f92f063d285ab88a6e2f92a17eeb85c294ca100abf4d84a393442cfdd955b3d1"
+    },
+    {
+      "path": "Koko/SocialDomain/HostedConversationRoom.swift",
+      "sha256": "44d541a916a8e1401702eb3664d644127c126dae779604b2077dd58ff0791c2c"
+    },
+    {
+      "path": "Koko/SocialDomain/MemberAccountArchive.swift",
+      "sha256": "5fbe5f7e7cb1ad28e476a2c6d6d570ab21b01441ef53096c2e410b8ebb798760"
+    },
+    {
+      "path": "Koko/SocialDomain/PrivateConversation.swift",
+      "sha256": "c975a80dc9f077731204c581e458ba58e36cebcb874cbd59534be88b469e20a9"
+    },
+    {
+      "path": "Koko/SocialDomain/RoomKeepsake.swift",
+      "sha256": "9a8d740c3a04642198dc59e5c180ed3e368d906dda658b7b2c30c6d72d86ce97"
+    },
+    {
+      "path": "Koko/SocialDomain/SampleFollowerArrival.swift",
+      "sha256": "da02bcdad682ca0638b7b88fa4446cd6d69f705da421af1796359a10f282f15c"
+    },
+    {
+      "path": "Koko/SocialDomain/SharedMoment.swift",
+      "sha256": "fd52b28db36f8352d1b852568b9d19165a4e5e1f19615e2e028cd816577ad514"
+    }
+  ]
+}
