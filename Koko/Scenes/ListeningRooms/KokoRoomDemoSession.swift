@@ -54,9 +54,8 @@ final class KokoRoomDemoSession: ObservableObject {
             let sender = senders[sequence % senders.count]
             let phrases = Self.phrases(for: currentRoom.conversationTopic)
             // Stable IDs let a reported line stay hidden across room re-entry.
-            let scriptIndex = sequence % (phrases.count * senders.count)
             var entry = ConversationEntry(authorMemberID: sender, messageText: KokoCopy.text(phrases[sequence % phrases.count]))
-            entry.id = "room-demo-\(room.id)-\(sender)-\(scriptIndex)"
+            entry.id = "room-demo-\(room.id)-\(sender)-\(sequence)"
             if sequence % 4 == 2 {
                 let gift = KokoCommunity.keepsakes[(sequence / 4) % KokoCommunity.keepsakes.count]
                 let quantity = [1, 3, 1, 5][(sequence / 4) % 4]

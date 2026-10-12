@@ -110,22 +110,9 @@ struct KokoListeningRoomView: View {
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3), spacing: 10) {
                         ForEach(0..<room.seatLimit, id: \.self) { position in seatView(position, room: room) }
                     }.padding(.vertical, 2)
-                    HStack { Text("Room chat").font(KokoTypography.heading(size: 15)); Spacer(); Button("Quick hello") { panel = "Quick hellos" }.font(KokoTypography.emphasis(size: 11)).frame(minHeight: 44).buttonStyle(.plain) }
-                    ScrollViewReader { proxy in
-                        ScrollView(showsIndicators: false) {
-                            KokoRoomChatLog(entries: Array(room.roomConversation.suffix(30)), showsEmptyState: false, compact: true)
-                                .id("voice-chat-bottom")
-                        }.frame(height: 176)
-                            .onChange(of: room.roomConversation.last?.id) { _ in
-                                withAnimation { proxy.scrollTo("voice-chat-bottom", anchor: .bottom) }
-                            }
-                            .onAppear { proxy.scrollTo("voice-chat-bottom", anchor: .bottom) }
-                    }
                 }.padding(.horizontal, 18).padding(.bottom, 12)
             }.scrollDismissesKeyboard(.interactively)
-                .overlay {
-                    voiceActivityOverlay
-                }
+            voiceConversationDeck(room)
             VStack(spacing: 10) {
                 HStack(spacing: 8) {
                     roomTool(13, "Join mic", "Voice connection")
@@ -154,27 +141,33 @@ struct KokoListeningRoomView: View {
         }
     }
 
-    /// Effects stay inside the scroll viewport, above the fixed composer and below
-    /// room navigation. The persistent chat log remains the accessible history.
-    private var voiceActivityOverlay: some View {
-        GeometryReader { bounds in
-            let hasGifts = voiceActivity.flights.contains(where: \.isGift)
-            ZStack {
-                // On a short viewport (for example with the keyboard visible),
-                // prioritize the gift ribbon instead of covering it with text.
-                if bounds.size.height >= 350 || !hasGifts {
-                    KokoRoomBarrage(flights: voiceActivity.flights, isPlaying: scenePhase == .active)
-                        .padding(.top, 12)
-                        .frame(maxHeight: .infinity, alignment: .top)
-                }
-                KokoRoomGiftShower(flights: voiceActivity.flights, isPlaying: scenePhase == .active)
-                    .frame(height: min(190, bounds.size.height))
-                    .padding(.horizontal, 18)
-                    .frame(maxHeight: .infinity, alignment: .bottom)
+    /// Chat stays visible beneath the scrolling microphone seats, including eight-seat rooms.
+    /// Gift arrivals temporarily float over this interaction area, never the seat controls.
+    private func voiceConversationDeck(_ room: HostedConversationRoom) -> some View {
+        VStack(spacing: 6) {
+            HStack {
+                Text("Room chat").font(KokoTypography.heading(size: 15))
+                Spacer()
+                Button("Quick hello") { panel = "Quick hellos" }
+                    .font(KokoTypography.emphasis(size: 11)).frame(minHeight: 44).buttonStyle(.plain)
             }
-            .frame(width: bounds.size.width, height: bounds.size.height)
-            .clipped()
-            .accessibilityHidden(true)
+            ScrollViewReader { proxy in
+                ScrollView(showsIndicators: false) {
+                    KokoRoomChatLog(entries: Array(room.roomConversation.suffix(30)), showsEmptyState: false, compact: true)
+                        .id("voice-chat-bottom")
+                }.frame(height: 128)
+                    .onChange(of: room.roomConversation.last?.id) { _ in
+                        withAnimation(reduceMotion ? nil : .easeOut(duration: 0.25)) {
+                            proxy.scrollTo("voice-chat-bottom", anchor: .bottom)
+                        }
+                    }
+                    .onAppear { proxy.scrollTo("voice-chat-bottom", anchor: .bottom) }
+            }
+        }
+        .padding(.horizontal, 18).padding(.bottom, 6)
+        .overlay(alignment: .bottom) {
+            KokoRoomGiftShower(flights: voiceActivity.flights, isPlaying: scenePhase == .active)
+                .frame(height: 174).padding(.horizontal, 18).accessibilityHidden(true)
         }
     }
 
@@ -302,7 +295,6 @@ struct KokoListeningRoomView: View {
                                     .font(KokoTypography.medium(size: 11)).foregroundStyle(KokoInk.accent)
                             }
                             Spacer()
-                            Artwork(sheet: .navigation, tile: 4).frame(width: 18, height: 18)
                         }.padding(.vertical, 8).contentShape(Rectangle())
                     }.buttonStyle(KokoPressStyle())
                 }
