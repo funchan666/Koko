@@ -86,40 +86,52 @@ struct Artwork: View {
 }
 
 struct ArtworkSurface: View {
+    @Environment(\.kokoDialogContent) private var inDialog
     var tile = 2
     var body: some View {
-        Image(uiImage: OriginalArtwork.panel(highlighted: tile == 3))
-            .resizable(capInsets: EdgeInsets(top: 18, leading: 18, bottom: 18, trailing: 18))
-            .overlay {
-                LinearGradient(
-                    colors: [KokoInk.accent.opacity(tile == 3 ? 0.12 : 0.035), Color.clear, KokoInk.coral.opacity(tile == 3 ? 0.04 : 0.02)],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
-            }
-            .shadow(color: Color.black.opacity(0.16), radius: 14, y: 8)
-            .accessibilityHidden(true)
+        if inDialog {
+            KokoDialogControlSurface()
+        } else {
+            Image(uiImage: OriginalArtwork.panel(highlighted: tile == 3))
+                .resizable(capInsets: EdgeInsets(top: 18, leading: 18, bottom: 18, trailing: 18))
+                .overlay {
+                    LinearGradient(
+                        colors: [KokoInk.accent.opacity(tile == 3 ? 0.12 : 0.035), Color.clear, KokoInk.coral.opacity(tile == 3 ? 0.04 : 0.02)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+                }
+                .shadow(color: Color.black.opacity(0.16), radius: 14, y: 8)
+                .accessibilityHidden(true)
+        }
     }
 }
 
+
 struct KokoControlSurface: View {
+    @Environment(\.kokoDialogContent) private var inDialog
     var highlighted = false
     var body: some View {
-        Image(uiImage: OriginalArtwork.control(highlighted: highlighted))
-            .resizable(capInsets: EdgeInsets(top: 18, leading: 18, bottom: 18, trailing: 18))
-            .overlay {
-                LinearGradient(
-                    colors: highlighted ? [KokoInk.paper.opacity(0.28), KokoInk.accent.opacity(0.72)] : [KokoInk.accent.opacity(0.08), Color.clear, KokoInk.coral.opacity(0.06)],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-            }
-            .shadow(color: Color.black.opacity(highlighted ? 0.08 : 0.18), radius: 10, y: 5)
-            .accessibilityHidden(true)
+        if inDialog {
+            KokoDialogControlSurface(prominent: highlighted)
+        } else {
+            Image(uiImage: OriginalArtwork.control(highlighted: highlighted))
+                .resizable(capInsets: EdgeInsets(top: 18, leading: 18, bottom: 18, trailing: 18))
+                .overlay {
+                    LinearGradient(
+                        colors: highlighted ? [KokoInk.paper.opacity(0.28), KokoInk.accent.opacity(0.72)] : [KokoInk.accent.opacity(0.08), Color.clear, KokoInk.coral.opacity(0.06)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                }
+                .shadow(color: Color.black.opacity(highlighted ? 0.08 : 0.18), radius: 10, y: 5)
+                .accessibilityHidden(true)
+        }
     }
 }
+
 
 struct KokoGradientBackdrop: View {
     var body: some View {
@@ -170,6 +182,7 @@ struct KokoSocialTag: View {
 }
 
 struct KokoAction: View {
+    @Environment(\.kokoDialogContent) private var inDialog
     var title: String
     var icon: Int? = nil
     var emphasis = true
@@ -182,8 +195,8 @@ struct KokoAction: View {
                     .multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
             }
             .foregroundStyle(emphasis ? KokoInk.onMint : KokoInk.primary)
-            .padding(.horizontal, 18).padding(.vertical, 14)
-            .frame(maxWidth: .infinity, minHeight: 54)
+            .padding(.horizontal, 18).padding(.vertical, inDialog ? 12 : 14)
+            .frame(maxWidth: .infinity, minHeight: inDialog ? 48 : 54)
             .background(KokoControlSurface(highlighted: emphasis))
         }.buttonStyle(KokoPressStyle())
     }
@@ -291,6 +304,7 @@ struct KokoPage<Content: View>: View {
     var title: String? = nil
     var subtitle: String? = nil
     var back: (() -> Void)? = nil
+    var openContentOptions: (() -> Void)? = nil
     @ViewBuilder var content: Content
     private var showsHeader: Bool { title != nil || back != nil }
     var body: some View {
@@ -303,6 +317,7 @@ struct KokoPage<Content: View>: View {
                         if let subtitle { Text(LocalizedStringKey(subtitle)).font(KokoTypography.body(size: 12, relativeTo: .subheadline)).foregroundStyle(KokoInk.secondary) }
                     }.fixedSize(horizontal: false, vertical: true)
                     Spacer(minLength: 0)
+                    if let openContentOptions { KokoIconAction(icon: 11, label: "More", action: openContentOptions) }
                 }.padding(.horizontal, 22).padding(.top, screenInsets.top + 8).padding(.bottom, 18)
             }
             ScrollView(showsIndicators: false) {
@@ -375,6 +390,7 @@ struct KokoSectionTitle: View {
 }
 
 struct KokoMenuRow: View {
+    @Environment(\.kokoDialogContent) private var inDialog
     let title: String
     var detail: String = ""
     var icon = 3
@@ -383,11 +399,15 @@ struct KokoMenuRow: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 12) {
-                Artwork(sheet: .navigation, tile: icon).frame(width: 27, height: 27).foregroundStyle(KokoInk.accent)
-                    .frame(width: 44, height: 44)
-                    .background(KokoInk.panelRaised.opacity(0.72))
-                    .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
-                    .overlay { RoundedRectangle(cornerRadius: 15, style: .continuous).stroke(KokoInk.line, lineWidth: 1) }
+                if inDialog {
+                    Artwork(sheet: .navigation, tile: icon).frame(width: 24, height: 24)
+                } else {
+                    Artwork(sheet: .navigation, tile: icon).frame(width: 27, height: 27).foregroundStyle(KokoInk.accent)
+                        .frame(width: 44, height: 44)
+                        .background(KokoInk.panelRaised.opacity(0.72))
+                        .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
+                        .overlay { RoundedRectangle(cornerRadius: 15, style: .continuous).stroke(KokoInk.line, lineWidth: 1) }
+                }
                 VStack(alignment: .leading, spacing: 4) {
                     (verbatim ? Text(verbatim: title) : Text(LocalizedStringKey(title)))
                         .font(KokoTypography.emphasis(size: 15, relativeTo: .body))
@@ -398,52 +418,169 @@ struct KokoMenuRow: View {
                 }.fixedSize(horizontal: false, vertical: true)
                 Spacer(minLength: 4)
                 Artwork(sheet: .navigation, tile: 5).rotationEffect(.degrees(180)).frame(width: 17, height: 17).foregroundStyle(KokoInk.coral)
-            }.foregroundStyle(KokoInk.primary).padding(14).frame(maxWidth: .infinity, minHeight: 72, alignment: .leading).background(ArtworkSurface())
+            }.foregroundStyle(KokoInk.primary).padding(14).frame(maxWidth: .infinity, minHeight: inDialog ? 56 : 72, alignment: .leading).background(ArtworkSurface())
         }.buttonStyle(KokoPressStyle())
     }
 }
 
 struct KokoToggleRow: View {
+    @Environment(\.kokoDialogContent) private var inDialog
     let title: String
     @Binding var enabled: Bool
     var body: some View {
         Button { enabled.toggle() } label: {
             HStack(spacing: 12) {
                 Text(LocalizedStringKey(title)).font(KokoTypography.medium(size: 15, relativeTo: .body)).multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
                 Spacer(minLength: 8)
-                Text(LocalizedStringKey(enabled ? "ON" : "OFF")).font(KokoTypography.heading(size: 11))
-                    .foregroundStyle(enabled ? KokoInk.onMint : KokoInk.secondary)
-                    .frame(width: 52, height: 38).background(KokoControlSurface(highlighted: enabled))
-            }.foregroundStyle(KokoInk.primary).padding(14).background(ArtworkSurface())
+                if inDialog {
+                    if enabled {
+                        Image("KokoDialogSuccess").resizable().scaledToFit()
+                            .frame(width: 30, height: 24).accessibilityHidden(true)
+                    }
+                } else {
+                    Text(LocalizedStringKey(enabled ? "ON" : "OFF")).font(KokoTypography.heading(size: 11))
+                        .foregroundStyle(enabled ? KokoInk.onMint : KokoInk.secondary)
+                        .frame(width: 52, height: 38).background(KokoControlSurface(highlighted: enabled))
+                }
+            }
+            .foregroundStyle(inDialog && enabled ? KokoInk.canvas : KokoInk.primary)
+            .padding(14).frame(minHeight: 48)
+            .background {
+                if inDialog { KokoDialogControlSurface(prominent: enabled) }
+                else { ArtworkSurface() }
+            }
         }.buttonStyle(KokoPressStyle()).accessibilityValue(enabled ? "On" : "Off")
+            .accessibilityAddTraits(inDialog && enabled ? .isSelected : [])
+    }
+}
+
+// Scoped to app-owned dialogs; page controls retain their existing artwork.
+private struct KokoDialogContentKey: EnvironmentKey {
+    static let defaultValue = false
+}
+extension EnvironmentValues {
+    var kokoDialogContent: Bool {
+        get { self[KokoDialogContentKey.self] }
+        set { self[KokoDialogContentKey.self] = newValue }
+    }
+}
+
+enum KokoDialogPresentation: Equatable {
+    case compact, selection, connection, safety, success, review
+
+    var illustration: String? {
+        switch self {
+        case .compact, .selection: nil
+        case .connection: "KokoDialogConnection"
+        case .safety: "KokoDialogSafety"
+        case .success: "KokoDialogSuccess"
+        case .review: "KokoDialogReview"
+        }
+    }
+    var width: CGFloat { self == .selection ? 440 : 370 }
+}
+
+struct KokoDialogControlSurface: View {
+    var prominent = false
+    var body: some View {
+        Image(prominent ? "KokoDialogPrimary" : "KokoDialogSecondary")
+            .resizable().accessibilityHidden(true)
     }
 }
 
 struct KokoModal<Content: View>: View {
     @Environment(\.kokoScreenInsets) private var screenInsets
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var textSize
+    @AccessibilityFocusState private var headingFocused: Bool
+    @State private var appeared = false
     let title: String
+    var presentation: KokoDialogPresentation = .compact
+    var dismissOnBackdrop = true
     var dismiss: () -> Void
     @ViewBuilder var content: Content
+
     var body: some View {
         GeometryReader { viewport in
             ZStack {
-                Color.black.opacity(0.65).onTapGesture(perform: dismiss).accessibilityHidden(true)
-                ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 18) {
-                        HStack(spacing: 12) {
-                            Text(LocalizedStringKey(title)).font(KokoTypography.heading(size: 22, relativeTo: .title2)).fixedSize(horizontal: false, vertical: true)
-                            Spacer(minLength: 0)
-                            KokoIconAction(icon: 6, label: "Close", action: dismiss)
-                        }
-                        content
-                    }.padding(22).background(ArtworkSurface()).frame(maxWidth: 480)
-                        .padding(.horizontal, 22).padding(.vertical, 20)
-                        .padding(.top, screenInsets.top).padding(.bottom, screenInsets.bottom)
-                        .frame(maxWidth: .infinity, minHeight: viewport.size.height)
+                Color.black.opacity(0.72)
+                    .ignoresSafeArea(.container)
+                    .contentShape(Rectangle())
+                    .onTapGesture { if dismissOnBackdrop { dismiss() } }
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 16) {
+                    dialogHeading
+                    // Short confirmations keep their natural height; long pickers and
+                    // enlarged text scroll below a persistent title and close action.
+                    ViewThatFits(in: .vertical) {
+                        dialogContent.fixedSize(horizontal: false, vertical: true)
+                        ScrollView { dialogContent }
+                            .scrollDismissesKeyboard(.interactively)
+                    }
+                }
+                .padding(24)
+                .frame(maxWidth: presentation.width)
+                .background {
+                    Image("KokoDialogSurface").resizable().accessibilityHidden(true)
+                }
+                .padding(.horizontal, viewport.size.width < 360 ? 14 : 22)
+                .padding(.top, screenInsets.top + 16)
+                .padding(.bottom, screenInsets.bottom + 16)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                .opacity(appeared ? 1 : 0)
+                .offset(y: appeared || reduceMotion ? 0 : 10)
+            }
+        }
+        .environment(\.kokoDialogContent, true)
+        .foregroundStyle(KokoInk.primary)
+        .accessibilityElement(children: .contain).accessibilityAddTraits(.isModal)
+        .accessibilityAction(.escape, dismiss)
+        .onAppear {
+            headingFocused = true
+            withAnimation(reduceMotion ? nil : .easeOut(duration: 0.2)) { appeared = true }
+        }
+    }
+
+    private var dialogContent: some View {
+        VStack(alignment: .leading, spacing: 12) { content }
+            .font(KokoTypography.medium(size: 14, relativeTo: .body))
+            .lineSpacing(3)
+            .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var dialogHeading: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            if let artwork = presentation.illustration {
+                HStack(alignment: .top) {
+                    Image(artwork).resizable().scaledToFit()
+                        .frame(width: textSize.isAccessibilitySize ? 72 : 112,
+                               height: textSize.isAccessibilitySize ? 48 : 72)
+                        .accessibilityHidden(true)
+                    Spacer(minLength: 8)
+                    closeButton
+                }
+                heading
+            } else {
+                HStack(alignment: .top, spacing: 10) {
+                    heading
+                    Spacer(minLength: 0)
+                    closeButton
                 }
             }
-        }.foregroundStyle(KokoInk.primary)
-            .accessibilityElement(children: .contain).accessibilityAddTraits(.isModal)
-            .accessibilityAction(.escape, dismiss)
+        }
+    }
+    private var heading: some View {
+        Text(LocalizedStringKey(title))
+            .font(KokoTypography.heading(size: 23, relativeTo: .title2))
+            .fixedSize(horizontal: false, vertical: true)
+            .accessibilityAddTraits(.isHeader).accessibilityFocused($headingFocused)
+    }
+    private var closeButton: some View {
+        Button(action: dismiss) {
+            Image("KokoDialogClose").resizable().scaledToFit()
+                .frame(width: 32, height: 32).frame(width: 44, height: 44)
+                .contentShape(Rectangle())
+        }.buttonStyle(KokoPressStyle()).accessibilityLabel(Text("Close"))
     }
 }

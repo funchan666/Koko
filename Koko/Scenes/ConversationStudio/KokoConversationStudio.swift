@@ -15,6 +15,7 @@ private struct KokoStudioArtwork: View {
 }
 
 struct KokoStudioAction: View {
+    @Environment(\.kokoDialogContent) private var inDialog
     let title: String
     let action: () -> Void
     var body: some View {
@@ -23,7 +24,10 @@ struct KokoStudioAction: View {
                 .multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
                 .foregroundStyle(KokoInk.canvas).padding(.horizontal, 24).padding(.vertical, 14)
                 .frame(maxWidth: .infinity, minHeight: 48)
-                .background { KokoStudioArtwork(name: "KokoStudioCoralAction", heightScale: 2.22) }
+                .background {
+                    if inDialog { KokoDialogControlSurface(prominent: true) }
+                    else { KokoStudioArtwork(name: "KokoStudioCoralAction", heightScale: 2.22) }
+                }
                 .contentShape(Rectangle())
         }.buttonStyle(KokoPressStyle())
     }
@@ -191,7 +195,7 @@ struct KokoConversationPlanView: View {
                 } else { Text("This plan is no longer available.") }
             }.allowsHitTesting(confirmation == nil).accessibilityHidden(confirmation != nil)
             if let confirmation {
-                KokoModal(title: confirmation == "delete" ? "Delete this plan?" : "Keep a reflection?", dismiss: { self.confirmation = nil }) {
+                KokoModal(title: confirmation == "delete" ? "Delete this plan?" : "Keep a reflection?", presentation: confirmation == "delete" ? .safety : .connection, dismiss: { self.confirmation = nil }) {
                     Text(LocalizedStringKey(confirmation == "delete" ? "This removes its questions and private notes. Your room and edition unlock are kept." : "Finish the cue sequence and write what you want to remember. Nothing is posted."))
                     KokoStudioAction(title: confirmation == "delete" ? "Delete this plan" : "Finish and reflect") {
                         self.confirmation = nil

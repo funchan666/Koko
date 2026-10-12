@@ -61,6 +61,7 @@
 		9559E50B14949FA885B79418 /* KokoDiscoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F2257407BDE96504412809 /* KokoDiscoverView.swift */; };
 		9BB2533FB3332DB4CC4669AD /* KokoConversationStudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7BC6CFA1BD4D5AC1E912661 /* KokoConversationStudio.swift */; };
 		9D962CFBEE1F0B39CF252B2C /* KokoPolicyReadingStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D1E68730FEF5C8FFE9FD86C /* KokoPolicyReadingStyle.swift */; };
+		9D9C8DCFB578DFA4D3D0F27F /* KokoMomentConversationSeeds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 615A1F2D7531AF954A7E698D /* KokoMomentConversationSeeds.swift */; };
 		A175DBBB4BBF9481EB6C2B55 /* KokoSocialWelcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8799FDF897FA05A14EEDD2F7 /* KokoSocialWelcome.swift */; };
 		A1C791AC78ACB77E6067614E /* KokoNoticePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E247A52D29AC403CEEC4DE9 /* KokoNoticePanel.swift */; };
 		A1CDB793068AC070147B40DE /* ContentReportReceipt.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF7DABEEDC5B8BE01091B8B5 /* ContentReportReceipt.swift */; };
@@ -122,6 +123,7 @@
 		50BA5A4C7A84EDEEEAF18DD0 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		59EFC4204D5A7B01A4DC2BE8 /* SampleFollowerArrival.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleFollowerArrival.swift; sourceTree = "<group>"; };
 		5D99C79A67A9F206EB53F95C /* KokoSceneNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoSceneNavigation.swift; sourceTree = "<group>"; };
+		615A1F2D7531AF954A7E698D /* KokoMomentConversationSeeds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoMomentConversationSeeds.swift; sourceTree = "<group>"; };
 		6807C087964747AE3366FA01 /* HostedConversationRoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostedConversationRoom.swift; sourceTree = "<group>"; };
 		68F2257407BDE96504412809 /* KokoDiscoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoDiscoverView.swift; sourceTree = "<group>"; };
 		6A9A3E8678AB3E604AB3E41C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -244,6 +246,7 @@
 				AD8644FA8D622A749BC03F66 /* ConversationRunSheet.swift */,
 				43E24D7CA8AA2BD18566BFEA /* ConversationStarters.swift */,
 				6807C087964747AE3366FA01 /* HostedConversationRoom.swift */,
+				615A1F2D7531AF954A7E698D /* KokoMomentConversationSeeds.swift */,
 				81CFBBE3AEF970684902E81A /* MemberAccountArchive.swift */,
 				CFD991623027878790BA8403 /* PrivateConversation.swift */,
 				8461F3BCE0DCFF3DF8102259 /* RoomKeepsake.swift */,
@@ -570,6 +573,7 @@
 				B14C5F79C348D9C8FF9FF0E5 /* KokoLocalCamera.swift in Sources */,
 				62DB7B6C0EF71310A758CFB5 /* KokoLocalCredentials.swift in Sources */,
 				7A76A478F46EFB37599608CE /* KokoMomentComposer.swift in Sources */,
+				9D9C8DCFB578DFA4D3D0F27F /* KokoMomentConversationSeeds.swift in Sources */,
 				1810BF41A6C23430877B25F2 /* KokoMomentDetail.swift in Sources */,
 				A1C791AC78ACB77E6067614E /* KokoNoticePanel.swift in Sources */,
 				0C97C14B6EA09021BBCE20DF /* KokoPersonalSpace.swift in Sources */,

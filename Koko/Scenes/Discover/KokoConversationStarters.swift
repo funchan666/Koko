@@ -134,7 +134,7 @@ struct KokoConversationStartersView: View {
                 }
             }.allowsHitTesting(!choosingFriend).accessibilityHidden(choosingFriend)
             if choosingFriend, let starter = current {
-                KokoModal(title: "Who is this question for?", dismiss: { choosingFriend = false }) {
+                KokoModal(title: "Who is this question for?", presentation: .selection, dismiss: { choosingFriend = false }) {
                     Text("Choose a mutual friend. You can review the draft before sending.")
                     ForEach(friends) { member in
                         HStack(spacing: 12) {

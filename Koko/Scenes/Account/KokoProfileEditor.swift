@@ -229,33 +229,22 @@ struct KokoProfileEditor: View {
     }
 
     private var countryPicker: some View {
-        VStack(spacing: 16) {
-            HStack(spacing: 14) {
-                backButton { editing = nil; choosingCountry = false }
-                Text("Country or region").font(KokoTypography.heading(size: 22, relativeTo: .title2))
-                Spacer(minLength: 0)
-            }
+        KokoModal(title: "Country or region", presentation: .selection,
+                  dismiss: { editing = nil; choosingCountry = false }) {
             profileField(.countrySearch, title: "Search", placeholder: "Find your country", value: $countryQuery)
-            ScrollView {
-                LazyVStack(spacing: 8) {
-                    if countryChoices.isEmpty {
-                        Text("No matches. Try another name.")
-                            .foregroundStyle(KokoWelcomePalette.quiet).padding(.vertical, 24)
-                    }
-                    ForEach(countryChoices, id: \.self) { code in
-                        Button { countryCode = code; editing = nil; choosingCountry = false } label: {
-                            controlLabel(interfaceLocale.localizedString(forRegionCode: code) ?? code,
-                                         selected: code == countryCode)
-                        }.buttonStyle(KokoPressStyle()).accessibilityAddTraits(code == countryCode ? .isSelected : [])
-                    }
-                }.padding(.bottom, screenInsets.bottom + 16)
-            }.scrollDismissesKeyboard(.interactively)
+            LazyVStack(spacing: 8) {
+                if countryChoices.isEmpty {
+                    Text("No matches. Try another name.")
+                        .foregroundStyle(KokoWelcomePalette.quiet).padding(.vertical, 16)
+                }
+                ForEach(countryChoices, id: \.self) { code in
+                    Button { countryCode = code; editing = nil; choosingCountry = false } label: {
+                        controlLabel(interfaceLocale.localizedString(forRegionCode: code) ?? code,
+                                     selected: code == countryCode)
+                    }.buttonStyle(KokoPressStyle()).accessibilityAddTraits(code == countryCode ? .isSelected : [])
+                }
+            }
         }
-        .padding(.horizontal, 26).padding(.top, screenInsets.top + 8)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(KokoWelcomePalette.backdrop)
-        .accessibilityAddTraits(.isModal)
-        .accessibilityAction(.escape) { editing = nil; choosingCountry = false }
     }
 
     private var choiceColumns: [GridItem] { [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)] }
@@ -384,15 +373,20 @@ private enum KokoProfileSelectionArtwork {
 }
 
 private struct KokoProfileChoiceSurface: View {
+    @Environment(\.kokoDialogContent) private var inDialog
     var selected: Bool
     var body: some View {
-        Image(uiImage: KokoProfileSelectionArtwork.skin(selected: selected))
-            .resizable(capInsets: EdgeInsets(top: 18, leading: 18, bottom: 18, trailing: 18), resizingMode: .stretch)
-            .overlay {
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .stroke(selected ? KokoWelcomePalette.mint.opacity(0.85) : Color.white.opacity(0.16), lineWidth: 1)
-            }
-            .shadow(color: Color.black.opacity(0.16), radius: 10, y: 5)
-            .accessibilityHidden(true)
+        if inDialog {
+            KokoDialogControlSurface(prominent: selected)
+        } else {
+            Image(uiImage: KokoProfileSelectionArtwork.skin(selected: selected))
+                .resizable(capInsets: EdgeInsets(top: 18, leading: 18, bottom: 18, trailing: 18), resizingMode: .stretch)
+                .overlay {
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .stroke(selected ? KokoWelcomePalette.mint.opacity(0.85) : Color.white.opacity(0.16), lineWidth: 1)
+                }
+                .shadow(color: Color.black.opacity(0.16), radius: 10, y: 5)
+                .accessibilityHidden(true)
+        }
     }
 }

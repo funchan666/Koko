@@ -47,7 +47,7 @@ struct KokoPersonalSpace: View {
                 }
             }
             if confirmLogout {
-                KokoModal(title: "Until next time?", dismiss: { confirmLogout = false }) {
+                KokoModal(title: "Until next time?", presentation: .connection, dismiss: { confirmLogout = false }) {
                     Text("Your profile and keepsakes will be here when you sign in with the same email.")
                     KokoAction(title: "Sign out") { confirmLogout = false; community.signOut() }
                 }
@@ -283,6 +283,8 @@ struct KokoMemberProfile: View {
     @Environment(\.dynamicTypeSize) private var textSize
     let memberID: String
     @State private var safety = false
+    @State private var showsOptions = false
+    @State private var confirmsBlock = false
     @State private var contentTab = "Moments"
     private var visibleMoments: [SharedMoment] {
         community.moments.filter {
@@ -294,33 +296,36 @@ struct KokoMemberProfile: View {
 
     var body: some View {
         ZStack {
-            KokoPage(back: navigation.back) {
+            KokoPage(back: navigation.back, openContentOptions: memberID == community.myID ? nil : { showsOptions = true; confirmsBlock = false }) {
                 if let member = community.member(memberID), community.isMemberVisible(memberID) {
                     profileHero(member)
                     profileIdentity(member)
                     profileStory(member)
-                    if memberID != community.myID { profileActions; connectionContext }
-                    KokoAnswerCards(member: member)
+                    if memberID != community.myID { profileActions }
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("From their world")
-                            .font(KokoTypography.heading(size: 22, relativeTo: .title2))
-                            .accessibilityAddTraits(.isHeader)
-                        KokoChoiceRail(choices: ["Moments", "Rooms"], selection: $contentTab)
+                        HStack(spacing: 10) {
+                            profileContentTab("Moments", count: visibleMoments.count)
+                            profileContentTab("Rooms", count: visibleRooms.count)
+                        }
                     }.padding(.top, 6)
                     if contentTab == "Moments" {
-                        ForEach(visibleMoments) { KokoMomentCard(moment: $0) }
+                        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: textSize.isAccessibilitySize ? 1 : 2), spacing: 14) {
+                            ForEach(visibleMoments) { KokoMomentCard(moment: $0) }
+                        }
                         if visibleMoments.isEmpty { Text("No moments to show yet.").foregroundStyle(KokoInk.secondary) }
                     } else {
                         ForEach(visibleRooms) { profileRoom($0) }
                         if visibleRooms.isEmpty { Text("No rooms to show yet.").foregroundStyle(KokoInk.secondary) }
                     }
+                    KokoAnswerCards(member: member)
                 } else if community.journal?.blockedMembers.contains(memberID) == true {
                     KokoEmpty(title: "Person blocked", detail: "This profile and its content are hidden.")
                     KokoAction(title: "Unblock", emphasis: false) { _ = community.unblock(memberID) }
                 } else {
                     KokoEmpty(title: "Profile not found", detail: "This profile is no longer available here.")
                 }
-            }.allowsHitTesting(!safety).accessibilityHidden(safety)
+            }.allowsHitTesting(!safety && !showsOptions).accessibilityHidden(safety || showsOptions)
+            if showsOptions { profileOptions }
             if safety {
                 KokoSafetyPanel(reportedContentID: memberID, memberID: memberID) {
                     safety = false
@@ -334,13 +339,13 @@ struct KokoMemberProfile: View {
     private func profileHero(_ member: CommunityMember) -> some View {
         // One photo only: no inset portrait, image border or text covering the face.
         KokoMemberCoverPhoto(member: member)
-            .frame(height: 320)
+            .frame(height: 280)
             .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
             .accessibilityLabel(Text(verbatim: member.publicName))
     }
 
     private func profileIdentity(_ member: CommunityMember) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 7) {
             ViewThatFits(in: .horizontal) {
                 HStack(alignment: .center, spacing: 16) {
                     profileName(member)
@@ -358,19 +363,13 @@ struct KokoMemberProfile: View {
                 Text(verbatim: details).font(KokoTypography.medium(size: 13, relativeTo: .subheadline))
                     .foregroundStyle(KokoInk.secondary).fixedSize(horizontal: false, vertical: true)
             }
-            let layout = textSize.isAccessibilitySize
-                ? AnyLayout(VStackLayout(alignment: .leading, spacing: 5))
-                : AnyLayout(HStackLayout(alignment: .firstTextBaseline, spacing: 22))
-            layout {
-                Text("Rooms · \(visibleRooms.count)")
-                Text("Moments · \(visibleMoments.count)")
-                if community.friends.contains(memberID) { Text("Mutual").foregroundStyle(KokoInk.accent) }
-            }.font(KokoTypography.emphasis(size: 12, relativeTo: .caption))
-                .foregroundStyle(KokoInk.secondary).padding(.top, 3)
+            if community.friends.contains(memberID) {
+                Text("Mutual").font(KokoTypography.emphasis(size: 11)).foregroundStyle(KokoInk.accent)
+            }
         }.padding(.horizontal, 3)
     }
     private func profileName(_ member: CommunityMember) -> some View {
-        Text(verbatim: member.publicName).font(KokoTypography.heading(size: 30, relativeTo: .title))
+        Text(verbatim: member.publicName).font(KokoTypography.heading(size: 27, relativeTo: .title))
             .fixedSize(horizontal: false, vertical: true).accessibilityAddTraits(.isHeader)
     }
     private var followButton: some View {
@@ -381,76 +380,119 @@ struct KokoMemberProfile: View {
 
     @ViewBuilder private func profileStory(_ member: CommunityMember) -> some View {
         if !member.introductionLine.isEmpty || !member.interests.isEmpty {
-            VStack(alignment: .leading, spacing: 18) {
+            VStack(alignment: .leading, spacing: 12) {
                 if !member.introductionLine.isEmpty {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("In their words").font(KokoTypography.emphasis(size: 12, relativeTo: .caption))
-                            .foregroundStyle(KokoInk.canvas.opacity(0.65))
-                        Text(verbatim: member.introductionLine)
-                            .font(KokoTypography.medium(size: 20, relativeTo: .title3))
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
+                    Text(verbatim: member.introductionLine)
+                        .font(KokoTypography.medium(size: 16, relativeTo: .body))
+                        .foregroundStyle(KokoInk.primary).fixedSize(horizontal: false, vertical: true)
                 }
                 if !member.interests.isEmpty {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("What they are into").font(KokoTypography.emphasis(size: 12, relativeTo: .caption))
-                            .foregroundStyle(KokoInk.canvas.opacity(0.65))
-                        Text(verbatim: member.interests.map { KokoCopy.text($0) }.joined(separator: "  ·  "))
-                            .font(KokoTypography.heading(size: 15, relativeTo: .body))
-                            .fixedSize(horizontal: false, vertical: true)
+                    ViewThatFits(in: .horizontal) {
+                        HStack(spacing: 8) { interestItems(member) }
+                        VStack(alignment: .leading, spacing: 8) { interestItems(member) }
                     }
                 }
-            }.foregroundStyle(KokoInk.canvas).padding(24)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background { Image("KokoProfileStoryPaper").resizable().accessibilityHidden(true) }
+            }.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 3)
+        }
+    }
+
+    @ViewBuilder private func interestItems(_ member: CommunityMember) -> some View {
+        ForEach(member.interests, id: \.self) { interest in
+            HStack(spacing: 6) {
+                Image(interestArtwork(interest)).resizable().scaledToFit().frame(width: 22, height: 22).accessibilityHidden(true)
+                Text(LocalizedStringKey(interest)).font(KokoTypography.emphasis(size: 12, relativeTo: .caption))
+                    .fixedSize(horizontal: false, vertical: true)
+            }.padding(.horizontal, 10).padding(.vertical, 7)
+                .background(KokoControlSurface()).foregroundStyle(KokoInk.accent)
+        }
+    }
+
+    private func interestArtwork(_ interest: String) -> String {
+        switch interest {
+        case "Music": "KokoDiscoverMusic"
+        case "Creative": "KokoDiscoverCreative"
+        case "After hours": "KokoDiscoverAfterHours"
+        default: "KokoDiscoverConversation"
         }
     }
 
     private var profileActions: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            profileButton("Send a hello", prominent: true) { navigation.open(.conversation(memberID)) }
+        VStack(spacing: 10) {
+            Button { navigation.open(.conversation(memberID)) } label: {
+                HStack(spacing: 9) {
+                    Image("KokoDiscoverConversation").resizable().scaledToFit().frame(width: 27, height: 27).accessibilityHidden(true)
+                    Text("Send a hello").font(KokoTypography.heading(size: 16, relativeTo: .body))
+                }.foregroundStyle(KokoInk.canvas).frame(maxWidth: .infinity, minHeight: 54)
+                    .background { Image("KokoProfileHelloSurface").resizable().accessibilityHidden(true) }
+            }.buttonStyle(KokoPressStyle())
             let layout = textSize.isAccessibilitySize
-                ? AnyLayout(VStackLayout(spacing: 10)) : AnyLayout(HStackLayout(spacing: 12))
+                ? AnyLayout(VStackLayout(spacing: 8)) : AnyLayout(HStackLayout(spacing: 10))
             layout {
-                profileButton("Voice call", prominent: false) { navigation.open(.call(memberID, .voice)) }
-                profileButton("Video call", prominent: false) { navigation.open(.call(memberID, .video)) }
+                profileCallButton("Voice call", image: "KokoProfileVoiceCall", channel: .voice)
+                profileCallButton("Video call", image: "KokoProfileVideoCall", channel: .video)
             }
-            Text("Voice and video are free when the connection is mutual.")
-                .font(KokoTypography.medium(size: 12, relativeTo: .caption))
-                .foregroundStyle(KokoInk.secondary).fixedSize(horizontal: false, vertical: true)
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: 20) { icebreakerLink; Spacer(minLength: 0); safetyLink }
-                VStack(alignment: .leading, spacing: 0) { icebreakerLink; safetyLink }
+            Button { navigation.open(.conversationStarters(memberID)) } label: {
+                HStack(spacing: 7) {
+                    Text("Choose an icebreaker →").font(KokoTypography.emphasis(size: 12, relativeTo: .body))
+                    Spacer(minLength: 0)
+                }.foregroundStyle(KokoInk.accent).frame(maxWidth: .infinity, minHeight: 44)
+            }.buttonStyle(KokoPressStyle())
+        }
+    }
+
+    private func profileCallButton(_ title: String, image: String, channel: KokoConversationChannel) -> some View {
+        Button { navigation.open(.call(memberID, channel)) } label: {
+            Text(LocalizedStringKey(title))
+                .font(KokoTypography.heading(size: 13, relativeTo: .subheadline))
+                .foregroundStyle(KokoInk.canvas).multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.leading, 49).padding(.trailing, 12).padding(.vertical, 18)
+                .frame(maxWidth: .infinity, minHeight: 72)
+                .background { Image(image).resizable().accessibilityHidden(true) }
+                .contentShape(Rectangle())
+        }.buttonStyle(KokoPressStyle())
+    }
+
+    private func profileContentTab(_ title: String, count: Int) -> some View {
+        Button { contentTab = title } label: {
+            HStack(spacing: 6) {
+                Text(LocalizedStringKey(title))
+                Text("\(count)").font(KokoTypography.heading(size: 16))
+            }.font(KokoTypography.emphasis(size: 13)).frame(maxWidth: .infinity, minHeight: 48)
+                .foregroundStyle(contentTab == title ? KokoInk.canvas : KokoInk.secondary)
+                .background {
+                    if contentTab == title { Image("KokoVoiceTopicSelection").resizable().accessibilityHidden(true) }
+                }
+                .contentShape(Rectangle())
+        }.buttonStyle(KokoPressStyle()).accessibilityAddTraits(contentTab == title ? .isSelected : [])
+    }
+
+    private var profileOptions: some View {
+        KokoModal(title: confirmsBlock ? "Block this person?" : "More", presentation: confirmsBlock ? .safety : .compact, dismiss: { showsOptions = false }) {
+            if confirmsBlock {
+                Text("Their rooms, moments and conversations will be hidden on this device. You can undo this in your blocked list.")
+                KokoAction(title: "Block person") {
+                    if community.block(memberID) { showsOptions = false; navigation.back() }
+                }
+                KokoAction(title: "Go back", emphasis: false) { confirmsBlock = false }
+            } else {
+                KokoAction(title: "Report", emphasis: false) { showsOptions = false; safety = true }
+                KokoAction(title: "Block this person", emphasis: false) { confirmsBlock = true }
             }
         }
     }
-    private var icebreakerLink: some View {
-        Button("Choose an icebreaker →") { navigation.open(.conversationStarters(memberID)) }
-            .font(KokoTypography.emphasis(size: 13, relativeTo: .body))
-            .foregroundStyle(KokoInk.accent).frame(minHeight: 44).buttonStyle(KokoPressStyle())
-    }
-    private var safetyLink: some View {
-        Button("Report or block") { safety = true }
-            .font(KokoTypography.medium(size: 12, relativeTo: .caption))
-            .foregroundStyle(KokoInk.secondary).frame(minHeight: 44).buttonStyle(KokoPressStyle())
-    }
+
     private func profileButton(_ title: String, prominent: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(LocalizedStringKey(title))
                 .font(KokoTypography.emphasis(size: prominent ? 16 : 13, relativeTo: .body))
                 .multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
                 .foregroundStyle(prominent ? KokoInk.canvas : KokoInk.paper)
-                .padding(.horizontal, 24).padding(.vertical, prominent ? 25 : 17)
-                .frame(maxWidth: .infinity, minHeight: 52)
+                .padding(.horizontal, 18).padding(.vertical, 12)
+                .frame(maxWidth: .infinity, minHeight: 44)
                 .background { Image(prominent ? "KokoProfileHelloSurface" : "KokoProfileQuietSurface").resizable().accessibilityHidden(true) }
                 .contentShape(Rectangle())
         }.buttonStyle(KokoPressStyle())
-    }
-
-    private var connectionContext: some View {
-        Text("Following is your choice. Chat and calls unlock only when the other person also follows you. No automatic friendships.")
-            .font(KokoTypography.medium(size: 12, relativeTo: .caption))
-            .foregroundStyle(KokoInk.secondary).padding(.top, 8)
     }
 
     private func profileRoom(_ room: HostedConversationRoom) -> some View {
@@ -535,7 +577,7 @@ struct KokoAlbumView: View {
                 }
             }
             if picker {
-                KokoModal(title: "Choose a photograph", dismiss: { picker = false }) {
+                KokoModal(title: "Choose a photograph", presentation: .selection, dismiss: { picker = false }) {
                     KokoCollectionPhotoPicker(selectedPhotoKey: $selectedPhotoKey)
                     KokoAction(title: "Add to album") {
                         guard let selectedPhotoKey, KokoMediaLibrary.asset(selectedPhotoKey)?.isVideo == false else { community.notice = "Choose a photo first."; return }
@@ -548,7 +590,7 @@ struct KokoAlbumView: View {
                 }
             }
             if let photo = KokoMediaLibrary.asset(viewingPhotoKey) {
-                KokoModal(title: "Your album", dismiss: { viewingPhotoKey = nil; deletionConfirmation = false }) {
+                KokoModal(title: "Your album", presentation: .selection, dismiss: { viewingPhotoKey = nil; deletionConfirmation = false }) {
                     KokoContentImage(asset: photo, fullResolution: true, fitInside: true).frame(height: 370)
                     Text(photo.captionLine).font(KokoTypography.emphasis(size: 16))
                     if deletionConfirmation {
@@ -560,7 +602,7 @@ struct KokoAlbumView: View {
                 }
             }
             if let index = viewingLegacyIndex, let tiles = community.journal?.albumTiles, tiles.indices.contains(index) {
-                KokoModal(title: "Saved illustration", dismiss: { viewingLegacyIndex = nil; deletionConfirmation = false }) {
+                KokoModal(title: "Saved illustration", presentation: .selection, dismiss: { viewingLegacyIndex = nil; deletionConfirmation = false }) {
                     Artwork(sheet: .collection, tile: tiles[index]).frame(height: 280)
                     if deletionConfirmation {
                         Text("Remove this illustration from your album?")

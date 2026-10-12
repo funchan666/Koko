@@ -37,7 +37,17 @@ extension CommunityJournalStore {
         isMemberVisible(entry.authorMemberID) && !isContentHidden(entry.id)
     }
     func comments(for momentID: String) -> [ConversationEntry] {
-        (journal?.momentComments[momentID] ?? []).filter(isEntryVisible)
+        (KokoMomentConversationSeeds.comments(for: momentID) + (journal?.momentComments[momentID] ?? [])).filter(isEntryVisible)
+    }
+    func momentLikeCount(_ momentID: String) -> Int {
+        KokoMomentConversationSeeds.likeCount(for: momentID) + (journal?.likedMomentKeys.contains(momentID) == true ? 1 : 0)
+    }
+    func toggleMomentLike(_ momentID: String) {
+        guard moments.contains(where: { $0.id == momentID }) else { return }
+        update {
+            if $0.likedMomentKeys.contains(momentID) { $0.likedMomentKeys.remove(momentID) }
+            else { $0.likedMomentKeys.insert(momentID) }
+        }
     }
     @discardableResult
     func requireMutualConnection(_ memberID: String) -> Bool {

@@ -52,7 +52,7 @@ struct KokoSettingsView: View {
                 KokoAction(title: "Delete account", emphasis: false) { confirmation = .deleteAccount }
             }
             if let confirmation {
-                KokoModal(title: confirmation.title, dismiss: { self.confirmation = nil }) {
+                KokoModal(title: confirmation.title, presentation: .safety, dismiss: { self.confirmation = nil }) {
                     let deleting = confirmation == .deleteAccount
                     Text(LocalizedStringKey(deleting ? "This permanently removes this account's profile, messages, album, rooms, remaining coins, purchase records and keepsakes. Completed consumable purchases cannot restore this deleted balance. Other accounts are kept." : "Your data stays here. Use the same email with any password of 8–128 characters, or the same Apple account, to return."))
                     KokoAction(title: deleting ? "Delete account permanently" : "Continue") {
@@ -155,7 +155,7 @@ struct KokoPreferencesView: View {
                     KokoAction(title: "Leave feedback", icon: 2) { navigation.open(.feedback) }
                 }
             }
-            if clearingMessages { KokoModal(title: "Clear conversations?", dismiss: { clearingMessages = false }) { Text("This removes all saved chat entries and drafts for this account."); KokoAction(title: "Clear now") { community.update { $0.privateConversations = [] }; clearingMessages = false } } }
+            if clearingMessages { KokoModal(title: "Clear conversations?", presentation: .safety, dismiss: { clearingMessages = false }) { Text("This removes all saved chat entries and drafts for this account."); KokoAction(title: "Clear now") { community.update { $0.privateConversations = [] }; clearingMessages = false } } }
         }
     }
 }
@@ -216,7 +216,7 @@ struct KokoBlacklistView: View {
                 if blocked.isEmpty { KokoEmpty(title: "Nothing here, and that's okay", detail: "People you block will appear here. You can unblock them at any time.") }
                 ForEach(blocked) { member in KokoCard { HStack { KokoProfileLink(memberID: member.id) { HStack { KokoMemberPortrait(member: member).frame(width: 60, height: 60); Text(member.publicName).font(KokoTypography.emphasis(size: 16)) } }; Spacer(); Button("Unblock") { selectedID = member.id }.buttonStyle(.plain).font(KokoTypography.medium(size: 12)) } } }
             }
-            if let memberID = selectedID { KokoModal(title: "Unblock this person?", dismiss: { selectedID = nil }) { Text("Their content can appear again. Your previous follow relationship will not be restored automatically."); KokoAction(title: "Unblock") { if community.unblock(memberID) { selectedID = nil } } } }
+            if let memberID = selectedID { KokoModal(title: "Unblock this person?", presentation: .safety, dismiss: { selectedID = nil }) { Text("Their content can appear again. Your previous follow relationship will not be restored automatically."); KokoAction(title: "Unblock") { if community.unblock(memberID) { selectedID = nil } } } }
         }
     }
 }

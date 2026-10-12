@@ -90,7 +90,7 @@ struct KokoDiscoverView: View {
             .allowsHitTesting(!choosingTopic)
             .accessibilityHidden(choosingTopic)
             if choosingTopic {
-                KokoModal(title: "Room topics", dismiss: { choosingTopic = false }) {
+                KokoModal(title: "Room topics", presentation: .selection, dismiss: { choosingTopic = false }) {
                     ForEach(KokoCommunity.topics, id: \.self) { topic in
                         KokoAction(title: topic == "All" ? "All topics" : topic, emphasis: roomTopic == topic) {
                             roomTopic = topic
@@ -569,7 +569,7 @@ struct KokoMomentsCollection: View {
             .allowsHitTesting(!choosingFilters)
             .accessibilityHidden(choosingFilters)
             if choosingFilters {
-                KokoModal(title: "Collection filters", dismiss: { choosingFilters = false }) {
+                KokoModal(title: "Collection filters", presentation: .selection, dismiss: { choosingFilters = false }) {
                     KokoToggleRow(title: "Following only", enabled: $followedCreatorsOnly)
                     KokoChoiceRail(choices: KokoCommunity.topics, selection: $collectionTopic)
                     KokoAction(title: "Show collection") { choosingFilters = false }
@@ -605,7 +605,7 @@ struct KokoMomentCard: View {
     @EnvironmentObject private var navigation: KokoSceneNavigation
     let moment: SharedMoment
     var body: some View {
-        Group {
+        VStack(spacing: 5) {
             KokoRoomEditorialLayout(
                 title: moment.captionLine,
                 topic: moment.mediaAsset.map { $0.isVideo ? "Video · \($0.durationLabel)" : "Photo" } ?? moment.topicLabel,
@@ -620,6 +620,20 @@ struct KokoMomentCard: View {
                     KokoPhotoPlaceholder()
                 }
             }
+            HStack(spacing: 8) {
+                Button { community.toggleMomentLike(moment.id) } label: {
+                    VStack(spacing: 2) {
+                        Text("\(community.momentLikeCount(moment.id))")
+                        Text(LocalizedStringKey(community.journal?.likedMomentKeys.contains(moment.id) == true ? "Liked" : "Like"))
+                    }.frame(maxWidth: .infinity, minHeight: 44)
+                }.buttonStyle(KokoPressStyle())
+                Button { navigation.open(.moment(moment.id)) } label: {
+                    VStack(spacing: 2) {
+                        Text("\(community.comments(for: moment.id).count)")
+                        Text("Comments")
+                    }.frame(maxWidth: .infinity, minHeight: 44)
+                }.buttonStyle(KokoPressStyle())
+            }.font(KokoTypography.emphasis(size: 11)).foregroundStyle(KokoInk.accent)
         }.buttonStyle(KokoPressStyle())
             .accessibilityLabel(moment.mediaAsset?.isVideo == true ? "Open video update: " + moment.captionLine : "Open photo update: " + moment.captionLine)
     }
@@ -693,7 +707,7 @@ struct KokoDiscoverySearch: View {
                 }
             }
             if filtersVisible {
-                KokoModal(title: "Make it your kind", dismiss: { filtersVisible = false }) {
+                KokoModal(title: "Make it your kind", presentation: .selection, dismiss: { filtersVisible = false }) {
                     HStack { KokoField(label: "Minimum age", value: $minimumAge, keyboard: .numberPad); KokoField(label: "Maximum age", value: $maximumAge, keyboard: .numberPad) }
                     KokoChoiceRail(choices: ["Any gender", "Woman", "Man", "Non-binary"], selection: $gender)
                     KokoChoiceRail(choices: ["Any language", "English", "Portuguese", "French", "Spanish", "Mandarin"], selection: $language)
@@ -731,7 +745,7 @@ struct KokoSafetyPanel: View {
     @State private var reason = ""
     @State private var confirmBlock = false
     var body: some View {
-        KokoModal(title: confirmBlock ? "Block this person?" : "Keep your space comfortable", dismiss: dismiss) {
+        KokoModal(title: confirmBlock ? "Block this person?" : "Keep your space comfortable", presentation: .safety, dismiss: dismiss) {
             if confirmBlock {
                 Text("Their rooms, moments and conversations will be hidden on this device. You can undo this in your blocked list.")
                 KokoAction(title: "Block person") { if community.block(memberID) { dismiss() } }

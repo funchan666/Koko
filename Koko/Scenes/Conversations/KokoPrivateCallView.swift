@@ -82,11 +82,7 @@ struct KokoPrivateCallView: View {
                 }
             }.allowsHitTesting(permitted || !gateVisible).accessibilityHidden(!permitted && gateVisible)
             if !permitted && gateVisible {
-                KokoModal(title: "A hello goes both ways.", dismiss: { gateVisible = false }) {
-                    Artwork(sheet: .navigation, tile: 3)
-                        .frame(width: 30, height: 30)
-                        .padding(20)
-                        .background(KokoControlSurface())
+                KokoModal(title: "A hello goes both ways.", presentation: .connection, dismiss: { gateVisible = false }) {
                     Text("Voice and video calls are for mutual followers. Open this profile to manage your connection.")
                     KokoAction(title: "Open profile") { gateVisible = false; navigation.open(.profile(memberID)) }
                     KokoAction(title: "Not now", emphasis: false, action: end)

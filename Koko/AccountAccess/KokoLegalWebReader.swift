@@ -164,63 +164,25 @@ struct KokoConsentFooter: View {
 }
 
 struct KokoConsentRequiredPanel: View {
-    @Environment(\.kokoScreenInsets) private var screenInsets
     let dismiss: () -> Void
     let open: (KokoLegalDocument) -> Void
-    @AccessibilityFocusState private var reminderFocused: Bool
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                Color.black.opacity(0.62).ignoresSafeArea()
-                    .onTapGesture(perform: dismiss)
-                    .accessibilityHidden(true)
-                ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 0) {
-                        Text("One quick step.")
-                            .font(KokoTypography.heading(size: 27, relativeTo: .title2))
-                            .tracking(-0.7)
-                            .foregroundStyle(KokoWelcomePalette.paper)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .accessibilityAddTraits(.isHeader)
-                            .accessibilityFocused($reminderFocused)
-                        Text("Read and agree to both policies before continuing.")
-                            .font(KokoTypography.body(size: 14, relativeTo: .body))
-                            .foregroundStyle(KokoWelcomePalette.quiet)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .lineSpacing(3)
-                            .padding(.top, 12)
-                        ViewThatFits(in: .horizontal) {
-                            HStack(spacing: 18) {
-                                policyLink(.terms)
-                                policyLink(.privacy)
-                            }.fixedSize(horizontal: true, vertical: false)
-                            VStack(alignment: .leading, spacing: 0) {
-                                policyLink(.terms)
-                                policyLink(.privacy)
-                            }
-                        }.padding(.top, 12)
-                        KokoWelcomeAction(title: "Back to agreement", primary: true, action: dismiss)
-                            .padding(.top, 20)
-                    }
-                    .padding(28)
-                    .background {
-                        Image("KokoConsentSurface")
-                            .resizable(capInsets: EdgeInsets(top: 28, leading: 28, bottom: 28, trailing: 28))
-                            .accessibilityHidden(true)
-                    }
-                    .frame(maxWidth: 360)
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 24)
-                    .padding(.top, screenInsets.top).padding(.bottom, screenInsets.bottom)
-                    .frame(maxWidth: .infinity)
-                    .frame(minHeight: geometry.size.height)
+        KokoModal(title: "One quick step.", presentation: .safety, dismiss: dismiss) {
+            Text("Read and agree to both policies before continuing.")
+                .foregroundStyle(KokoInk.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 18) {
+                    policyLink(.terms)
+                    policyLink(.privacy)
+                }.fixedSize(horizontal: true, vertical: false)
+                VStack(alignment: .leading, spacing: 0) {
+                    policyLink(.terms)
+                    policyLink(.privacy)
                 }
             }
+            KokoAction(title: "Back to agreement", action: dismiss)
         }
-        .accessibilityElement(children: .contain)
-        .accessibilityAddTraits(.isModal)
-        .accessibilityAction(.escape, dismiss)
-        .onAppear { reminderFocused = true }
     }
     private func policyLink(_ document: KokoLegalDocument) -> some View {
         Button {

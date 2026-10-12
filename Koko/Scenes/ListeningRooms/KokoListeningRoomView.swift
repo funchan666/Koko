@@ -218,7 +218,7 @@ struct KokoListeningRoomView: View {
         return community.saveRoom(room)
     }
     @ViewBuilder private func roomPanel(_ title: String, room: HostedConversationRoom) -> some View {
-        KokoModal(title: title, dismiss: { panel = nil }) {
+        KokoModal(title: title, presentation: .selection, dismiss: { panel = nil }) {
             switch title {
             case "Send a little something":
                 Text("\(community.coinBalance) coins available").font(KokoTypography.medium(size: 13))
@@ -228,7 +228,7 @@ struct KokoListeningRoomView: View {
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())]) {
                     ForEach(KokoCommunity.keepsakes) { gift in
                         Button { selectedGift = gift.id } label: {
-                            VStack { Artwork(sheet: .collection, tile: gift.artworkTile).frame(height: 72); Text(LocalizedStringKey(gift.keepsakeName)).font(KokoTypography.emphasis(size: 12)); Text("\(gift.coinPrice) coins").font(KokoTypography.body(size: 11)) }.padding(10).frame(maxWidth: .infinity).background(ArtworkSurface(tile: selectedGift == gift.id ? 3 : 2))
+                            VStack { Artwork(sheet: .collection, tile: gift.artworkTile).frame(height: 72); Text(LocalizedStringKey(gift.keepsakeName)).font(KokoTypography.emphasis(size: 12)); Text("\(gift.coinPrice) coins").font(KokoTypography.body(size: 11)) }.padding(10).frame(maxWidth: .infinity).background(KokoControlSurface(highlighted: selectedGift == gift.id)).foregroundStyle(selectedGift == gift.id ? KokoInk.canvas : KokoInk.primary)
                         }.buttonStyle(.plain)
                     }
                 }

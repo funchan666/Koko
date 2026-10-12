@@ -57,7 +57,7 @@ struct KokoConversationsView: View {
                 } else { ForEach(friendsRooms) { KokoRoomCard(room: $0) } }
             }
             if confirmClear {
-                KokoModal(title: "Clear your conversations?", dismiss: { confirmClear = false }) {
+                KokoModal(title: "Clear your conversations?", presentation: .safety, dismiss: { confirmClear = false }) {
                     Text("This removes all conversation entries and drafts from this device. Your friendships stay.")
                     KokoAction(title: "Clear conversations") { community.update { $0.privateConversations = [] }; confirmClear = false }
                     KokoAction(title: "Keep them", emphasis: false) { confirmClear = false }
@@ -266,20 +266,20 @@ struct KokoConversationDetail: View {
             }.allowsHitTesting(!showSafety && !showAttachmentPicker && !showClear && viewingPhotoKey == nil)
                 .accessibilityHidden(showSafety || showAttachmentPicker || showClear || viewingPhotoKey != nil)
             if showAttachmentPicker {
-                KokoModal(title: "Choose a photo", dismiss: { showAttachmentPicker = false }) {
+                KokoModal(title: "Choose a photo", presentation: .selection, dismiss: { showAttachmentPicker = false }) {
                     KokoCollectionPhotoPicker(selectedPhotoKey: $attachment)
                     KokoAction(title: "Attach selection") { guard attachment != nil else { community.notice = "Choose a photo first."; return }; showAttachmentPicker = false }
                 }
             }
             if let photo = KokoMediaLibrary.asset(viewingPhotoKey) {
-                KokoModal(title: "Attached photo", dismiss: { viewingPhotoKey = nil }) {
+                KokoModal(title: "Attached photo", presentation: .selection, dismiss: { viewingPhotoKey = nil }) {
                     KokoContentImage(asset: photo, fullResolution: true, fitInside: true).frame(height: 400)
                     Text(photo.captionLine).font(KokoTypography.body(size: 14))
                 }
             }
             if showSafety { KokoSafetyPanel(reportedContentID: "conversation-" + memberID, memberID: memberID) { showSafety = false; if !community.isMemberVisible(memberID) || community.isContentHidden("conversation-" + memberID) { navigation.back() } } }
             if showClear {
-                KokoModal(title: "Clear this chat?", dismiss: { showClear = false }) {
+                KokoModal(title: "Clear this chat?", presentation: .safety, dismiss: { showClear = false }) {
                     Text("Messages and the saved draft will be removed from this device.")
                     KokoAction(title: "Clear chat") { community.update { $0.privateConversations.removeAll { $0.correspondentID == memberID } }; draft = ""; attachment = nil; showClear = false }
                 }
