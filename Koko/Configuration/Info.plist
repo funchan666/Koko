@@ -32,9 +32,9 @@
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>KokoSafetySupportContactEnabled</key>
-	<false/>
+	<true/>
 	<key>KokoSafetySupportEmail</key>
-	<string>support@example.invalid</string>
+	<string>stapallalkthiag@hotmail.com</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>

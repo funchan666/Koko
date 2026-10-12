@@ -93,7 +93,18 @@ extension CommunityJournalStore {
 
 enum KokoCommunityGuidelines {
     struct Section: Sendable { let title: String; let body: String }
-    static let sections: [Section] = [
+    static var supportEmail: String? {
+        guard Bundle.main.object(forInfoDictionaryKey: "KokoSafetySupportContactEnabled") as? Bool == true,
+              let email = Bundle.main.object(forInfoDictionaryKey: "KokoSafetySupportEmail") as? String else { return nil }
+        let address = email.trimmingCharacters(in: .whitespacesAndNewlines)
+        return address.isEmpty ? nil : address
+    }
+    static var sections: [Section] {
+        var entries = communityRules
+        if let email = supportEmail { entries.append(.init(title: "Support email", body: email)) }
+        return entries
+    }
+    private static let communityRules: [Section] = [
         .init(title: "Adults, with accountable profiles", body: "Koko is for adults aged 18 and over. Use your own account and do not impersonate anyone. Random or anonymous matching is not offered. Never sexualize minors or share exploitative material."),
         .init(title: "A conversation takes two", body: "Private messages and calls require both people to follow each other. A follow never accepts for the other person. Respect a refusal, an unfollow or a block. Do not pressure anyone into contact, gifts or purchases."),
         .init(title: "Keep the room welcoming", body: "No harassment, hate, threats, bullying, pornography, exploitation, scams, illegal sales or encouragement of violence. Do not spam rooms or post deceptive links. Conversation, voice and video features are free."),

@@ -199,6 +199,15 @@ struct KokoFeedbackView: View {
                 guard !trimmed.isEmpty, trimmed.count <= 1000 else { community.notice = "Write a note from 1 to 1000 characters."; return }
                 if community.update({ $0.feedbackNotes.append(topic + ": " + trimmed) }) { message = ""; community.notice = "Your feedback is saved on this device. It has not been sent to a support team." }
             }
+            if let email = KokoCommunityGuidelines.supportEmail {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Support email").font(KokoTypography.emphasis(size: 16))
+                    Text(verbatim: email).font(KokoTypography.body(size: 14))
+                        .foregroundStyle(KokoInk.secondary)
+                        .textSelection(.enabled)
+                        .fixedSize(horizontal: false, vertical: true)
+                }.frame(maxWidth: .infinity, alignment: .leading)
+            }
             Text("Your saved notes").font(KokoTypography.heading(size: 20))
             ForEach(Array((community.journal?.feedbackNotes ?? []).enumerated()), id: \.offset) { _, note in KokoCard { Text(note).font(KokoTypography.body(size: 14)) } }
         }

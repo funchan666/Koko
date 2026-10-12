@@ -169,6 +169,7 @@ struct KokoPolicyView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         Text(LocalizedStringKey(section.title)).font(KokoTypography.emphasis(size: 20))
                         Text(LocalizedStringKey(section.body)).font(KokoTypography.body(size: 15))
+                            .textSelection(.enabled)
                             .lineSpacing(4).fixedSize(horizontal: false, vertical: true)
                     }.padding(.vertical, 8)
                 }
